@@ -111,9 +111,10 @@ async function update(req, res, next) {
         }
       }
     )
+    updateTypeProduct.image = req.file.filename;
     }
-    console.log(updateTypeProduct);
-    res.json("hello");
+    const result = await typeProduct.update({ _id: req.params.id }, updateTypeProduct)
+    res.json(result);
   } catch (error) {
     console.error(error);
   }
