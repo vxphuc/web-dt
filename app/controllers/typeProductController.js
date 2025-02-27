@@ -100,8 +100,17 @@ async function update(req, res, next) {
     };
     if (req.file) {
       const TypeID = await typeProduct.getAll({ _id: req.params.id });
-      const pathImg = await path.join(__dirname, '..','..', 'public', 'uploads', TypeID.image);
+      const pathImg = await path.join(__dirname, '..','..', 'public', 'uploads', TypeID[0].image);
       
+      fs.unlink(pathImg, (err) => {
+        if(err){
+          console.error("Lỗi khi xóa file:", err);
+          return;
+        }else{
+          console.log("File đã bị xóa thành công!");
+        }
+      }
+    )
     }
     console.log(updateTypeProduct);
     res.json("hello");
