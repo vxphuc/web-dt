@@ -98,10 +98,10 @@ async function update(req, res, next) {
       name: req.body.name,
       slug: slugify(req.body.name),
     };
-
     if (req.file) {
       const TypeID = await typeProduct.getAll({ _id: req.params.id });
-      console.log(req.file.filename)
+      const pathImg = await path.join(__dirname, '..','..', 'public', 'uploads', TypeID.image);
+      
     }
     console.log(updateTypeProduct);
     res.json("hello");
