@@ -26,6 +26,11 @@ class typeProductRepository{
          const result = await this.model.deleteMany(data).exec();
          return result
     }
+    //đếm số lượng loại sản phẩm 
+    async count(data){
+        const result = await this.model.countDocuments(data).lean()
+        return result
+    }
 }
 
 

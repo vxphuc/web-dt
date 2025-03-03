@@ -1,3 +1,4 @@
+
 const typeProduct = require("../models/typeProduct");
 const fs = require("fs");
 const path = require("path");
@@ -5,8 +6,16 @@ const { default: slugify } = require("slugify");
 
 //xem tất cả sản phẩm chưa được xóa
 async function index(req, res, next) {
-  const typeProducts = await typeProduct.getAll({ isDelete: false });
-  res.json(typeProducts);
+  try{
+    const [typeProducts, countDelete] = await Promise.all([
+      typeProduct.getAll({isDelete: false}),
+      typeProduct.count({isDelete: true})
+    ])
+    res.json( {typeProducts: typeProducts, count: countDelete} );
+  }catch{
+    console.log("lỗi truy vấn")
+  }
+
 }
 
 // POST create new Type
