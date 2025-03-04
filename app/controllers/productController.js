@@ -83,7 +83,7 @@ async function RecycleBin(req, res, next) {
 function Restore(req, res, next) {
   ProductRepository.updateoneFiled(
     { _id: req.params.id },
-    { $set: { isDeleted: false, deletedAt: null } }
+    { $set: { isDeleted: null, deletedAt: null } }
   )
     .then((product) => res.json(product))
     .catch(next);
