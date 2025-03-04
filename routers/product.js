@@ -5,6 +5,10 @@ const upload = require('../app/middlewares/multerUpload')
 //controller
 const productController = require('../app/controllers/productController')
 
+
+//post
+router.post('/create',upload.single('image'), productController.create)
+
 //patch
 router.patch('/:id/destroy', productController.destroy)
 router.patch('/:id/Restore', productController.Restore)
@@ -14,8 +18,7 @@ router.patch('/:id/Restore', productController.Restore)
 //sửa sản phẩm
 router.put('/:id/fixProduct',upload.single('image'), productController.fixProduct)
 
-//post
-router.post('/create',upload.single('image'), productController.create)
+
 
 //delete
 router.delete('/:id/delete', productController.Delete)
