@@ -8,7 +8,7 @@ async function index(req, res, next) {
   const products = await ProductRepository.getAllWithJoin([
     {
       $match: {
-        isDeleted: false,
+        isDeleted: null,
       },
     },
     {
@@ -59,7 +59,7 @@ function destroy(req, res, next) {
 //Get product delete
 async function RecycleBin(req, res, next) {
   const productDelete = await ProductRepository.getAllWithJoin([
-    { $match: { isDeleted: null } },
+    { $match: { isDeleted: true } },
     {
       $lookup: {
         from: "typeproducs",
