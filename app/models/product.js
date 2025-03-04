@@ -10,8 +10,8 @@ const product = new Schema({
     description: String,
     typeProductId: {type: Schema.Types.ObjectId, ref: 'typeProducs'},
     quantity: {type: Number, default: 0},
-    isDeleted: { type: Boolean, default: false },
-    deletedAt: { type: Date, default: false },
+    isDeleted: { type: Boolean, default: null },
+    deletedAt: { type: Date, default: null },
     image: {type: String, default: '' },
     slug: String
 });
