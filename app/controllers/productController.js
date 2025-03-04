@@ -72,8 +72,7 @@ async function RecycleBin(req, res, next) {
   const products = await productDelete.map((product) => {
     return {
       ...product,
-      price: product.price.toString(),
-      deletedAt: product.deletedAt.toLocaleString("vi-VN"),
+      price: product.price.toString()
     };
   });
   res.json(products);
