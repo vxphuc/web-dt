@@ -59,7 +59,7 @@ function destroy(req, res, next) {
 //Get product delete
 async function RecycleBin(req, res, next) {
   const productDelete = await ProductRepository.getAllWithJoin([
-    { $match: { isDeleted: true } },
+    { $match: { isDeleted: null } },
     {
       $lookup: {
         from: "typeproducs",
