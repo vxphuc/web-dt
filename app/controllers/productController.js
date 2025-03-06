@@ -2,6 +2,7 @@ const ProductRepository = require("../models/product");
 const fs = require("fs");
 const path = require("path");
 const slugify = require("slugify");
+const cloudinary = require('../../config/cloudinaryConfig')
 
 //Get product not delete
 async function index(req, res, next) {
@@ -39,9 +40,15 @@ async function index(req, res, next) {
 
 //create post
 async function create(req, res, next) {
-  const imageeName = req.file.filename;
+  const imageeName = req.file.path;
+  const uploadResult = await cloudinary.uploader.upload(imageeName, {
+    folder: 'products'
+  })
+  fs.unlinkSync(req.file.path);
+
+  console.log(uploadResult.secure_url)
   const product = await ProductRepository.create({
-    image: imageeName,
+    image:  uploadResult.secure_url,
     ...req.body,
   });
   res.json(product);
