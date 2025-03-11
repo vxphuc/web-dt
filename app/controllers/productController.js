@@ -1,6 +1,5 @@
 const ProductRepository = require("../models/product");
 const fs = require("fs");
-const path = require("path");
 const slugify = require("slugify");
 const cloudinary = require('../../config/cloudinaryConfig')
 
@@ -46,7 +45,6 @@ async function create(req, res, next) {
   })
   fs.unlinkSync(req.file.path);
 
-  console.log(uploadResult.secure_url)
   const product = await ProductRepository.create({
     image:  uploadResult.secure_url,
     ...req.body,
@@ -98,28 +96,18 @@ function Restore(req, res, next) {
 //delete product
 async function Delete(req, res, next) {
   try {
-    //xóa ảnh trong file
-    const product = await ProductRepository.getAll({
-      isDeleted: true,
-      _id: req.params.id,
-    });
-    for (let i = 0; i < product.length; i++) {
-      imgpath = path.join(__dirname, "..", "..", "public" ,"uploads", product[i].image);
-      fs.unlink(imgpath, (err) => {
-        if (err) {
-          console.log(`Lôi khi xóa tệp ${err}`);
-        } else {
-          console.log("Xóa tệp thành công");
-        }
-      });
+    const product = await ProductRepository.getAll({_id: req.params.id});
+    const getPublicIdFromUrl = (url) =>{
+      const urlParts = url.split("/")
+      const publicIdWithExt = urlParts.splice(-2).join("/").split(".")[0]
+      return publicIdWithExt
     }
-
-    //xóa dữ liệu trong monggoDB
-    await ProductRepository.deleteProduct({ _id: req.params.id })
-      .then(() => {
-        res.json({ message: "succcess" });
-      })
-      .catch(next);
+    for(let x of product){
+      const publicId = getPublicIdFromUrl(x.image)
+      const result = await cloudinary.uploader.destroy(publicId);
+    }
+    await ProductRepository.deleteProduct({ _id: req.params.id });
+    
   } catch {
     res.json({ message: "error" });
   }
@@ -128,7 +116,7 @@ async function Delete(req, res, next) {
 //sửa sản phẩm
 async function fixProduct(req, res, next) {
   try {
-    const updateProduct = await {
+    const updateProduct = {
       name: req.body.name,
       price: req.body.price,
       description: req.body.description,
@@ -136,22 +124,26 @@ async function fixProduct(req, res, next) {
       typeProductId: req.body.typeProductId,
       slug: slugify(req.body.name),
     };
+
+    const getPublicIdFromUrl = (url) => {
+      const urlParts = url.split("/");
+      const publicIdWithExt = urlParts.slice(-2).join("/");
+      const publicIdWithExtension = publicIdWithExt.split(".")[0];
+      return publicIdWithExtension
+    }
+
     if (req.file) {
       const product = await ProductRepository.getAll({ _id: req.params.id });
-      
       for (let x of product) {
-        const imgpath = path.join(__dirname, "../../public/uploads", x.image);
-        
-        fs.unlink(imgpath, (err) => {
-          if (err) {
-            console.log(`Lỗi khi xóa tệp ${err}`);
-            return;
-          } else {
-            console.log("File đã được xóa thành công");
-          }
-        });
+        imgpath = req.file.path
+        const publicId = getPublicIdFromUrl(x.image)
+        await cloudinary.uploader.destroy(publicId)
+        const uploadResult = await cloudinary.uploader.upload(imgpath, {
+          folder: 'products'
+        })
+        updateProduct.image = uploadResult.secure_url
+        fs.unlinkSync(req.file.path);
       }
-      updateProduct.image = req.file.filename;
     }
 
     const doc = await ProductRepository.update(
@@ -165,7 +157,6 @@ async function fixProduct(req, res, next) {
       res.status(404).json({ message: "Product not found" });
     }
   } catch (err) {
-    console.log(req.params.id);
     res.status(500).json({ message: "Error", error: err.message });
   }
 }
