@@ -78,22 +78,11 @@ async function restore(req, res, next) {
 async function deleteForever(req, res, next) {
   try {
     const TypeID = await typeProduct.getAll({ _id: req.params.id });
-    for (let i = 0; i < TypeID.length; i++) {
-      const fullPath = path.join(
-        __dirname,
-        "..",
-        "..",
-        "public",
-        "uploads",
-        TypeID[i].image
-      );
-      fs.unlink(fullPath, (err) => {
-        if (err) {
-          console.error("Lỗi khi xóa file:", err);
-          return;
-        }
-        console.log("File đã bị xóa thành công!");
-      });
+    for(let x of TypeID){
+      const imagePath = x.image;
+      const imgArr = imagePath.split('/').slice(-2);
+      const fullPath = imgArr.join('/').split('.')[0];
+      await cloudinary.uploader.destroy(fullPath);
     }
     const result = await typeProduct.deleteMany({ _id: req.params.id });
     res.json(result);
@@ -117,24 +106,28 @@ async function detail(req, res, next) {
 //cập nhập loại sản phẩm
 async function update(req, res, next) {
   try {
-    const updateTypeProduct = await {
+    const updateTypeProduct = {
       name: req.body.name,
       slug: slugify(req.body.name),
     };
-    if (req.file) {
-      const TypeID = await typeProduct.getAll({ _id: req.params.id });
-      const pathImg = await path.join(__dirname, '..','..', 'public', 'uploads', TypeID[0].image);
-      
-      fs.unlink(pathImg, (err) => {
-        if(err){
-          console.error("Lỗi khi xóa file:", err);
-          return;
-        }else{
-          console.log("File đã bị xóa thành công!");
-        }
+    const TypeID = await typeProduct.getAll({_id: req.params.id});
+    
+     if(req.file){
+      for (const element of TypeID) {
+        const imagePath = element.image;
+        const imgArr = imagePath.split('/').slice(-2);
+        const fullPath = imgArr.join('/').split('.')[0];
+        await cloudinary.uploader.destroy(fullPath);
       }
-    )
-    updateTypeProduct.image = req.file.filename;
+
+      const img = req.file.path
+      const uploadCloudinary = await cloudinary.uploader.upload(img , 
+        {
+          folder: 'typeProduct',
+        }
+      )
+      updateTypeProduct.image = uploadCloudinary.secure_url
+      fs.unlinkSync(img)
     }
     const result = await typeProduct.update({ _id: req.params.id }, updateTypeProduct)
     res.json(result);
