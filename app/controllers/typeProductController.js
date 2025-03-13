@@ -3,6 +3,7 @@ const typeProduct = require("../models/typeProduct");
 const fs = require("fs");
 const path = require("path");
 const { default: slugify } = require("slugify");
+const cloudinary = require('../../config/cloudinaryConfig')
 
 //xem tất cả sản phẩm chưa được xóa
 async function index(req, res, next) {
@@ -20,10 +21,23 @@ async function index(req, res, next) {
 
 // POST create new Type
 async function create(req, res, next) {
-  uploadimg = req.file.filename;
+  uploadimg = req.file.path;
+  const uploadCloudinary = await cloudinary.uploader.upload(uploadimg, 
+    {
+      folder: "typeProduct",
+    }
+  );
+  fs.unlink(uploadimg, (err) => {
+    if (err) {
+        console.error('Lỗi khi xóa file:', err);
+        return;
+    }
+    console.log('File đã được xóa thành công');
+});
+  console.log(uploadCloudinary)
   const typeProductCreate = typeProduct.create({
     ...req.body,
-    image: uploadimg,
+    image: uploadCloudinary.secure_url,
   });
   res.json(typeProductCreate);
 }
