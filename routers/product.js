@@ -24,8 +24,11 @@ router.put('/:id/fixProduct',upload.single('image'), productController.fixProduc
 router.delete('/:id/delete', productController.Delete)
 
 //get
+router.get('/ProductsNest', productController.getProductsNest)
+router.get('/newProduct', productController.newProduct)
 router.get('/', productController.index)
 router.get('/Recycle-Bin', productController.RecycleBin)
+router.get('/ProductsNest/:slug', productController.getProductsNest)
 router.get('/:slug', productController.show)
 
 

@@ -13,7 +13,8 @@ const product = new Schema({
     isDeleted: { type: Boolean, default: null },
     deletedAt: { type: Date, default: null },
     image: {type: String, default: '' },
-    slug: String
+    slug: String,
+    createdAt: { type: Date, default: Date.now },
 });
 
 //gán document cho slug

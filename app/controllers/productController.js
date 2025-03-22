@@ -186,6 +186,40 @@ async function show(req, res, next) {
   await res.json(formatProducts);
 }
 
+//lấy 10 sản phẩm mới nhất
+async function newProduct(req, res, next) {
+  const products = await ProductRepository.getNewProduct({isDeleted: null});
+  const formatProducts = products.map((product) => {
+    return {
+      product,
+      price: product.price.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      }),
+    };
+  });
+  await res.json(formatProducts);
+}
+
+// lấy ra sản phẩm mang loai sản phẩm
+async function getProductsNest(req, res, next) {
+  const products = await ProductRepository.getAllWithJoin([{
+    $lookup: {
+      from: "typeproducs",
+      localField: "typeProductId",
+      foreignField: "_id",
+      as: "typeProduct"
+    }
+  },{
+    $match: {
+      'typeProduct.slug': req.params.slug,
+      isDeleted: null
+    }
+  }
+]);
+res.json(products)
+}
+
 module.exports = {
   index,
   create,
@@ -195,4 +229,6 @@ module.exports = {
   Delete,
   fixProduct,
   show,
+  newProduct,
+  getProductsNest
 };
