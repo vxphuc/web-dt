@@ -73,7 +73,7 @@ async function RecycleBin(req, res, next) {
         as: "typeProduct",
       },
     },
-  ]);
+  ], 10);
   const products = await productDelete.map((product) => {
     return {
       ...product,
@@ -173,7 +173,7 @@ async function show(req, res, next) {
         as: "Typeproduct", // Tên mảng chứa dữ liệu trả về từ join
       },
     },
-  ]);
+  ], 1);
   const formatProducts = products.map((item) => {
     return {
       ...item,
