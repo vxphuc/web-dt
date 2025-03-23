@@ -203,6 +203,7 @@ async function newProduct(req, res, next) {
 
 // lấy ra sản phẩm mang loai sản phẩm
 async function getProductsNest(req, res, next) {
+  let num = 5
   const products = await ProductRepository.getAllWithJoin([{
     $lookup: {
       from: "typeproducs",
@@ -216,7 +217,27 @@ async function getProductsNest(req, res, next) {
       isDeleted: null
     }
   }
-], 5);
+], num);
+res.json(products)
+}
+
+// lấy ra sản phẩm mang loai sản phẩm
+async function getProducts(req, res, next) {
+  let num = 10
+  const products = await ProductRepository.getAllWithJoin([{
+    $lookup: {
+      from: "typeproducs",
+      localField: "typeProductId",
+      foreignField: "_id",
+      as: "typeProduct"
+    }
+  },{
+    $match: {
+      'typeProduct.slug': req.params.slug,
+      isDeleted: null
+    }
+  }
+], num);
 res.json(products)
 }
 
@@ -230,5 +251,6 @@ module.exports = {
   fixProduct,
   show,
   newProduct,
-  getProductsNest
+  getProductsNest,
+  getProducts
 };

@@ -28,6 +28,7 @@ router.get('/ProductsNest', productController.getProductsNest)
 router.get('/newProduct', productController.newProduct)
 router.get('/', productController.index)
 router.get('/Recycle-Bin', productController.RecycleBin)
+router.get('/getProducts/:slug', productController.getProducts)
 router.get('/ProductsNest/:slug', productController.getProductsNest)
 router.get('/:slug', productController.show)
 
