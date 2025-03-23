@@ -19,7 +19,7 @@ async function index(req, res, next) {
         as: "typeProduct", // Tên biến chứa dữ liệu sau khi join
       },
     },
-  ]);
+  ], 10);
   const formattedProducts = products.map((product) => {
     return {
       ...product,
@@ -216,7 +216,7 @@ async function getProductsNest(req, res, next) {
       isDeleted: null
     }
   }
-]);
+], 5);
 res.json(products)
 }
 

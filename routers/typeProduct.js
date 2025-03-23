@@ -21,6 +21,6 @@ router.delete('/delete/:id', typeProductController.deleteForever)
 //GET
 router.get('/', typeProductController.index)
 router.get('/delete-typeProduct', typeProductController.GetdeleteTypeProduct)
-router.get('/detailTypeProduct/:id', typeProductController.detail)
+router.get('/detailTypeProduct/:slug', typeProductController.detail)
 
 module.exports = router

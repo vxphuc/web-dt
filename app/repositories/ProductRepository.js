@@ -34,8 +34,8 @@ class ProductRepository{
     }
 
     //xem tất cả sản phẩm không bị xóa mềm
-    async getAllWithJoin(data){
-        const result = await this.model.aggregate(data).limit(5).exec();
+    async getAllWithJoin(data, number){
+        const result = await this.model.aggregate(data).sort({createdAt: -1}).limit(number).exec();
         return result
     }
     //đếm số lượng sản phẩm

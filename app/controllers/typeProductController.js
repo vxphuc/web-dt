@@ -94,7 +94,7 @@ async function deleteForever(req, res, next) {
 //xem chi tiết loại sản phẩm
 async function detail(req, res, next) {
   try {
-    const result = await typeProduct.getAll({_id: req.params.id});
+    const result = await typeProduct.getAll({slug: req.params.slug});
     res.json(result)
 
   }catch(error){
