@@ -188,17 +188,22 @@ async function show(req, res, next) {
 
 //lấy 10 sản phẩm mới nhất
 async function newProduct(req, res, next) {
-  const products = await ProductRepository.getNewProduct({isDeleted: null});
-  const formatProducts = products.map((product) => {
-    return {
-      product,
-      price: product.price.toLocaleString("vi-VN", {
-        style: "currency",
-        currency: "VND",
-      }),
-    };
-  });
-  await res.json(formatProducts);
+  const product = await ProductRepository.getAllWithJoin([
+    {
+      $lookup: {
+        from: "typeproducs",
+        localField: "typeProductId",
+        foreignField: "_id",
+        as: "typeProduct",
+    }
+  }, 
+  {
+    $match: {
+      isDeleted: null
+    }
+  }
+  ], 10)
+  res.json(product)
 }
 
 // lấy ra sản phẩm mang loai sản phẩm

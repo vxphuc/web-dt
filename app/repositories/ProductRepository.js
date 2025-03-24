@@ -9,12 +9,6 @@ class ProductRepository{
         return result
     }
 
-    // lấy 10 sản phẩm mới nhất
-    async getNewProduct(data){
-        const result = await this.model.find(data).sort({createdAt: -1}).limit(10).exec();
-        return result
-    }
-
     //xem tất cả các collecttion
     async getAll(data){
         const result = await this.model.find(data).exec();
