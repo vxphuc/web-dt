@@ -12,7 +12,7 @@ const product = new Schema({
     quantity: {type: Number, default: 0},
     isDeleted: { type: Boolean, default: null },
     deletedAt: { type: Date, default: null },
-    image: {type: String, default: '' },
+    image: [{ type: String }],
     slug: String,
     createdAt: { type: Date, default: Date.now },
 });

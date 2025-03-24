@@ -7,7 +7,7 @@ const productController = require('../app/controllers/productController')
 
 
 //post
-router.post('/create',upload.single('image'), productController.create)
+router.post('/create',upload.array('images', 10), productController.create)
 
 //patch
 router.patch('/:id/destroy', productController.destroy)

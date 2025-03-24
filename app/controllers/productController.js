@@ -39,14 +39,17 @@ async function index(req, res, next) {
 
 //create post
 async function create(req, res, next) {
-  const imageeName = req.file.path;
-  const uploadResult = await cloudinary.uploader.upload(imageeName, {
-    folder: 'products'
-  })
-  fs.unlinkSync(req.file.path);
-
+  const imageeName = req.files;
+  const imageUrls = [];
+  for(let i = 0; i < imageeName.length; i++) {
+    const uploadResult = await cloudinary.uploader.upload(imageeName[i].path, {
+      folder: 'products'
+    })
+    imageUrls.push(uploadResult.secure_url)
+    fs.unlinkSync(imageeName[i].path)
+  }
   const product = await ProductRepository.create({
-    image:  uploadResult.secure_url,
+    image:  imageUrls,
     ...req.body,
   });
   res.json(product);
