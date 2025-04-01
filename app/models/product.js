@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const slugify = require('slugify')
-const ProductRepository = require('../repositories/ProductRepository')
+const ProductRepository = require('../repositories/ProductRepository');
+const { image } = require('../../config/cloudinaryConfig');
 
 
 const product = new Schema({

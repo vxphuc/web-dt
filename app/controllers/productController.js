@@ -249,7 +249,27 @@ async function getProducts(req, res, next) {
 res.json(products)
 }
 
+//xem tất cả các sản phẩm chưa bị xóa
+async function getAllProducts(req, res, next) {
+  const product = await ProductRepository.getWithJoin([{
+    $lookup: {
+      from: "typeproducs",
+      localField: "typeProductId",
+      foreignField: "_id",
+      as: "typeProduct"
+    }
+  }
+  ,{
+    $match: {
+      isDeleted: null
+    }
+  }
+  ])
+  res.json(product)
+}
+
 module.exports = {
+  getAllProducts,
   index,
   create,
   destroy,
@@ -260,5 +280,5 @@ module.exports = {
   show,
   newProduct,
   getProductsNest,
-  getProducts
+  getProducts,
 };

@@ -42,6 +42,11 @@ class ProductRepository{
     async deleteProduct (id){
         const result = await this.model.deleteOne(id)
     }
+
+    async getWithJoin(data){
+        const result = await this.model.aggregate(data);
+        return result
+    }
 }
 
 module.exports = ProductRepository;

@@ -24,6 +24,7 @@ router.put('/:id/fixProduct',upload.single('image'), productController.fixProduc
 router.delete('/:id/delete', productController.Delete)
 
 //get
+router.get('/getAllProducts', productController.getAllProducts)
 router.get('/ProductsNest', productController.getProductsNest)
 router.get('/newProduct', productController.newProduct)
 router.get('/', productController.index)
