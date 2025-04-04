@@ -6,9 +6,6 @@ const ReviewForm = new Schema({
     comment :{type: String, maxlength: 300},
     name: {type: String, maxlength: 30},
     phone: {type: String, maxlength: 10},
-    img: [{
-        type: String
-    }],
     createdAt: { type: Date, default: Date.now },
     productID : {type: Schema.Types.ObjectId, ref: 'Products'},
 })

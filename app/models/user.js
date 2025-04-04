@@ -12,7 +12,8 @@ const user = new Schema({
         required: true,
         default: 'user'
       },
-    createDate: {type: Date, default: Date.now}
+    createDate: {type: Date, default: Date.now},
+    communeCode : {type: Schema.Types.ObjectId},
   });
 
   module.exports = mongoose.model('User', user);

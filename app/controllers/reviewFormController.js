@@ -11,17 +11,8 @@ const getReviewForm = async (req, res, next) => {
 // đánh giá sản phẩm
 const createReview = async (req, res, next) => {
   try {
-    const imageeName = req.files;
-    const imgUrl = [];
-    for (let i = 0; i < imageeName.length; i++) {
-      const result = await cloudinary.uploader.upload(imageeName[i].path, {
-        folder: "RatingStar",
-      });
-      imgUrl.push(result.secure_url);
-      fs.unlinkSync(imageeName[i].path);
-      
-    }
-    const createReview = new Review({ img: imgUrl, ...req.body });
+    
+    const createReview = new Review( req.body );
     await createReview.save();
     res.status(201).json({ message: "Đánh giá thành công" });
   } catch(err) {
@@ -30,4 +21,4 @@ const createReview = async (req, res, next) => {
   }
 };
 
-module.exports = { getReviewForm, createReview };
+module.exports = { getReviewForm, createReview }; 
