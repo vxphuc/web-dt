@@ -1,6 +1,4 @@
 const Review = require("../models/reviewForm");
-const fs = require("fs");
-const cloudinary = require("../../config/cloudinaryConfig");
 
 //xem bình luận và đánh giá sản phẩm
 const getReviewForm = async (req, res, next) => {
@@ -11,7 +9,7 @@ const getReviewForm = async (req, res, next) => {
 // đánh giá sản phẩm
 const createReview = async (req, res, next) => {
   try {
-    
+
     const createReview = new Review( req.body );
     await createReview.save();
     res.status(201).json({ message: "Đánh giá thành công" });
