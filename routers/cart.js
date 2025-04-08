@@ -6,6 +6,6 @@ const checkAuth = require('../app/middlewares/checkAuth')
 //thêm sản phẩm vào giỏ hàng
 router.post('/create', checkAuth, cartsController.create)
 //xem giỏ hàng
-router.get('/', cartsController.index)
+router.get('/', checkAuth, cartsController.index)
 
 module.exports = router

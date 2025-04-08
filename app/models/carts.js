@@ -6,7 +6,7 @@ const { Schema } = mongoose;
 const CartSchema = new Schema({
     productID: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'products',
+        ref: 'Product',
         required: true,
     },
     quantity: {
@@ -14,16 +14,12 @@ const CartSchema = new Schema({
         default: 1,
         required: true,
     },
-    IDWards: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Wards',
-    },
     totalAmount: {
         type: Number,
     },
     userID: {
         type: String,
-        ref: 'users',
+        ref: 'User',
     },
 });
 
