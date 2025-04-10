@@ -2,7 +2,6 @@ const cartsModel = require("../models/carts");
 
 const index = async (req, res) => {
   try {
-    console.log(req.user.uid);
     const carts = await cartsModel.aggregate([
       {
         $lookup: {
@@ -20,13 +19,6 @@ const index = async (req, res) => {
           userID: req.user.uid,
         },
       },
-      {
-        $group: {
-            _id: "$productID",
-            product: { $first: "$product" },
-            quantity: { $sum: 1 },
-        }
-      }
     ]);
     res.json(carts);
   } catch (error) {
@@ -36,6 +28,13 @@ const index = async (req, res) => {
 
 const create = async (req, res) => {
   try {
+    const existingCart  = await cartsModel.findOne({productID: req.body.productID});
+    if (existingCart ) {
+      existingCart .quantity += 1;
+      const savedCarts = await existingCart.save();
+      return res.status(200).json(savedCarts);
+    }
+
     const cart = new cartsModel({
       productID: req.body.productID,
       userID: req.user.uid,
@@ -47,10 +46,54 @@ const create = async (req, res) => {
   }
 };
 
+const Delete = async (req, res) => {
+  try {
+    const cart = await cartsModel.deleteMany({ productID: req.params.id });
+    if (!cart) return res.status(404).json({ message: "Cart not found" });
+    res.json({ message: "Cart deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const updateincrease = async (req, res) => {
+  try {
+    const cart = await cartsModel.updateOne(
+      { productID: req.params.id, userID: req.user.uid },
+      { $inc: { quantity: 1 } }
+    );
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const updateDecrease = async (req, res) => {
+  try {
+    const cart = await cartsModel.findOne({
+      productID: req.params.id,
+      userID: req.user.uid,
+    });
+    if(cart.quantity === 1){
+      await cartsModel.deleteOne({productID: req.params.id, userID: req.user.uid});
+      return res.json({message: "Xóa thành công"})
+    }
+    if(cart.quantity > 1){
+      const updateCart = await cartsModel.updateOne(
+        { productID: req.params.id, userID: req.user.uid },
+        { $inc: { quantity: -1 } }
+      );
+      res.json(updateCart);
+    }
+  }catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 module.exports = {
   index,
   create,
-  // show,
-  // update,
-  // delete
+  Delete,
+  updateincrease,
+  updateDecrease,
 };
