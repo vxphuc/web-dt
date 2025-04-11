@@ -19,6 +19,17 @@ const index = async (req, res) => {
           userID: req.user.uid,
         },
       },
+      {
+        $lookup: {
+          from: "roads",
+          localField: 'roadID',
+          foreignField: '_id',
+          as: "Roads" 
+        }
+      },
+      {
+        $unwind: "$Roads",
+      },
     ]);
     res.json(carts);
   } catch (error) {
