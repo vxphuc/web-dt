@@ -28,9 +28,11 @@ const index = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const existingCart  = await cartsModel.findOne({productID: req.body.productID});
-    if (existingCart ) {
-      existingCart .quantity += 1;
+    const existingCart = await cartsModel.findOne({
+      productID: req.body.productID,
+    });
+    if (existingCart) {
+      existingCart.quantity += 1;
       const savedCarts = await existingCart.save();
       return res.status(200).json(savedCarts);
     }
@@ -74,21 +76,42 @@ const updateDecrease = async (req, res) => {
       productID: req.params.id,
       userID: req.user.uid,
     });
-    if(cart.quantity === 1){
-      await cartsModel.deleteOne({productID: req.params.id, userID: req.user.uid});
-      return res.json({message: "Xóa thành công"})
+    if (cart.quantity === 1) {
+      await cartsModel.deleteOne({
+        productID: req.params.id,
+        userID: req.user.uid,
+      });
+      return res.json({ message: "Xóa thành công" });
     }
-    if(cart.quantity > 1){
+    if (cart.quantity > 1) {
       const updateCart = await cartsModel.updateOne(
         { productID: req.params.id, userID: req.user.uid },
         { $inc: { quantity: -1 } }
       );
       res.json(updateCart);
     }
-  }catch (error) {
+  } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
+
+const updateAddress = async (req, res) => {
+  try {
+    const updateCart = await cartsModel.updateMany(
+      {
+        userID: req.user.uid,
+      },
+      {
+        $set: {
+          roadID : req.body.roadID
+        },
+      }
+    );
+    res.json(updateCart);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
   index,
@@ -96,4 +119,5 @@ module.exports = {
   Delete,
   updateincrease,
   updateDecrease,
+  updateAddress,
 };

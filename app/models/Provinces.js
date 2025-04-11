@@ -6,7 +6,7 @@ const ProvincesSchema = new Schema({
         type: Number,
         required: true,
     },
-    name: String,
+    nameProvinces: String,
 })
 
 const Provinces = mongoose.model('Provinces', ProvincesSchema, 'Provinces');

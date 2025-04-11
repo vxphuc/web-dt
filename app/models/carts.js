@@ -21,6 +21,9 @@ const CartSchema = new Schema({
         type: String,
         ref: 'User',
     },
+    roadID: {
+        type: mongoose.Schema.Types.ObjectId,
+    }
 });
 
 module.exports = mongoose.model('carts', CartSchema);

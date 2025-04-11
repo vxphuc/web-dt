@@ -1,16 +1,70 @@
 const Wards = require('../models/wards');
 const Districts = require('../models/districts');
 const province = require('../models/Provinces');
+const road = require('../models/road');
 
 const createAddress = async (req, res) => {
     try {
-        res.json('ok')
+        const Province = new province(req.body)
+        const district = new Districts(req.body)
+        const ward = new Wards(req.body)
+        const Road = new road({userUID: req.user.uid, ...req.body})
+
+        await Province.save()
+        await district.save()
+        await ward.save()
+        await Road.save()
+        res.status(201).json({message: 'Address created successfully', data: req.body})
     }catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
+//xem địa chỉ
+const getAdress = async (req, res) => {
+    try {
+        const address = await road.aggregate([
+            {
+                $match: {userUID: req.user.uid}
+            },
+            {
+                $lookup: {
+                    from: 'Wards',
+                    localField: 'idWards',
+                    foreignField: 'IDWards',
+                    as: 'wards'
+                }
+            },
+            {
+                $unwind: "$wards"
+            },{
+                $lookup: {
+                    from: 'Districts',
+                    localField: 'wards.IDDistricts',
+                    foreignField: 'IDDistricts',
+                    as: 'districts'
+                }
+            },{
+                $unwind: "$districts"
+            },{
+                $lookup: {
+                    from: 'Provinces',
+                    localField: 'districts.IDProvinces',
+                    foreignField: 'IDProvinces',
+                    as: 'provinces'
+                }
+            },
+            {
+                $unwind: "$provinces"
+            }
+        ])
+        res.json(address)
+    }catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
-    createAddress,
+    createAddress,getAdress,
 }

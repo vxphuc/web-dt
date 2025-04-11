@@ -6,9 +6,9 @@ const WardsSchema = new Schema({
         type: Number,
         required: true,
     },
-    name: String,
+    nameWards: String,
     IDDistricts: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Number,
         ref: 'Districts',
         required: true,
     },

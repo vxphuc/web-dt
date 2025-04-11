@@ -100,16 +100,21 @@ function Restore(req, res, next) {
 async function Delete(req, res, next) {
   try {
     const product = await ProductRepository.getAll({_id: req.params.id});
-    const getPublicIdFromUrl = (url) =>{
-      const urlParts = url.split("/")
-      const publicIdWithExt = urlParts.splice(-2).join("/").split(".")[0]
-      return publicIdWithExt
+    const getPublicIdFromUrl = (url) => {
+      const urlParts = url.split("/");
+      const publicIdWithExt = urlParts.slice(-2).join("/");
+      const publicID = publicIdWithExt.split('.')[0]
+      return publicID
+
     }
     for(let x of product){
-      const publicId = getPublicIdFromUrl(x.image)
-      const result = await cloudinary.uploader.destroy(publicId);
+      for(let i = 0; i < x.image.length; i++){
+        const publicId = getPublicIdFromUrl(x.image[i])
+        await cloudinary.uploader.destroy(publicId)
+      }
     }
-    await ProductRepository.deleteProduct({ _id: req.params.id });
+    const deleteProduct = await ProductRepository.deleteProduct({ _id: req.params.id });
+    res.json(deleteProduct);
     
   } catch {
     res.json({ message: "error" });
