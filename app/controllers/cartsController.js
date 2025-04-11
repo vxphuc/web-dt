@@ -19,14 +19,6 @@ const index = async (req, res) => {
           userID: req.user.uid,
         },
       },
-      {
-        $lookup: {
-          from: "roads",
-          localField: 'roadID',
-          foreignField: '_id',
-          as: "Roads" 
-        }
-      },
     ]);
     res.json(carts);
   } catch (error) {
@@ -111,11 +103,67 @@ const updateAddress = async (req, res) => {
       },
       {
         $set: {
-          roadID : req.body.roadID
+          roadID: req.body.roadID,
         },
       }
     );
     res.json(updateCart);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+//lấy địa chỉ
+const getAdd = async (req, res) => {
+  try {
+    const cart = await cartsModel.aggregate([
+      // {
+      //   $match: {}
+      // },
+      {
+        $lookup: {
+          from: "roads",
+          localField: "roadID",
+          foreignField: "_id",
+          as: "road",
+        },
+      },
+      {
+        $unwind: "$road",
+      },
+      {
+        $lookup: {
+          from: "Wards",
+          localField: "road.idWards",
+          foreignField: "IDWards",
+          as: "wards",
+        },
+      },
+      {
+        $unwind: "$wards",
+      },
+      {
+        $lookup: {
+          from: "Districts",
+          localField: "wards.IDDistricts",
+          foreignField: "IDDistricts",
+          as: "districts",
+        },
+      },
+      {
+        $unwind: "$districts",
+      },{
+        $lookup: {
+          from: "Provinces",
+          localField: "districts.IDProvinces",
+          foreignField: "IDProvinces",
+          as: "provinces",
+        },
+      },{
+        $unwind: "$provinces",
+      }
+    ]);
+    res.json(cart);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -128,4 +176,5 @@ module.exports = {
   updateincrease,
   updateDecrease,
   updateAddress,
+  getAdd,
 };
