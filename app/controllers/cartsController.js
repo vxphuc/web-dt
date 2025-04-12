@@ -171,6 +171,16 @@ const getAdd = async (req, res) => {
   }
 };
 
+//xóa sản phẩm sau khi mua xong
+async function deleteCart (req, res) {
+    try{
+      const cart = await cartsModel.deleteMany({userID: req.user.uid});
+      res.json(cart);
+    }catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+}
+
 module.exports = {
   index,
   create,
@@ -179,4 +189,5 @@ module.exports = {
   updateDecrease,
   updateAddress,
   getAdd,
+  deleteCart
 };

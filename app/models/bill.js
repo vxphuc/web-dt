@@ -20,7 +20,7 @@ const billSchema = new Schema({
   Intomoney: {
     type: String,
   },
-  product: [
+  products: [
     {
       name: String,
       price: mongoose.Schema.Types.Decimal128,
@@ -37,10 +37,10 @@ const billSchema = new Schema({
   },
   OrderStatus: {
     type: String,
-    enum: ["chờ xác nhận", "đã xác nhận", "đã giao hàng"],
+    enum: ["chờ xác nhận", "đã xác nhận", "đã giao hàng", "hủy đơn hàng"],
     default: "chờ xác nhận",
     require: true,
-  },
+  }
 });
 
 module.exports = mongoose.model("Bill", billSchema);

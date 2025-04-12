@@ -13,6 +13,8 @@ router.patch('/updateincrease/:id', checkAuth, cartsController.updateincrease)
 router.post('/create', checkAuth, cartsController.create)
 //xem giỏ hàng
 router.get('/', checkAuth, cartsController.index)
+//xóa sản phẩm trong giỏ hàng khi đã hoàn thành thanh toán
+router.delete('/deleteCart', checkAuth, cartsController.deleteCart)
 //xóa sản phẩm trong giỏ hàng
 router.delete('/delete/:id', checkAuth, cartsController.Delete)
 //tăng sản phẩm trong giỏ hàng
