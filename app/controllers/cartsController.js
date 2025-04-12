@@ -117,9 +117,11 @@ const updateAddress = async (req, res) => {
 const getAdd = async (req, res) => {
   try {
     const cart = await cartsModel.aggregate([
-      // {
-      //   $match: {}
-      // },
+      {
+        $match: {
+          userID: req.user.uid,
+        }
+      },
       {
         $lookup: {
           from: "roads",

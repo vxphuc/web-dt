@@ -4,7 +4,7 @@ const cartsController = require('../app/controllers/cartsController')
 const checkAuth = require('../app/middlewares/checkAuth')
 
 //lấy địa chỉ
-router.get('/getAdd', cartsController.getAdd)
+router.get('/getAdd', checkAuth,  cartsController.getAdd)
 //cập nhập địa chỉ giỏ hàng
 router.patch('/updateAddress', checkAuth, cartsController.updateAddress)
 //tăng sản phẩm trong giỏ hàng

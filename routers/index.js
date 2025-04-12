@@ -5,6 +5,7 @@ const auth = require('./auth')
 const ReviewFormRouter = require('./reviewForm')
 const cartRouter = require('./cart')
 const addressRouter = require('./adress')
+const billRouter = require('./bill')
 
 
 function router(app){
@@ -14,6 +15,7 @@ function router(app){
     app.use('/sign-in', auth)
     app.use('/cart', cartRouter)
     app.use('/address', addressRouter)
+    app.use('/bill', billRouter)
 }
 
 module.exports = router;
