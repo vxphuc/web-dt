@@ -5,8 +5,15 @@ const router = require('./routers/index');
 const db = require('./config/db/index');
 const cors = require('cors')
 require('dotenv').config()
+const cookieParser = require('cookie-parser');
 
-app.use(cors());
+app.use(cookieParser());
+
+
+app.use(cors({
+  origin: "http://localhost:3000", // CHỈ ĐỊNH chính xác FE
+  credentials: true               // Cho phép gửi cookie/auth header
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
@@ -17,6 +24,7 @@ router(app);
 
 //database
 db.connect();
+
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

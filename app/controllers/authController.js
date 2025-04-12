@@ -58,6 +58,7 @@ async function signin(req, res, next) {
   try {
     const decodedToken = await admin.auth().verifyIdToken(idToken);
     let user = await User.findOne({ uid: decodedToken.uid });
+
     if (!user) {
       user = await new User({
         uid: decodedToken.uid,
@@ -65,11 +66,21 @@ async function signin(req, res, next) {
       });
       await user.save();
     }
+
+    // ✅ Set cookie httpOnly tại đây
+    res.cookie("authToken", idToken, {
+      httpOnly: true,
+      secure: false, // Để true nếu dùng HTTPS
+      sameSite: "Lax",
+      path: "/",
+    });
+
     res.json({ message: "Login successful", user });
   } catch {
     res.status(401).json({ error: "Authentication failed" });
   }
 }
+
 
 //GET User
 async function Getuser(req, res, next) {
