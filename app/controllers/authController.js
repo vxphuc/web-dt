@@ -70,7 +70,7 @@ async function signin(req, res, next) {
     // ✅ Set cookie httpOnly tại đây
     res.cookie("authToken", idToken, {
       httpOnly: true,
-      secure: false, // Để true nếu dùng HTTPS
+      secure: true, // Để true nếu dùng HTTPS
       sameSite: "Lax",
       path: "/",
     });
