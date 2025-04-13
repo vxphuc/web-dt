@@ -11,7 +11,7 @@ router.post('/', authContrller.signin)
 router.post('/upload-banner', multerUpload.single('image') ,authContrller.uploadBaner)
 
 //đăng xuất
-router.post('/logout',checkAuth, authContrller.logout)
+router.post('/logout', authContrller.logout)
 //lấy ra tất cả user dành cho editor và admin
 router.get('/user',checkAuth, checkRole('admin'), authContrller.Getuser)
 //lấy ra tất cả banner để hiển thị
