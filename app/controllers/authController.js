@@ -116,6 +116,8 @@ async function fillInInformation(req, res, next) {
 // routes/sign-in.js
 async function logout(req, res, next) {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
+
     res.clearCookie("authToken", {
       httpOnly: true,
       secure: isProduction,                      // true nếu deploy
