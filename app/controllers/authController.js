@@ -112,6 +112,7 @@ async function fillInInformation(req, res, next) {
     { uid: user.uid },
     { $set: { name: req.body.name, gender: req.body.gender } }
   );
+  res.json(result);
 }
 // routes/sign-in.js
 async function logout(req, res, next) {
