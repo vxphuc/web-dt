@@ -3,7 +3,7 @@ const admin = require('../../config/firebaseConfig');
 
 const checkAuth = async (req, res, next) => {
 
-  const token = req.cookies.authToken || req.headers.authorization?.split("Bearer ")[1];
+  const token = req.cookies.authToken 
 
   if (!token) return res.status(401).json({ error: "Unauthorized: No token provided" });
 

@@ -7,12 +7,12 @@ const cors = require('cors')
 require('dotenv').config()
 const cookieParser = require('cookie-parser');
 
-app.use(cookieParser());
 
+app.use(cookieParser());
 
 app.use(cors({
   origin: "http://localhost:3000", // CHỈ ĐỊNH chính xác FE
-  credentials: true               // Cho phép gửi cookie/auth header
+  credentials: true
 }));
 
 app.use(express.json());

@@ -118,9 +118,9 @@ async function logout(req, res, next) {
   try {
     res.clearCookie("authToken", {
       httpOnly: true,
-      secure: true,        // Chỉ dùng nếu dùng HTTPS
-      sameSite: "Lax",     // Hoặc 'Strict' nếu bảo mật cao hơn
-      path: "/"
+      secure: isProduction,                      // true nếu deploy
+      sameSite: isProduction ? "None" : "Lax",   // None nếu khác origin
+      path: "/",
     });
     res.status(200).json({ message: "Logged out" });
   } catch (error) {
