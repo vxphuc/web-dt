@@ -10,6 +10,8 @@ router.post('/', authContrller.signin)
 //tạo banner hiển thị trang home
 router.post('/upload-banner', multerUpload.single('image') ,authContrller.uploadBaner)
 
+//đăng xuất
+router.post('/logout',checkAuth, authContrller.logout)
 //lấy ra tất cả user dành cho editor và admin
 router.get('/user',checkAuth, checkRole('admin'), authContrller.Getuser)
 //lấy ra tất cả banner để hiển thị

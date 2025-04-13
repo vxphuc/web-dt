@@ -111,6 +111,21 @@ async function fillInInformation(req, res, next) {
     { $set: { name: req.body.name, gender: req.body.gender } }
   );
 }
+// routes/sign-in.js
+async function logout(req, res, next) {
+  try {
+    res.clearCookie("authToken", {
+      httpOnly: true,
+      secure: true,        // Chỉ dùng nếu dùng HTTPS
+      sameSite: "Lax",     // Hoặc 'Strict' nếu bảo mật cao hơn
+      path: "/"
+    });
+    res.status(200).json({ message: "Logged out" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to logout" });
+  }
+}
+
 
 module.exports = {
   signin,
@@ -120,4 +135,5 @@ module.exports = {
   uploadBaner,
   GetBanner,
   deleteBanner,
+  logout,
 };
