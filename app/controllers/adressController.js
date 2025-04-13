@@ -65,6 +65,19 @@ const getAdress = async (req, res) => {
     }
 }
 
+const deleteAddress = async (req, res) => {
+    try{
+        roadDelete = await road.deleteOne({_id: req.params.roadId})
+        wardelete = await Wards.deleteOne({_id: req.params.wardId})
+        disdelete = await Districts.deleteOne({_id: req.params.districtId})
+        provdelete = await province.deleteOne({_id: req.params.provinceId})
+        res.json(roadDelete)
+
+    }catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
-    createAddress,getAdress,
+    createAddress,getAdress,deleteAddress
 }
