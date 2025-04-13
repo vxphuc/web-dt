@@ -71,7 +71,7 @@ async function signin(req, res, next) {
     res.cookie("authToken", idToken, {
       httpOnly: true,
       secure: true, // Để true nếu dùng HTTPS
-      sameSite: "Lax",
+      sameSite: "None",
       path: "/",
     });
 
