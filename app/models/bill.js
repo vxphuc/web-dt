@@ -40,6 +40,10 @@ const billSchema = new Schema({
     enum: ["chờ xác nhận", "đã xác nhận", "đã giao hàng", "hủy đơn hàng"],
     default: "chờ xác nhận",
     require: true,
+  },
+  statusPay:{
+    type:String,
+    default: "chưa thanh toán",
   }
 });
 

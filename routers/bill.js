@@ -6,6 +6,8 @@ const billController = require('../app/controllers/billController');
 //lấy hóa đơn theo người dùng
 router.get('/user', checkAuth, billController.getBillByUser);
 //tạo mói hóa đơn
-router.post( '/create', checkAuth, billController.createBill)
+router.post( '/create',checkAuth, billController.createBill)
+//lấy hóa đơn theo mã hóa đơn
+router.get('/:id', billController.getBillByCode);
 
 module.exports = router;

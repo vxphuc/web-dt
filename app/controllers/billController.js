@@ -1,4 +1,5 @@
 const billModel = require("../models/bill");
+const userModel = require('../models/user')
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
@@ -22,7 +23,19 @@ const getBillByUser = async (req, res) => {
   }
 }
 
+//lấy hóa đơn theo mã hóa đơn
+const getBillByCode = async (req, res) => {
+  try{
+    const bill = await billModel.findOne({_id: req.params.id})
+    res.json(bill)
+  }catch (error){
+    console.error(error);
+  }
+}
+
+
 module.exports = {
   createBill,
-  getBillByUser
+  getBillByUser,
+  getBillByCode
 };
