@@ -33,9 +33,20 @@ const getBillByCode = async (req, res) => {
   }
 }
 
+//sử trạng thái giao dịch
+const updateBillStatus = async (req, res) => {
+  try{
+    const bill = await billModel.updateOne({ _id: req.params.id }, { $set:{statusPay: 'đã thanh toán'}})
+    res.json(bill)
+  }catch (error){
+    console.error(error);
+  }
+}
+
 
 module.exports = {
   createBill,
   getBillByUser,
-  getBillByCode
+  getBillByCode,
+  updateBillStatus
 };

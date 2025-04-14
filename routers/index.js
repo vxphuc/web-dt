@@ -6,7 +6,7 @@ const ReviewFormRouter = require('./reviewForm')
 const cartRouter = require('./cart')
 const addressRouter = require('./adress')
 const billRouter = require('./bill')
-
+const serverRouter = require('./server')
 
 function router(app){
     app.use('/ReviewForm', ReviewFormRouter)
@@ -16,6 +16,7 @@ function router(app){
     app.use('/cart', cartRouter)
     app.use('/address', addressRouter)
     app.use('/bill', billRouter)
+    app.use('/server', serverRouter)
 }
 
 module.exports = router;
