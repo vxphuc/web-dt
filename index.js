@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 app.use(cors({
-  origin: "https://67f28886901b4b419e38b27f-teal-beigne.netlify.app/", // CHỈ ĐỊNH chính xác FE
+  origin: "https://67f28886901b4b419e38b27f-teal-beigne.netlify.app", // CHỈ ĐỊNH chính xác FE
   credentials: true
 }));
 
