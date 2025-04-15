@@ -34,6 +34,7 @@ const billSchema = new Schema({
   },
   PaymentForm: {
     type: String,
+    default: "Thanh toán bằng tiền mặt",
   },
   OrderStatus: {
     type: String,
