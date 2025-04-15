@@ -1,25 +1,28 @@
 const ProductRepository = require("../models/product");
 const fs = require("fs");
 const slugify = require("slugify");
-const cloudinary = require('../../config/cloudinaryConfig')
+const cloudinary = require("../../config/cloudinaryConfig");
 
 //Get product not delete
 async function index(req, res, next) {
-  const products = await ProductRepository.getAllWithJoin([
-    {
-      $match: {
-        isDeleted: null,
+  const products = await ProductRepository.getAllWithJoin(
+    [
+      {
+        $match: {
+          isDeleted: null,
+        },
       },
-    },
-    {
-      $lookup: {
-        from: "typeproducs", // Tên collection cần nối
-        localField: "typeProductId", // Trường khóa chính (FK)
-        foreignField: "_id", // Trường trong collection kia
-        as: "typeProduct", // Tên biến chứa dữ liệu sau khi join
+      {
+        $lookup: {
+          from: "typeproducs", // Tên collection cần nối
+          localField: "typeProductId", // Trường khóa chính (FK)
+          foreignField: "_id", // Trường trong collection kia
+          as: "typeProduct", // Tên biến chứa dữ liệu sau khi join
+        },
       },
-    },
-  ], 10);
+    ],
+    10
+  );
   const formattedProducts = products.map((product) => {
     return {
       ...product,
@@ -41,15 +44,15 @@ async function index(req, res, next) {
 async function create(req, res, next) {
   const imageeName = req.files;
   const imageUrls = [];
-  for(let i = 0; i < imageeName.length; i++) {
+  for (let i = 0; i < imageeName.length; i++) {
     const uploadResult = await cloudinary.uploader.upload(imageeName[i].path, {
-      folder: 'products'
-    })
-    imageUrls.push(uploadResult.secure_url)
-    fs.unlinkSync(imageeName[i].path)
+      folder: "products",
+    });
+    imageUrls.push(uploadResult.secure_url);
+    fs.unlinkSync(imageeName[i].path);
   }
   const product = await ProductRepository.create({
-    image:  imageUrls,
+    image: imageUrls,
     ...req.body,
   });
   res.json(product);
@@ -59,28 +62,31 @@ async function create(req, res, next) {
 function destroy(req, res, next) {
   const product = ProductRepository.updateoneFiled(
     { _id: req.params.id },
-    { $set: { isDeleted: true, deletedAt: new Date()} }
+    { $set: { isDeleted: true, deletedAt: new Date() } }
   );
   res.json(product);
 }
 
 //Get product delete
 async function RecycleBin(req, res, next) {
-  const productDelete = await ProductRepository.getAllWithJoin([
-    { $match: { isDeleted: true } },
-    {
-      $lookup: {
-        from: "typeproducs",
-        localField: "typeProductId",
-        foreignField: "_id",
-        as: "typeProduct",
+  const productDelete = await ProductRepository.getAllWithJoin(
+    [
+      { $match: { isDeleted: true } },
+      {
+        $lookup: {
+          from: "typeproducs",
+          localField: "typeProductId",
+          foreignField: "_id",
+          as: "typeProduct",
+        },
       },
-    },
-  ], 10);
+    ],
+    10
+  );
   const products = await productDelete.map((product) => {
     return {
       ...product,
-      price: product.price.toString()
+      price: product.price.toString(),
     };
   });
   res.json(products);
@@ -99,23 +105,23 @@ function Restore(req, res, next) {
 //delete product
 async function Delete(req, res, next) {
   try {
-    const product = await ProductRepository.getAll({_id: req.params.id});
+    const product = await ProductRepository.getAll({ _id: req.params.id });
     const getPublicIdFromUrl = (url) => {
       const urlParts = url.split("/");
       const publicIdWithExt = urlParts.slice(-2).join("/");
-      const publicID = publicIdWithExt.split('.')[0]
-      return publicID
-
-    }
-    for(let x of product){
-      for(let i = 0; i < x.image.length; i++){
-        const publicId = getPublicIdFromUrl(x.image[i])
-        await cloudinary.uploader.destroy(publicId)
+      const publicID = publicIdWithExt.split(".")[0];
+      return publicID;
+    };
+    for (let x of product) {
+      for (let i = 0; i < x.image.length; i++) {
+        const publicId = getPublicIdFromUrl(x.image[i]);
+        await cloudinary.uploader.destroy(publicId);
       }
     }
-    const deleteProduct = await ProductRepository.deleteProduct({ _id: req.params.id });
+    const deleteProduct = await ProductRepository.deleteProduct({
+      _id: req.params.id,
+    });
     res.json(deleteProduct);
-    
   } catch {
     res.json({ message: "error" });
   }
@@ -137,19 +143,19 @@ async function fixProduct(req, res, next) {
       const urlParts = url.split("/");
       const publicIdWithExt = urlParts.slice(-2).join("/");
       const publicIdWithExtension = publicIdWithExt.split(".")[0];
-      return publicIdWithExtension
-    }
+      return publicIdWithExtension;
+    };
 
     if (req.file) {
       const product = await ProductRepository.getAll({ _id: req.params.id });
       for (let x of product) {
-        imgpath = req.file.path
-        const publicId = getPublicIdFromUrl(x.image)
-        await cloudinary.uploader.destroy(publicId)
+        imgpath = req.file.path;
+        const publicId = getPublicIdFromUrl(x.image);
+        await cloudinary.uploader.destroy(publicId);
         const uploadResult = await cloudinary.uploader.upload(imgpath, {
-          folder: 'products'
-        })
-        updateProduct.image = uploadResult.secure_url
+          folder: "products",
+        });
+        updateProduct.image = uploadResult.secure_url;
         fs.unlinkSync(req.file.path);
       }
     }
@@ -171,17 +177,20 @@ async function fixProduct(req, res, next) {
 
 //xem chỉ tiết sản phẩm
 async function show(req, res, next) {
-  const products = await ProductRepository.getAllWithJoin([
-    { $match: { slug: req.params.slug } },
-    {
-      $lookup: {
-        from: "typeproducs", // Tên collection cần join
-        localField: "typeProductId", // Trường trong collection hiện tại
-        foreignField: "_id", // Trường trong collection khác
-        as: "Typeproduct", // Tên mảng chứa dữ liệu trả về từ join
+  const products = await ProductRepository.getAllWithJoin(
+    [
+      { $match: { slug: req.params.slug } },
+      {
+        $lookup: {
+          from: "typeproducs", // Tên collection cần join
+          localField: "typeProductId", // Trường trong collection hiện tại
+          foreignField: "_id", // Trường trong collection khác
+          as: "Typeproduct", // Tên mảng chứa dữ liệu trả về từ join
+        },
       },
-    },
-  ], 1);
+    ],
+    1
+  );
   const formatProducts = products.map((item) => {
     return {
       ...item,
@@ -196,82 +205,109 @@ async function show(req, res, next) {
 
 //lấy 10 sản phẩm mới nhất
 async function newProduct(req, res, next) {
-  const product = await ProductRepository.getAllWithJoin([
+  const product = await ProductRepository.getAllWithJoin(
+    [
+      {
+        $lookup: {
+          from: "typeproducs",
+          localField: "typeProductId",
+          foreignField: "_id",
+          as: "typeProduct",
+        },
+      },
+      {
+        $match: {
+          isDeleted: null,
+        },
+      },
+    ],
+    10
+  );
+  res.json(product);
+}
+
+// lấy ra sản phẩm mang loai sản phẩm
+async function getProductsNest(req, res, next) {
+  let num = 5;
+  const products = await ProductRepository.getAllWithJoin(
+    [
+      {
+        $lookup: {
+          from: "typeproducs",
+          localField: "typeProductId",
+          foreignField: "_id",
+          as: "typeProduct",
+        },
+      },
+      {
+        $match: {
+          "typeProduct.slug": req.params.slug,
+          isDeleted: null,
+        },
+      },
+    ],
+    num
+  );
+  res.json(products);
+}
+
+// lấy ra sản phẩm mang loai sản phẩm
+async function getProducts(req, res, next) {
+  let num = 10;
+  const products = await ProductRepository.getAllWithJoin(
+    [
+      {
+        $lookup: {
+          from: "typeproducs",
+          localField: "typeProductId",
+          foreignField: "_id",
+          as: "typeProduct",
+        },
+      },
+      {
+        $match: {
+          "typeProduct.slug": req.params.slug,
+          isDeleted: null,
+        },
+      },
+    ],
+    num
+  );
+  res.json(products);
+}
+
+//xem tất cả các sản phẩm chưa bị xóa
+async function getAllProducts(req, res, next) {
+  const product = await ProductRepository.getWithJoin([
     {
       $lookup: {
         from: "typeproducs",
         localField: "typeProductId",
         foreignField: "_id",
         as: "typeProduct",
-    }
-  }, 
-  {
-    $match: {
-      isDeleted: null
-    }
-  }
-  ], 10)
-  res.json(product)
+      },
+    },
+    {
+      $match: {
+        isDeleted: null,
+      },
+    },
+  ]);
+  res.json(product);
 }
 
-// lấy ra sản phẩm mang loai sản phẩm
-async function getProductsNest(req, res, next) {
-  let num = 5
-  const products = await ProductRepository.getAllWithJoin([{
-    $lookup: {
-      from: "typeproducs",
-      localField: "typeProductId",
-      foreignField: "_id",
-      as: "typeProduct"
-    }
-  },{
-    $match: {
-      'typeProduct.slug': req.params.slug,
-      isDeleted: null
-    }
+const search = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    const products = await ProductRepository.getAll({
+      name: { $regex: q, $options: "i" },
+      isDeleted: null,
+    });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
-], num);
-res.json(products)
-}
-
-// lấy ra sản phẩm mang loai sản phẩm
-async function getProducts(req, res, next) {
-  let num = 10
-  const products = await ProductRepository.getAllWithJoin([{
-    $lookup: {
-      from: "typeproducs",
-      localField: "typeProductId",
-      foreignField: "_id",
-      as: "typeProduct"
-    }
-  },{
-    $match: {
-      'typeProduct.slug': req.params.slug,
-      isDeleted: null
-    }
-  }
-], num);
-res.json(products)
-}
-
-//xem tất cả các sản phẩm chưa bị xóa
-async function getAllProducts(req, res, next) {
-  const product = await ProductRepository.getWithJoin([{
-    $lookup: {
-      from: "typeproducs",
-      localField: "typeProductId",
-      foreignField: "_id",
-      as: "typeProduct"
-    }
-  }
-  ,{
-    $match: {
-      isDeleted: null
-    }
-  }
-  ])
-  res.json(product)
-}
+};
 
 module.exports = {
   getAllProducts,
@@ -286,4 +322,5 @@ module.exports = {
   newProduct,
   getProductsNest,
   getProducts,
+  search,
 };
