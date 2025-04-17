@@ -42,7 +42,6 @@ async function index(req, res, next) {
   });
 }
 
-
 //create post
 async function create(req, res, next) {
   const imageeName = req.files;
@@ -302,10 +301,21 @@ async function getAllProducts(req, res, next) {
 const search = async (req, res, next) => {
   try {
     const { q } = req.query;
-    const products = await ProductRepository.getAll({
-      name: { $regex: q, $options: "i" },
-      isDeleted: null,
-    });
+    const products = await ProductRepository.getAllWithJoin([
+      {
+        $lookup: {
+          from: "typeproducs",
+          localField: "typeProductId",
+          foreignField: "_id",
+          as: "typeProduct",
+        },
+      },{
+        $match: {
+          name: { $regex: q, $options: "i" }, // Tìm gần đúng không phân biệt hoa thường
+          isDeleted: null
+        },
+      }
+    ]);
     res.json(products);
   } catch (err) {
     res.status(500).json({ message: err.message });
