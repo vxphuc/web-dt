@@ -5,40 +5,43 @@ const cloudinary = require("../../config/cloudinaryConfig");
 
 //Get product not delete
 async function index(req, res, next) {
-  const products = await ProductRepository.getAllWithJoin(
-    [
-      {
-        $match: {
-          isDeleted: null,
+  const page = Number.parseInt(req.query.page) || 1;
+  const limit = Number.parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  const [products, deleteCount, totalCount] = await Promise.all([
+    ProductRepository.getAllWithJoin(
+      [
+        { $match: { isDeleted: null } },
+        {
+          $lookup: {
+            from: "typeproducs",
+            localField: "typeProductId",
+            foreignField: "_id",
+            as: "typeProduct",
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "typeproducs", // Tên collection cần nối
-          localField: "typeProductId", // Trường khóa chính (FK)
-          foreignField: "_id", // Trường trong collection kia
-          as: "typeProduct", // Tên biến chứa dữ liệu sau khi join
-        },
-      },
-    ],
-    10
-  );
-  const formattedProducts = products.map((product) => {
-    return {
-      ...product,
-      price: product.price.toString(),
-    };
-  });
-  const deleteProduct = await ProductRepository.countProduct({
-    isDeleted: true,
-  });
-  Promise.all([formattedProducts, deleteProduct]).then((results) => {
-    res.json({
-      results: results[0],
-      count: results[1],
-    });
+      ],
+      limit,
+      skip
+    ),
+    ProductRepository.countProduct({ isDeleted: true }),
+    ProductRepository.countProduct({ isDeleted: null }), // 🔥 Thêm dòng này để tính totalPages
+  ]);
+  const formattedProducts = products.map((product) => ({
+    ...product,
+    price: product.price.toString(),
+  }));
+
+  res.json({
+    results: formattedProducts,
+    count: deleteCount,
+    totalCount: totalCount,
+    totalPages: Math.ceil(totalCount / limit), // 🔥 Trả về totalPages
+    currentPage: page,
   });
 }
+
 
 //create post
 async function create(req, res, next) {
