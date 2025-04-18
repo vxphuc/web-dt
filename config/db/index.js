@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 function connect() {
-    mongoose.connect('mongodb+srv://vinh2711:vinhthe@dtshop.ehyii.mongodb.net/dtShop')
+    mongoose.connect('mongodb+srv://hkmediadtgroup:hkmedia@dtshop.ryjmkoe.mongodb.net/?retryWrites=true&w=majority&appName=DTShop')
         .then(() => console.log('Connected!'));
 }
 
