@@ -2,25 +2,33 @@ const cartsModel = require("../models/carts");
 
 const index = async (req, res) => {
   try {
-    const carts = await cartsModel.aggregate([
-      {
-        $lookup: {
-          from: "products",
-          localField: "productID",
-          foreignField: "_id",
-          as: "product",
+    const [carts, itemCount] = await Promise.all([
+      cartsModel.aggregate([
+        {
+          $lookup: {
+            from: "products",
+            localField: "productID",
+            foreignField: "_id",
+            as: "product",
+          },
         },
-      },
-      {
-        $unwind: "$product",
-      },
-      {
-        $match: {
-          userID: req.user.uid,
+        {
+          $unwind: "$product",
         },
-      },
+        {
+          $match: {
+            userID: req.user.uid,
+          },
+        },
+      ]),
+
+      cartsModel.countDocuments({userID: req.user.uid}),
     ]);
-    res.json(carts);
+
+    res.json({
+      carts,
+      itemCount,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -120,7 +128,7 @@ const getAdd = async (req, res) => {
       {
         $match: {
           userID: req.user.uid,
-        }
+        },
       },
       {
         $lookup: {
@@ -154,16 +162,18 @@ const getAdd = async (req, res) => {
       },
       {
         $unwind: "$districts",
-      },{
+      },
+      {
         $lookup: {
           from: "Provinces",
           localField: "districts.IDProvinces",
           foreignField: "IDProvinces",
           as: "provinces",
         },
-      },{
+      },
+      {
         $unwind: "$provinces",
-      }
+      },
     ]);
     res.json(cart);
   } catch (error) {
@@ -172,13 +182,13 @@ const getAdd = async (req, res) => {
 };
 
 //xóa sản phẩm sau khi mua xong
-async function deleteCart (req, res) {
-    try{
-      const cart = await cartsModel.deleteMany({userID: req.user.uid});
-      res.json(cart);
-    }catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+async function deleteCart(req, res) {
+  try {
+    const cart = await cartsModel.deleteMany({ userID: req.user.uid });
+    res.json(cart);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 }
 
 module.exports = {
@@ -189,5 +199,5 @@ module.exports = {
   updateDecrease,
   updateAddress,
   getAdd,
-  deleteCart
+  deleteCart,
 };
