@@ -12,7 +12,7 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
-      "https://dt-group.netlify.app/",
+      "https://dt-group.netlify.app",
       "http://localhost:3000",
     ], // CHỈ ĐỊNH chính xác FE
     credentials: true,
