@@ -1,8 +1,8 @@
-const validateSignature = require("../../utils/signatureValidator.js");
+const ValidateSignature = require("../../utils/signatureValidator.js");
 
 const handleWebhook = async (req, res) => {
   const secureToken = req.headers[`secure-token`]
-  if (!validateSignature(secureToken)) {
+  if (!ValidateSignature.validateSignature(secureToken)) {
     return res.status(403).json({ message: "Forbidden" });
   }
   console.log("Webhook received:", secureToken);
