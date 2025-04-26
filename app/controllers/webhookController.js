@@ -3,6 +3,7 @@ const ValidateSignature = require("../../utils/signatureValidator.js");
 const handleWebhook = async (req, res) => {
 
   const signatureHeader = req.headers["x-casso-signature"];
+  console.log("Body received from Casso:", JSON.stringify(req.body));
 
   if (!signatureHeader) {
     return res.status(400).json({ message: "Missing signature" });
@@ -13,9 +14,6 @@ const handleWebhook = async (req, res) => {
   const timestampPart = parts.find((p) => p.trim().startsWith("t="));
   const signaturePart = parts.find((p) => p.trim().startsWith("v1="));
 
-  console.log("Signature Header:", signatureHeader);
-  console.log("Timestamp Part:", timestampPart);
-
   if (!timestampPart || !signaturePart) {
     return res.status(400).json({ message: "Invalid signature format" });
   }
@@ -24,11 +22,10 @@ const handleWebhook = async (req, res) => {
   const signature = signaturePart.split("=")[1];
 
   // Kiểm tra chữ ký
-  if (!ValidateSignature.isValidCassoSignature(req.body, signature, timestamp)) {
+  if (!ValidateSignature.isValidCassoSignature(req.body, timestamp ,signature)) {
     return res.status(403).json({ message: "Forbidden" });
   }
-
-  console.log("✅ Webhook received and verified:", req.body);
+  
   res.status(200).json({ message: "Webhook received successfully" });
 };
 
