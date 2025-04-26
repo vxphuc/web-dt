@@ -3,8 +3,7 @@ const crypto = require("crypto");
 
 const VALID_TOKEN = process.env.CASSO_SECURE_TOKEN;
 
-const isValidCassoSignature = (body) => {
-  const timestamp = Date.now().toString();
+const isValidCassoSignature = (body, signatureFromCasso, timestamp) => {
 
   const payload = `${timestamp}.${JSON.stringify(body)}`;
 
@@ -14,7 +13,7 @@ const isValidCassoSignature = (body) => {
     .digest("hex");
 
   const sig1 = Buffer.from(signatureFromCasso, 'hex');
-  const sig2 = Buffer.from(computedSignature, 'hex');
+  const sig2 = Buffer.from(signature, 'hex');
 
   if (sig1.length !== sig2.length) {
     return false;
