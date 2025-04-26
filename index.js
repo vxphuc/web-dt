@@ -20,16 +20,16 @@ app.use(
   })
 );
 
-// Middleware lưu lại raw body
+
+// app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
 app.use(express.json({
   verify: (req, res, buf) => {
     req.rawBody = buf.toString(); // <- bắt buộc để tạo signature chính xác
   }
 }));
-
-// app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
 
 //router
 router(app);
