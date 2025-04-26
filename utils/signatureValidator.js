@@ -7,7 +7,7 @@ const VALID_TOKEN = process.env.CASSO_SECURE_TOKEN
 const isValidCassoSignature = (body, signatureFromCasso) => {
     const computedSignature  = crypto
         .createHmac('sha256', VALID_TOKEN)
-        .update(json.stringify(body))
+        .update(JSON.stringify(body))
         .digest('hex');
 
     return crypto.timingSafeEqual(
