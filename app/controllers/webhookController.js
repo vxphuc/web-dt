@@ -2,8 +2,8 @@ const ValidateSignature = require("../../utils/signatureValidator.js");
 
 const handleWebhook = async (req, res) => {
   console.log("Headers:", req.headers)
-  const secureToken = req.headers[`Secure-token`]
-  if (!ValidateSignature.validateSignature(secureToken)) {
+  const signature  = req.headers[`X-Casso-Signature`]
+  if (!ValidateSignature.isValidCassoSignature(req.body, signature)) {
     return res.status(403).json({ message: "Forbidden" });
   }
   console.log("Webhook received:", req.body);
