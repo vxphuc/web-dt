@@ -26,7 +26,7 @@ const handleWebhook = async (req, res) => {
     return res.status(403).json({ message: "Forbidden" });
   }
   
-  res.status(200).json({ message: "Webhook received successfully" });
+  res.status(200).json({ code: 200, message: "OK" });
 };
 
 module.exports = {
