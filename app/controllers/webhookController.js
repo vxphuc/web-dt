@@ -13,6 +13,7 @@ const handleWebhook = async (req, res) => {
   const orderIdRegex = /\b[A-Z0-9]+\b/g; // hoặc regex theo quy tắc mã đơn hàng của bạn
   const matches = description.match(orderIdRegex);
   const extractedOrderId = matches ? matches[0] : null;
+  console.log("extractedOrderId", extractedOrderId);
 
   if (!extractedOrderId) {
     return res
