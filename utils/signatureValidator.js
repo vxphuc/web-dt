@@ -1,5 +1,6 @@
 require(`dotenv`).config();
 const crypto = require("crypto");
+const axios = require('axios');
 
 const VALID_TOKEN = process.env.CASSO_SECURE_TOKEN;
 
