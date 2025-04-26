@@ -6,7 +6,7 @@ const VALID_TOKEN = process.env.CASSO_SECURE_TOKEN;
 const isValidCassoSignature = (body) => {
   const timestamp = Date.now().toString();
 
-  const payload = `${timestamp}.${JSON.stringify(body, signatureFromCasso, timestamp)}`;
+  const payload = `${timestamp}.${JSON.stringify(body)}`;
 
   const signature = crypto
     .createHmac("sha256", VALID_TOKEN)
