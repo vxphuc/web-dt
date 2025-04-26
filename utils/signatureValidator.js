@@ -12,8 +12,9 @@ const isValidCassoSignature = (body, timestamp, signatureFromCasso) => {
     .update(payload)
     .digest("hex");
 
-  const sig1 = Buffer.from(signatureFromCasso, 'hex');
   const sig2 = Buffer.from(signature, 'hex');
+  const sig1 = Buffer.from(signatureFromCasso, 'hex');
+  
 
   if (sig1.length !== sig2.length) {
     return false;
