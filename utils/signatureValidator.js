@@ -1,38 +1,27 @@
 require(`dotenv`).config();
 const crypto = require("crypto");
-const axios = require('axios');
 
 const VALID_TOKEN = process.env.CASSO_SECURE_TOKEN;
 
 const isValidCassoSignature = (body) => {
   const timestamp = Date.now().toString();
 
-  const payload = `${timestamp}.${JSON.stringify(body)}`;
+  const payload = `${timestamp}.${JSON.stringify(body, signatureFromCasso, timestamp)}`;
 
   const signature = crypto
     .createHmac("sha256", VALID_TOKEN)
     .update(payload)
     .digest("hex");
 
-  const xCassoSignature = `t=${timestamp},v1=${signature}`;
+  const sig1 = Buffer.from(signatureFromCasso, 'hex');
+  const sig2 = Buffer.from(computedSignature, 'hex');
 
-  // Gửi request bằng axios
-  axios
-    .post("http://localhost:8080/api/webhook-event-handler", body, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-Casso-Signature": xCassoSignature,
-      },
-    })
-    .then((response) => {
-      console.log("✅ Server response:", response.data);
-    })
-    .catch((error) => {
-      console.error(
-        "❌ Error sending webhook:",
-        error.response?.data || error.message
-      );
-    });
+  if (sig1.length !== sig2.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(sig1, sig2);
+
 };
 
 module.exports = { isValidCassoSignature };
