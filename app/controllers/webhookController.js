@@ -1,20 +1,21 @@
 const handleWebhook = async (req, res) => {
   console.log("Received webhook:", req.body);
 
-  const { error, data } = req.body;
-
-  if (error !== 0 || !data) {
+  if (!req.body.error || !req.body.data) {
     return res.status(400).json({ code: 400, message: "Bad Request" });
   }
 
-  const { description, amount } = data;
+  const description = req.body.data.description;
+  const amount = req.body.data.amount;
 
   // Giả sử bạn cần kiểm tra orderId và số tiền khớp
   const expectedOrderId = req.body.orderId; // <- hoặc lấy từ db nếu đã lưu
-  const expectedAmount = req.body.amountBill;    // <- hoặc từ db
+  const expectedAmount = req.body.amountBill; // <- hoặc từ db
 
   if (!expectedOrderId || !expectedAmount) {
-    return res.status(400).json({ code: 400, message: "Missing expected values" });
+    return res
+      .status(400)
+      .json({ code: 400, message: "Missing expected values" });
   }
 
   if (description.includes(expectedOrderId) && amount == expectedAmount) {
