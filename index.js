@@ -20,11 +20,6 @@ app.use(
   })
 );
 
-app.use(bodyParser.json({
-  verify: (req, res, buf) => {
-    req.rawBody = buf.toString(); // Save raw body
-  }
-}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -21,10 +21,8 @@ const handleWebhook = async (req, res) => {
   const timestamp = timestampPart.split("=")[1];
   const signature = signaturePart.split("=")[1];
 
-  const rawBody = req.rawBody;
-
   // Kiểm tra chữ ký
-  if (!ValidateSignature.isValidCassoSignature(rawBody, signature, timestamp)) {
+  if (!ValidateSignature.isValidCassoSignature(req.body, timestamp ,signature)) {
     return res.status(403).json({ message: "Forbidden" });
   }
   
