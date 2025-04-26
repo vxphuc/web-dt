@@ -4,7 +4,6 @@ const crypto = require("crypto");
 const VALID_TOKEN = process.env.CASSO_SECURE_TOKEN;
 
 const isValidCassoSignature = (rawBody, timestamp, signatureFromCasso) => {
-
   const payload = `${timestamp}.${rawBody}`;
 
   const signature = crypto
@@ -12,16 +11,14 @@ const isValidCassoSignature = (rawBody, timestamp, signatureFromCasso) => {
     .update(payload)
     .digest("hex");
 
-  const sig2 = Buffer.from(signature, 'hex');
-  const sig1 = Buffer.from(signatureFromCasso, 'hex');
-  
+  const bufferFromCasso = Buffer.from(signatureFromCasso, "hex");
+  const bufferComputed = Buffer.from(signature, "hex");
 
   if (sig1.length !== sig2.length) {
     return false;
   }
 
   return crypto.timingSafeEqual(sig1, sig2);
-
 };
 
 module.exports = { isValidCassoSignature };
