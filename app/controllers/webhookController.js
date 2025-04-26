@@ -3,7 +3,6 @@ const ValidateSignature = require("../../utils/signatureValidator.js");
 const handleWebhook = async (req, res) => {
 
   const signatureHeader = req.headers["x-casso-signature"];
-  console.log("Body received from Casso:", JSON.stringify(req.body));
 
   if (!signatureHeader) {
     return res.status(400).json({ message: "Missing signature" });
@@ -22,7 +21,7 @@ const handleWebhook = async (req, res) => {
   const signature = signaturePart.split("=")[1];
 
   // Kiểm tra chữ ký
-  if (!ValidateSignature.isValidCassoSignature(req.body, timestamp ,signature)) {
+  if (!ValidateSignature.isValidCassoSignature(req.rawBody, timestamp ,signature)) {
     return res.status(403).json({ message: "Forbidden" });
   }
   
