@@ -6,6 +6,7 @@ const db = require("./config/db/index");
 const cors = require("cors");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 app.use(cookieParser());
 
@@ -18,6 +19,12 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(bodyParser.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf.toString(); // Save raw body
+  }
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
