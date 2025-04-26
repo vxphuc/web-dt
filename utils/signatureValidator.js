@@ -14,11 +14,11 @@ const isValidCassoSignature = (rawBody, timestamp, signatureFromCasso) => {
   const bufferFromCasso = Buffer.from(signatureFromCasso, "hex");
   const bufferComputed = Buffer.from(signature, "hex");
 
-  if (sig1.length !== sig2.length) {
+  if (bufferFromCasso.length !== bufferComputed.length) {
     return false;
   }
 
-  return crypto.timingSafeEqual(sig1, sig2);
+  return crypto.timingSafeEqual(bufferFromCasso, bufferComputed);
 };
 
 module.exports = { isValidCassoSignature };
