@@ -3,7 +3,7 @@ const bills = require("../models/bill");
 const handleWebhook = async (req, res) => {
   try {
     console.log("Received webhook:", req.body);
-    const description = req.body.description;
+    const description = req.body.data.description;
     const descriptionSplit = description.split(" ")[1];
     console.log("Description split:", descriptionSplit);
     const bill = bills.findOne({ _id: req.body.id });
