@@ -14,6 +14,8 @@ const handleWebhook = async (req, res) => {
       amount: req.body.data.amount,
     });
 
+    await Bank.save();
+
     return res.status(200).json({ code: 200, message: "OK", data: Bank });
   } catch (error) {
     console.error("Error handling webhook:", error);
@@ -21,6 +23,24 @@ const handleWebhook = async (req, res) => {
   }
 };
 
+const handlecheck = async (req, res) => {
+  try {
+    const {id}  = req.body;
+
+    console.log("Received check:", id);
+    const bankData = await bank.findOne({ description: id });
+    if (!bankData) {
+      console.log("Bank data not found for id:", id);
+      return res.status(404).json({ code: 404, message: "Not Found" });
+    }
+    return res.status(200).json({ code: 200, message: "OK", data: bankData });
+  } catch (error) {
+    console.error("Error handling check:", error);
+    return res.status(500).json({ code: 500, message: "Internal Server Error" });
+  }
+};
+
 module.exports = {
   handleWebhook,
+  handlecheck
 };
