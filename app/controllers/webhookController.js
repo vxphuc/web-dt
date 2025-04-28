@@ -11,7 +11,7 @@ const handleWebhook = async (req, res) => {
 
     const bill = await bills.findOne({ _id:  descriptionSplit});
     console.log("Bill found:", bill);
-    if(bill._id !== descriptionSplit){
+    if(bill._id.toString() !== descriptionSplit){
       return res.status(404).json({ code: 404, message: "Bill not found" });
     }
     return res.status(200).json({ code: 200, message: "OK" });
