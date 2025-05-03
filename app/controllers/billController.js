@@ -6,11 +6,11 @@ async function createBill(req, res) {
   try {
     console.log(req.body);
     const IntomoneySplit = req.body.Intomoney.split("₫");
-    const cleanedMoney = IntomoneySplit[0].replace(/\./g, "");
+    const cleanedMoney = Number.parseFloat(IntomoneySplit[0].replace(/\./g, ""));
     const bill = await billModel.create({
       UserUID: req.user.uid,
       ...req.body,
-      Intomoney: mongoose.Types.Decimal128.fromString(cleanedMoney),
+      Intomoney: cleanedMoney,
     });
     res.json(bill);
   } catch (error) {
