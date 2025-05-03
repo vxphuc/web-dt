@@ -18,7 +18,7 @@ const billSchema = new Schema({
     type: String,
   },
   Intomoney: {
-    type: String,
+    type: mongoose.Schema.Types.Decimal128,
   },
   products: [
     {

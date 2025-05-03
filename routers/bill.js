@@ -7,7 +7,7 @@ const billController = require('../app/controllers/billController');
 //lấy hóa đơn theo người dùng
 router.get('/user', checkAuth, billController.getBillByUser);
 //tạo mói hóa đơn
-router.post( '/create',checkAuth, billController.createBill)
+router.post( '/create', checkAuth, billController.createBill)
 //sử trạng thái giao dịch
 router.patch('/status/:id', checkAuth, billController.updateBillStatus);
 //lấy hóa đơn theo mã hóa đơn

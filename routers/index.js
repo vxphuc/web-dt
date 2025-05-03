@@ -7,6 +7,7 @@ const cartRouter = require('./cart')
 const addressRouter = require('./adress')
 const billRouter = require('./bill')
 const webhookRouter = require('./webhook')
+const chartRouter = require('./Chart')
 
 
 function router(app){
@@ -18,6 +19,7 @@ function router(app){
     app.use('/address', addressRouter)
     app.use('/bill', billRouter)
     app.use('/webhook', webhookRouter)
+    app.use('/chart', chartRouter)
 }
 
 module.exports = router;
