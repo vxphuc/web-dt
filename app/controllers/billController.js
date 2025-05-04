@@ -29,7 +29,7 @@ const getBillByUser = async (req, res) => {
   }
 };
 
-//lấy hóa đơn theo mã hóa đơn
+//lấy hóa đơn theo mã hóa đơn xem chi tiết hóa đơn
 const getBillByCode = async (req, res) => {
   try {
     const bill = await billModel.findOne({ _id: req.params.id });
@@ -52,9 +52,21 @@ const updateBillStatus = async (req, res) => {
   }
 };
 
+// xem tất cả hóa đơn
+const getAllBill = async (req, res) => {
+  try {
+    const bill = await billModel.find({});
+    res.json(bill);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
 module.exports = {
   createBill,
   getBillByUser,
   getBillByCode,
   updateBillStatus,
+  getAllBill,
 };
