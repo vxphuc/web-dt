@@ -5,7 +5,7 @@ const checkRole = (roleUser) => {
         if(!req.user){
           return res.status(401).json({message: 'You are not logged in'})
         }
-        if(req.user.role !== roleUser){
+        if(!roleUser.includes(req.user.role)){
           return res.status(403).json({ error: `Forbidden: You need ${role} role` });
         }
 
