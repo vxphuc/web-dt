@@ -74,6 +74,11 @@ const getAllBill = async (req, res) => {
           Intomoney: 1,
           statusPay: 1,
           createDate: 1,
+          OrderStatus: 1,
+          road: 1,
+          province: 1,
+          District: 1,
+          ward: 1,
           userInfo: {
             name: "$userInfo.name",
             numberPhone: "$userInfo.numberPhone",
