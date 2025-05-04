@@ -55,7 +55,32 @@ const updateBillStatus = async (req, res) => {
 // xem tất cả hóa đơn
 const getAllBill = async (req, res) => {
   try {
-    const bill = await billModel.find({});
+    const bill = await billModel.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "UserUID",
+          foreignField: "uid",
+          as: "userInfo",
+        },
+      },
+      {
+        $unwind: "$userInfo",
+      },
+      {
+        $project: {
+          _id: 1,
+          UserUID: 1,
+          Intomoney: 1,
+          statusPay: 1,
+          createDate: 1,
+          userInfo: {
+            name: "$userInfo.name",
+            numberPhone: "$userInfo.numberPhone",
+          },
+        },
+      },
+    ]);
     res.json(bill);
   } catch (error) {
     console.error(error);
