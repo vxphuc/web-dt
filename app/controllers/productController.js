@@ -298,6 +298,7 @@ async function getAllProducts(req, res, next) {
   res.json(product);
 }
 
+//tìm kiếm sản phẩm
 const search = async (req, res, next) => {
   try {
     const { q } = req.query;

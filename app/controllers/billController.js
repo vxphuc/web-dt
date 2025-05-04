@@ -92,6 +92,20 @@ const getAllBill = async (req, res) => {
   }
 }
 
+// sửa trạng thái giao dịch
+const updateStatus = async (req, res) => {
+  try {
+    console.log(req.params);
+    const bill = await billModel.updateMany(
+      { _id: req.params.id },
+      { $set: { OrderStatus: req.body.OrderStatus } }
+    )
+    res.json(bill);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
 module.exports = {
   createBill,
@@ -99,4 +113,5 @@ module.exports = {
   getBillByCode,
   updateBillStatus,
   getAllBill,
+  updateStatus,
 };
