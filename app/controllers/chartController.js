@@ -81,7 +81,9 @@ const getWeekRevenue = async (req, res) => {
       },
       {$match: {
         '_id.month': month,
-      }}
+      }},{
+        $sort: { '_id.week': 1 },
+      }
     ]);
     res
       .status(200)
