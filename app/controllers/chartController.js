@@ -50,7 +50,7 @@ const getTop10Product = async (req, res) => {
         },
       },
       {
-        $sort: { totalRevenue: -1 },
+        $sort: { totalQuantity: -1 },
       },
       {
         $limit: 10,
