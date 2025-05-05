@@ -16,9 +16,9 @@ const getYearRevenue = async (req, res) => {
       },
       {
         $match: {
-          '_id.year': year,
-        }
-      }
+          "_id.year": year,
+        },
+      },
     ]);
 
     res.status(200).json({
@@ -30,8 +30,37 @@ const getYearRevenue = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+// lấy top 10 số lượng và doanh thu sản phẩm bán chạy nhất
+const getTop10Product = async (req, res) => {
+  try {
+    const result = await bill.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $group: {
+          _id: "$products._id",
+          name: { $first: "$products.name" },
+          totalRevenue: {
+            $sum: {
+              $multiply: ["$products.price", "$products.quantity"],
+            },
+          },
+          totalQuantity: { $sum: "$products.quantity" },
+        },
+      },
+      {
+        $sort: { totalRevenue: -1 },
+      },
+      {
+        $limit: 10,
+      }
+    ]);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 
-
-
-
-module.exports = { getYearRevenue};
+module.exports = { getYearRevenue, getTop10Product };
