@@ -8,6 +8,8 @@ const checkRole = require("../app/middlewares/checkRole");
 router.get("/getYearRevenue", checkAuth, checkRole(['admin']), chartController.getYearRevenue);
 // lấy top 10 số lượng và doanh thu sản phẩm bán chạy nhất
 router.get("/getTop10Product",checkAuth, checkRole(['admin']), chartController.getTop10Product);
+// lấy ra doanh thu theo tuần của năm hiện tại
+router.get("/getWeekRevenue", chartController.getWeekRevenue);
 
 
 module.exports = router;

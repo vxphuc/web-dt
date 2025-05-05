@@ -54,7 +54,7 @@ const getTop10Product = async (req, res) => {
       },
       {
         $limit: 10,
-      }
+      },
     ]);
     res.status(200).json(result);
   } catch (err) {
@@ -63,4 +63,33 @@ const getTop10Product = async (req, res) => {
   }
 };
 
-module.exports = { getYearRevenue, getTop10Product };
+// lấy doanh thu theo các tuần hiện tại
+const getWeekRevenue = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const d = new Date();
+    let month = d.getMonth() + 1;
+    const weeklyRevenue = await bill.aggregate([
+      {
+        $group: {
+          _id: {
+            week: { $week: "$createDate" },
+            month: { $month: "$createDate" },
+          },
+          totalRevenue: { $sum: "$Intomoney" },
+        },
+      },
+      {$match: {
+        '_id.month': month,
+      }}
+    ]);
+    res
+      .status(200)
+      .json({ message: "Get weekly revenue successfully", weeklyRevenue });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { getYearRevenue, getTop10Product, getWeekRevenue };
