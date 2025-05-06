@@ -8,6 +8,7 @@ const addressRouter = require('./adress')
 const billRouter = require('./bill')
 const webhookRouter = require('./webhook')
 const chartRouter = require('./Chart')
+const chatbotRouter = require('./chatbot')
 
 
 function router(app){
@@ -20,6 +21,7 @@ function router(app){
     app.use('/bill', billRouter)
     app.use('/webhook', webhookRouter)
     app.use('/chart', chartRouter)
+    app.use('/chatbot', chatbotRouter)
 }
 
 module.exports = router;
