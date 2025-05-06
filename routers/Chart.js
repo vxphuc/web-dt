@@ -10,6 +10,8 @@ router.get("/getYearRevenue", checkAuth, checkRole(['admin']), chartController.g
 router.get("/getTop10Product",checkAuth, checkRole(['admin']), chartController.getTop10Product);
 // lấy ra doanh thu theo tuần của năm hiện tại
 router.get("/getWeekRevenue", checkAuth, checkRole(['admin']), chartController.getWeekRevenue);
+//lấy ra doanh thu theo ngày của tuần hiện tại
+router.get("/getDayRevenue", checkAuth, checkRole(['admin']), chartController.getDayRevenue);
 
 
 module.exports = router;

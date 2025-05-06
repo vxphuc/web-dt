@@ -1,4 +1,5 @@
 const bill = require("../models/bill");
+const moment = require("moment");
 
 // lấy ra số năm doanh thu và lấy số lượng đơn hiện tại
 const getYearRevenue = async (req, res) => {
@@ -79,11 +80,14 @@ const getWeekRevenue = async (req, res) => {
           totalRevenue: { $sum: "$Intomoney" },
         },
       },
-      {$match: {
-        '_id.month': month,
-      }},{
-        $sort: { '_id.week': 1 },
-      }
+      {
+        $match: {
+          "_id.month": month,
+        },
+      },
+      {
+        $sort: { "_id.week": 1 },
+      },
     ]);
     res
       .status(200)
@@ -94,4 +98,84 @@ const getWeekRevenue = async (req, res) => {
   }
 };
 
-module.exports = { getYearRevenue, getTop10Product, getWeekRevenue };
+// lấy doanh thu theo ngày tính ra thứ trong tuần hiện tại
+const getDayRevenue = async (req, res) => {
+  try {
+    const currentYear = new Date().getFullYear();
+    const d = new Date();
+    let month = d.getMonth() + 1;
+    const isoWeekNow = moment(d).isoWeek();
+    const dailyRevenue = await bill.aggregate([
+      {
+        $addFields: {
+          createDateAsDate: {
+            $toDate: "$createDate",
+          },
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $eq: [
+                  {
+                    $month: "$createDateAsDate",
+                  },
+                  month,
+                ],
+              },
+              {
+                $eq: [
+                  {
+                    $year: "$createDateAsDate",
+                  },
+                  currentYear,
+                ],
+              },
+              {
+                $eq: [
+                  {
+                    $isoWeek: "$createDateAsDate",
+                  },
+                  isoWeekNow,
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            week: { $isoWeek: "$createDateAsDate" },
+            dayOfWeek: { $dayOfWeek: "$createDateAsDate" },
+            year: { $year: "$createDateAsDate" },
+            month: { $month: "$createDateAsDate" },
+          },
+          totalRevenue: { $sum: "$Intomoney" },
+        },
+      },
+      {
+        $sort: {
+          "_id.week": -1,
+          "_id.dayOfWeek": 1,
+        },
+      },
+    ]);
+    res.status(200).json({
+      message: "Get daily revenue successfully",
+      dailyRevenue,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  getYearRevenue,
+  getTop10Product,
+  getWeekRevenue,
+  getDayRevenue,
+};
