@@ -7,17 +7,20 @@ const getYearRevenue = async (req, res) => {
     let year = new Date().getFullYear();
     const result = await bill.aggregate([
       {
+        $match: {
+          OrderStatus: 'đã giao hàng',
+          $expr:{
+            $eq: [{$year: '$createDate'}, year]
+          }
+        },
+      },
+      {
         $group: {
           _id: {
             year: { $year: "$createDate" },
           },
           totalRevenue: { $sum: "$Intomoney" },
           totalBill: { $sum: 1 },
-        },
-      },
-      {
-        $match: {
-          "_id.year": year,
         },
       },
     ]);
