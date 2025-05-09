@@ -33,7 +33,8 @@ const getBillByUser = async (req, res) => {
 const getBillByCode = async (req, res) => {
   try {
     const bill = await billModel.findOne({ _id: req.params.id });
-    res.json(bill);
+    const user = await userModel.find({uid: bill.UserUID});
+    res.json(bill, user);
   } catch (error) {
     console.error(error);
   }
@@ -107,6 +108,8 @@ const updateStatus = async (req, res) => {
 };
 
 
+
+
 module.exports = {
   createBill,
   getBillByUser,
@@ -114,4 +117,5 @@ module.exports = {
   updateBillStatus,
   getAllBill,
   updateStatus,
+
 };

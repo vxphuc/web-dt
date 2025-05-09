@@ -9,7 +9,7 @@ router.get("/getYearRevenue", checkAuth, checkRole(['admin']), chartController.g
 // lấy top 10 số lượng và doanh thu sản phẩm bán chạy nhất
 router.get("/getTop10Product",checkAuth, checkRole(['admin']), chartController.getTop10Product);
 // lấy ra doanh thu theo tuần của năm hiện tại
-router.get("/getWeekRevenue", checkAuth, checkRole(['admin']), chartController.getWeekRevenue);
+router.get("/getWeekRevenue", chartController.getWeekRevenue);
 //lấy ra doanh thu theo ngày của tuần hiện tại
 router.get("/getDayRevenue", checkAuth, checkRole(['admin']), chartController.getDayRevenue);
 
