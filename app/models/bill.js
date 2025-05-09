@@ -38,7 +38,7 @@ const billSchema = new Schema({
   },
   OrderStatus: {
     type: String,
-    enum: ["chờ xác nhận", "đã xác nhận", "đã giao hàng", "hủy đơn hàng"],
+    enum: ["chờ xác nhận", "đã xác nhận", "đã giao hàng","đang giao hàng" ,"hủy đơn hàng"],
     default: "chờ xác nhận",
     require: true,
   },

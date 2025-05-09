@@ -62,6 +62,7 @@ const updateBillStatus = async (req, res) => {
 
 // xem tất cả hóa đơn
 const getAllBill = async (req, res) => {
+  let status = req.query.status || 'chờ xác nhận';
   try {
     const bill = await billModel.aggregate([
       {
@@ -74,6 +75,11 @@ const getAllBill = async (req, res) => {
       },
       {
         $unwind: "$userInfo",
+      },
+      {
+        $match: {
+          OrderStatus: status,
+        }
       },
       {
         $project: {

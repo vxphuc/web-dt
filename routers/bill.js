@@ -4,8 +4,9 @@ const checkAuth = require('../app/middlewares/checkAuth');
 const billController = require('../app/controllers/billController');
 const checkRole = require('../app/middlewares/checkRole');
 
+// checkRole(['admin', 'user'])
 // xem tất cả hóa đơn
-router.get('/', checkAuth, checkRole(['admin', 'user']), billController.getAllBill);
+router.get('/', billController.getAllBill);
 //lấy hóa đơn theo người dùng
 router.get('/user', checkAuth, billController.getBillByUser);
 //tạo mói hóa đơn
