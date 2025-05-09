@@ -6,7 +6,9 @@ async function createBill(req, res) {
   try {
     console.log(req.body);
     const IntomoneySplit = req.body.Intomoney.split("₫");
-    const cleanedMoney = Number.parseFloat(IntomoneySplit[0].replace(/\./g, ""));
+    const cleanedMoney = Number.parseFloat(
+      IntomoneySplit[0].replace(/\./g, "")
+    );
     const bill = await billModel.create({
       UserUID: req.user.uid,
       ...req.body,
@@ -32,11 +34,16 @@ const getBillByUser = async (req, res) => {
 //lấy hóa đơn theo mã hóa đơn xem chi tiết hóa đơn
 const getBillByCode = async (req, res) => {
   try {
-    const bill = await billModel.findOne({ _id: req.params.id });
-    const user = await userModel.find({uid: bill.UserUID});
-    res.json(bill, user);
+    const bill = await billModel.findById(req.params.id);
+    if (!bill)
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+
+    const user = await userModel.findOne({ uid: bill.UserUID }); // hoặc find nếu muốn lấy mảng
+
+    res.json({ bill, user });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: "Lỗi server" });
   }
 };
 
@@ -91,7 +98,7 @@ const getAllBill = async (req, res) => {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // sửa trạng thái giao dịch
 const updateStatus = async (req, res) => {
@@ -100,15 +107,12 @@ const updateStatus = async (req, res) => {
     const bill = await billModel.updateMany(
       { _id: req.params.id },
       { $set: { OrderStatus: req.body.OrderStatus } }
-    )
+    );
     res.json(bill);
   } catch (error) {
     console.error(error);
   }
 };
-
-
-
 
 module.exports = {
   createBill,
@@ -117,5 +121,4 @@ module.exports = {
   updateBillStatus,
   getAllBill,
   updateStatus,
-
 };

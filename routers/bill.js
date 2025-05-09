@@ -14,6 +14,6 @@ router.post( '/create', checkAuth, billController.createBill)
 router.patch('/billstatus/:id', billController.updateStatus);
 router.patch('/status/:id', checkAuth, billController.updateBillStatus);
 //lấy hóa đơn theo mã hóa đơn
-router.get('/:id', checkAuth, billController.getBillByCode);
+router.get('/:id', billController.getBillByCode);
 
 module.exports = router;
