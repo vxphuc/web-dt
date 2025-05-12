@@ -8,10 +8,10 @@ const getYearRevenue = async (req, res) => {
     const result = await bill.aggregate([
       {
         $match: {
-          OrderStatus: 'đã giao hàng',
-          $expr:{
-            $eq: [{$year: '$createDate'}, year]
-          }
+          OrderStatus: "đã giao hàng",
+          $expr: {
+            $eq: [{ $year: "$createDate" }, year],
+          },
         },
       },
       {
@@ -43,8 +43,8 @@ const getTop10Product = async (req, res) => {
       },
       {
         $match: {
-          $expr:{$eq: ['$OrderStatus', 'đã giao hàng']}
-        }
+          $expr: { $eq: ["$OrderStatus", "đã giao hàng"] },
+        },
       },
       {
         $group: {
@@ -80,17 +80,30 @@ const getWeekRevenue = async (req, res) => {
     let month = d.getMonth() + 1;
     const weeklyRevenue = await bill.aggregate([
       {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $eq: ["$OrderStatus", "đã giao hàng"],
+              },
+              {
+                $eq: [{ $year: "$createDate" }, currentYear],
+              },
+              {
+                $eq: [{ $month: "$createDate"}, month ],
+              },
+            ],
+          },
+        },
+      },
+      {
         $group: {
           _id: {
             week: { $week: "$createDate" },
             month: { $month: "$createDate" },
+            year: { $year: "$createDate" },
           },
           totalRevenue: { $sum: "$Intomoney" },
-        },
-      },
-      {
-        $match: {
-          "_id.month": month,
         },
       },
       {
