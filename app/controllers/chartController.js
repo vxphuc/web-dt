@@ -42,6 +42,11 @@ const getTop10Product = async (req, res) => {
         $unwind: "$products",
       },
       {
+        $match: {
+          $expr:{$eq: ['$OrderStatus', 'đã giao hàng']}
+        }
+      },
+      {
         $group: {
           _id: "$products._id",
           name: { $first: "$products.name" },
