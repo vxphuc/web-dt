@@ -162,6 +162,9 @@ const getDayRevenue = async (req, res) => {
                   isoWeekNow,
                 ],
               },
+              {
+                $eq: ["$OrderStatus", "đã giao hàng"],
+              }
             ],
           },
         },
