@@ -35,7 +35,7 @@ async function deleteBanner(req, res, next) {
   try {
     const banner = await Banner.find({ _id: req.params.id });
     banner.map((img) => {
-      link = path.join(__dirname, "..","..", "public", "uploads", img.image);
+      link = path.join(__dirname, "..", "..", "public", "uploads", img.image);
       fs.unlink(link, (err) => {
         if (err) {
           console.error(err);
@@ -44,9 +44,9 @@ async function deleteBanner(req, res, next) {
         }
       });
     });
-    Banner.deleteOne({_id: req.params.id})
+    Banner.deleteOne({ _id: req.params.id })
       .then((result) => console.log(result))
-      .catch(error => console.error(error));
+      .catch((error) => console.error(error));
   } catch {
     res.json("lỗi khi xóa");
   }
@@ -71,18 +71,16 @@ async function signin(req, res, next) {
 
     res.cookie("authToken", idToken, {
       httpOnly: true,
-      secure: isProduction,                      // true nếu deploy
-      sameSite: isProduction ? "None" : "Lax",   // None nếu khác origin
+      secure: isProduction, // true nếu deploy
+      sameSite: isProduction ? "None" : "Lax", // None nếu khác origin
       path: "/",
     });
 
-    
     res.json({ message: "Login successful", user });
   } catch {
     res.status(401).json({ error: "Authentication failed" });
   }
 }
-
 
 //GET User
 async function Getuser(req, res, next) {
@@ -96,7 +94,7 @@ async function userProfile(req, res, next) {
     const user = req.user;
     res.json({
       uid: user.uid, // UID của người dùng từ Firebase
-      name: user.name, 
+      name: user.name,
       phone: user.numberPhone, // Số điện thoại đã đăng ký
       token: user.token, // Token mua hàng
       role: user.role, // Vai trò của người dùng
@@ -122,8 +120,8 @@ async function logout(req, res, next) {
 
     res.clearCookie("authToken", {
       httpOnly: true,
-      secure: isProduction,                      // true nếu deploy
-      sameSite: isProduction ? "None" : "Lax",   // None nếu khác origin
+      secure: isProduction, // true nếu deploy
+      sameSite: isProduction ? "None" : "Lax", // None nếu khác origin
       path: "/",
     });
     res.status(200).json({ message: "Logged out" });
@@ -132,6 +130,19 @@ async function logout(req, res, next) {
   }
 }
 
+// chỉnh sửa thông tin
+async function editProfile(req, res, next) {
+  try {
+    const user = req.user;
+    const result = await User.updateOne(
+      { uid: user.uid },
+      { $set: { name: req.body.name, gender: req.body.sex, numberPhone: req.body.numberPhone } }
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to edit profile" });
+  }
+}
 
 module.exports = {
   signin,
@@ -142,4 +153,5 @@ module.exports = {
   GetBanner,
   deleteBanner,
   logout,
+  editProfile
 };

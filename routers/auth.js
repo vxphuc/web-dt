@@ -19,6 +19,8 @@ router.get('/banner', authContrller.GetBanner)
 //đăng nhập tài khoản
 router.get('/user-profile', checkAuth ,authContrller.userProfile)
 
+//chỉnh sửa tài khoản
+router.put('/editProfile', checkAuth, authContrller.editProfile)
 
 //điền thông tin tài khoản còn thiếu
 router.put('/:uid/fillInInformation', checkAuth, authContrller.fillInInformation)
