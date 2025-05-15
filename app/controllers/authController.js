@@ -98,6 +98,7 @@ async function userProfile(req, res, next) {
       phone: user.numberPhone, // Số điện thoại đã đăng ký
       token: user.token, // Token mua hàng
       role: user.role, // Vai trò của người dùng
+      gender: user.gender, // Giới tính của người dùng
     });
   } catch {
     res.status(404).json({ error: "User not found" });
