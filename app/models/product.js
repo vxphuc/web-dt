@@ -31,6 +31,17 @@ class ProductModel extends ProductRepository {
     constructor(Product) {
         super(Product)
     }
+    async getById(id) {
+    return await this.model.findById(id).exec();
+  }
+
+  async reduceStock(id, quantity) {
+    return await this.model.findByIdAndUpdate(
+      id,
+      { $inc: { quantity: -quantity } },
+      { new: true }
+    );
+}
 }  
 
 module.exports = new ProductModel(Product)
