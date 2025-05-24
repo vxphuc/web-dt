@@ -1,6 +1,7 @@
 const billModel = require("../models/bill");
 const userModel = require("../models/user");
-const Product = require("../models/Product");
+const Product = require("../models/product"); // đúng chữ thường!
+
 
 //tạo mới hóa đơn
 const createBill = async (req, res) => {
