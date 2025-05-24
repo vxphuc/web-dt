@@ -40,7 +40,7 @@ const create = async (req, res) => {
       productID: req.body.productID,
     });
     if (existingCart) {
-      existingCart.quantity += 1;
+      existingCart.quantity += req.body.quantity ?? 1;
       const savedCarts = await existingCart.save();
       return res.status(200).json(savedCarts);
     }
@@ -48,6 +48,7 @@ const create = async (req, res) => {
     const cart = new cartsModel({
       productID: req.body.productID,
       userID: req.user.uid,
+      quantity: req.body.quantity ?? 1
     });
     const savedCarts = await cart.save();
     res.status(201).json(savedCarts);
