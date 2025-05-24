@@ -1,25 +1,54 @@
 const billModel = require("../models/bill");
 const userModel = require("../models/user");
+const Product = require("../models/product"); 
+
 
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
   try {
-    console.log(req.body);
+    console.log("🔥 Bắt đầu createBill");
+    const productsInOrder = req.body.products;
+
+    if (!productsInOrder || !Array.isArray(productsInOrder)) {
+      return res.status(400).json({ message: "Dữ liệu sản phẩm không hợp lệ." });
+    }
+
+    for (const item of productsInOrder) {
+      console.log("🧪 Kiểm tra sản phẩm:", item.productID, "SL:", item.quantity);
+      const product = await Product.getById(item.productID);
+      if (!product) {
+        console.log("⛔ Không tìm thấy sản phẩm:", item.productID);
+        return res.status(404).json({ message: `Sản phẩm ${item.name} không tồn tại.` });
+      }
+      if (product.quantity < item.quantity) {
+        console.log("⚠️ Không đủ tồn kho cho:", item.productID);
+        return res.status(400).json({ message: `Sản phẩm "${item.name}" chỉ còn ${product.quantity} sản phẩm.` });
+      }
+    }
+
     const IntomoneySplit = req.body.Intomoney.split("₫");
-    const cleanedMoney = Number.parseFloat(
-      IntomoneySplit[0].replace(/\./g, "")
-    );
+    const cleanedMoney = Number.parseFloat(IntomoneySplit[0].replace(/\./g, ""));
+
     const bill = await billModel.create({
       UserUID: req.user.uid,
       ...req.body,
       Intomoney: cleanedMoney,
     });
-    res.json(bill);
+
+    // Trừ tồn kho
+    for (const item of productsInOrder) {
+      await Product.reduceStock(item.productID, item.quantity);
+    }
+
+    console.log("✅ Đơn hàng đã tạo:", bill._id);
+    return res.json(bill);
   } catch (error) {
-    console.error(error);
+    console.error("❌ Lỗi createBill:", error);
+    return res.status(500).json({ message: "Lỗi server" });
   }
 }
+
 
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
