@@ -1,24 +1,49 @@
 const billModel = require("../models/bill");
 const userModel = require("../models/user");
+const Product = require("../models/Product");
 
 //tạo mới hóa đơn
-async function createBill(req, res) {
+const createBill = async (req, res) => {
   try {
-    console.log(req.body);
-    const IntomoneySplit = req.body.Intomoney.split("₫");
+    const productsInOrder = req.body.products;
+
+    // 1. Kiểm tra tồn kho
+    for (const item of productsInOrder) {
+      const product = await Product.getById(item.productID);
+      if (!product) {
+        return res.status(404).json({ message: `Sản phẩm "${item.name}" không tồn tại.` });
+      }
+
+      if (product.quantity < item.quantity) {
+        return res.status(400).json({
+          message: `Sản phẩm "${item.name}" chỉ còn ${product.quantity} sản phẩm trong kho.`,
+        });
+      }
+    }
+
+    // 2. Tạo đơn hàng
     const cleanedMoney = Number.parseFloat(
-      IntomoneySplit[0].replace(/\./g, "")
+      req.body.Intomoney.split("₫")[0].replace(/\./g, "")
     );
-    const bill = await billModel.create({
+
+    const bill = await Bill.create({
       UserUID: req.user.uid,
       ...req.body,
       Intomoney: cleanedMoney,
     });
-    res.json(bill);
+
+    // 3. Trừ tồn kho
+    for (const item of productsInOrder) {
+      await Product.reduceStock(item.productID, item.quantity);
+    }
+
+    return res.status(200).json(bill);
   } catch (error) {
-    console.error(error);
+    console.error("Lỗi tạo đơn:", error);
+    return res.status(500).json({ message: "Lỗi xử lý đơn hàng." });
   }
-}
+};
+
 
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
