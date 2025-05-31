@@ -145,6 +145,22 @@ async function editProfile(req, res, next) {
   }
 }
 
+//  chỉnh sửa thông tin khách hàng bằng tài khoản admin
+async function editUserByAdmin(req, res, next) {
+  try {
+    const { uid } = req.params;
+    const { name, gender, role } = req.body;
+    const result = await User.updateOne(
+      { uid: uid },
+      { $set: { name : name, gender: gender, role: role } }
+    );
+    res.json(result);
+  }
+  catch (error) {
+    res.status(500).json({ error: "Failed to edit user by admin" });
+  }
+}
+
 module.exports = {
   signin,
   Getuser,
@@ -154,5 +170,6 @@ module.exports = {
   GetBanner,
   deleteBanner,
   logout,
-  editProfile
+  editProfile,
+  editUserByAdmin
 };
