@@ -7,6 +7,8 @@ const checkAuth = require('../app/middlewares/checkAuth')
 router.get('/getAdd', checkAuth,  cartsController.getAdd)
 //cập nhập địa chỉ giỏ hàng
 router.patch('/updateAddress', checkAuth, cartsController.updateAddress)
+// cập nhập số lượng trong giỏ hàng
+router.patch('/updateQuantity/:id', checkAuth, cartsController.updateQuantity)
 //tăng sản phẩm trong giỏ hàng
 router.patch('/updateincrease/:id', checkAuth, cartsController.updateincrease)
 //thêm sản phẩm vào giỏ hàng

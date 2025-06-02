@@ -192,6 +192,23 @@ async function deleteCart(req, res) {
   }
 }
 
+// Update quantity to a specific value
+const updateQuantity = async (req, res) => {
+  try {
+    const { quantity } = req.body;
+    if (quantity < 1) return res.status(400).json({ message: "Số lượng phải lớn hơn 0" });
+
+    const updateCart = await cartsModel.updateOne(
+      { productID: req.params.id, userID: req.user.uid },
+      { $set: { quantity } }
+    );
+    res.json(updateCart);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   index,
   create,
@@ -201,4 +218,5 @@ module.exports = {
   updateAddress,
   getAdd,
   deleteCart,
+  updateQuantity
 };
