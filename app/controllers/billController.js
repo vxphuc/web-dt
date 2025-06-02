@@ -7,26 +7,43 @@ const Product = require("../models/product");
 //tạo mới hóa đơn
 async function createBill(req, res) {
   try {
-    console.log("🔥 Bắt đầu createBill");
     const productsInOrder = req.body.products;
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
       return res.status(400).json({ message: "Dữ liệu sản phẩm không hợp lệ." });
     }
 
+    // Gom các sản phẩm không đủ tồn kho
+    let notEnoughProducts = [];
     for (const item of productsInOrder) {
-      console.log("🧪 Kiểm tra sản phẩm:", item.productID, "SL:", item.quantity);
       const product = await Product.getById(item.productID);
       if (!product) {
-        console.log("⛔ Không tìm thấy sản phẩm:", item.productID);
-        return res.status(404).json({ message: `Sản phẩm ${item.name} không tồn tại.` });
+        notEnoughProducts.push({
+          productID: item.productID,
+          name: item.name,
+          reason: "Sản phẩm không tồn tại",
+        });
+        continue;
       }
       if (product.quantity < item.quantity) {
-        console.log("⚠️ Không đủ tồn kho cho:", item.productID);
-        return res.status(400).json({ message: `Sản phẩm "${item.name}" chỉ còn ${product.quantity} sản phẩm.` });
+        notEnoughProducts.push({
+          productID: item.productID,
+          name: item.name,
+          stock: product.quantity,
+          reason: `Chỉ còn ${product.quantity} sản phẩm`,
+        });
       }
     }
 
+    // Nếu có sản phẩm lỗi thì trả về hết luôn!
+    if (notEnoughProducts.length > 0) {
+      return res.status(400).json({
+        message: "Có sản phẩm không đủ số lượng trong kho",
+        products: notEnoughProducts,
+      });
+    }
+
+    // Tạo đơn hàng
     const IntomoneySplit = req.body.Intomoney.split("₫");
     const cleanedMoney = Number.parseFloat(IntomoneySplit[0].replace(/\./g, ""));
 
@@ -41,7 +58,6 @@ async function createBill(req, res) {
       await Product.reduceStock(item.productID, item.quantity);
     }
 
-    console.log("✅ Đơn hàng đã tạo:", bill._id);
     return res.json(bill);
   } catch (error) {
     console.error("❌ Lỗi createBill:", error);
