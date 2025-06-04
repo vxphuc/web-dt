@@ -1,8 +1,6 @@
 const billModel = require("../models/bill");
 const userModel = require("../models/user");
-const Product = require("../models/product"); 
-
-
+const Product = require("../models/product");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
@@ -10,7 +8,9 @@ async function createBill(req, res) {
     const productsInOrder = req.body.products;
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
-      return res.status(400).json({ message: "Dữ liệu sản phẩm không hợp lệ." });
+      return res
+        .status(400)
+        .json({ message: "Dữ liệu sản phẩm không hợp lệ." });
     }
 
     // Gom các sản phẩm không đủ tồn kho
@@ -45,7 +45,9 @@ async function createBill(req, res) {
 
     // Tạo đơn hàng
     const IntomoneySplit = req.body.Intomoney.split("₫");
-    const cleanedMoney = Number.parseFloat(IntomoneySplit[0].replace(/\./g, ""));
+    const cleanedMoney = Number.parseFloat(
+      IntomoneySplit[0].replace(/\./g, "")
+    );
 
     const bill = await billModel.create({
       UserUID: req.user.uid,
@@ -64,7 +66,6 @@ async function createBill(req, res) {
     return res.status(500).json({ message: "Lỗi server" });
   }
 }
-
 
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
@@ -108,7 +109,7 @@ const updateBillStatus = async (req, res) => {
 
 // xem tất cả hóa đơn
 const getAllBill = async (req, res) => {
-  let status = req.query.status || 'chờ xác nhận';
+  let status = req.query.status || "chờ xác nhận";
   try {
     const bill = await billModel.aggregate([
       {
@@ -125,7 +126,7 @@ const getAllBill = async (req, res) => {
       {
         $match: {
           OrderStatus: status,
-        }
+        },
       },
       {
         $project: {
@@ -166,6 +167,18 @@ const updateStatus = async (req, res) => {
   }
 };
 
+// hủy đơn hàng
+const cancelOrder = async (req, res) => {
+  try {
+    const bill = await billModel.updateMany(
+      { _id: req.params.id },
+      { $set: { OrderStatus: "hủy đơn hàng" } }
+      );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 module.exports = {
   createBill,
   getBillByUser,
@@ -173,4 +186,5 @@ module.exports = {
   updateBillStatus,
   getAllBill,
   updateStatus,
+  cancelOrder
 };

@@ -14,6 +14,8 @@ router.post( '/create', checkAuth, billController.createBill)
 //sửa trạng thái giao dịch
 router.patch('/billstatus/:id', billController.updateStatus);
 router.patch('/status/:id', checkAuth, billController.updateBillStatus);
+//Hủy đơn hàng
+router.patch('/cancel/:id', checkAuth, billController.cancelOrder);
 //lấy hóa đơn theo mã hóa đơn
 router.get('/:id', checkAuth, billController.getBillByCode);
 
