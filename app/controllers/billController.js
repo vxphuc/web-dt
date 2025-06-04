@@ -174,6 +174,8 @@ const cancelOrder = async (req, res) => {
       { _id: req.params.id },
       { $set: { OrderStatus: "hủy đơn hàng" } }
       );
+
+      res.status(201).json({message:"Successfully Registered"});
   } catch (error) {
     console.error(error);
   }
