@@ -160,6 +160,16 @@ async function editUserByAdmin(req, res, next) {
     res.status(500).json({ error: "Failed to edit user by admin" });
   }
 }
+// lấy ra thông tin của tài khoản bằng tài khoản admin
+async function getUserByAdmin(req, res, next) {
+  try {
+    const { uid } = req.params;
+    const user = await User.findOne({ uid: uid });
+    res.json(user);
+  }catch{
+    res.status(500).json({ error: "Failed to get user by admin" });
+  }
+}
 
 module.exports = {
   signin,
@@ -171,5 +181,6 @@ module.exports = {
   deleteBanner,
   logout,
   editProfile,
-  editUserByAdmin
+  editUserByAdmin,
+  getUserByAdmin
 };

@@ -22,6 +22,8 @@ router.get('/user-profile', checkAuth ,authContrller.userProfile)
 
 //chỉnh sửa tài khoản
 router.put('/editProfile', checkAuth, authContrller.editProfile)
+// lấy tài khoản đang nhập bằng tài khaonr admin
+router.get('/user-profile-admin/:uid', checkAuth, checkRole('admin'), authContrller.getUserByAdmin)
 
 //chỉnh sửa tài khoản bằng tài khoản admin
 router.put('/:uid/editUserByAdmin', checkAuth, checkRole('admin'), authContrller.editUserByAdmin)
