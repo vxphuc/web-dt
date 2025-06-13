@@ -15,6 +15,7 @@ app.use(
     origin: [
       "https://dt-group.netlify.app",
       "http://localhost:3000",
+      "http://127.0.0.1:3000",
     ], // CHỈ ĐỊNH chính xác FE
     credentials: true,
   })
