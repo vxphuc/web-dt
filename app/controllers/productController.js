@@ -26,7 +26,7 @@ async function index(req, res, next) {
       skip
     ),
     ProductRepository.countProduct({ isDeleted: true }),
-    ProductRepository.countProduct({ isDeleted: null }), // 🔥 Thêm dòng này để tính totalPages
+    ProductRepository.countProduct({ isDeleted: null }), 
   ]);
   const formattedProducts = products.map((product) => ({
     ...product,
@@ -37,7 +37,7 @@ async function index(req, res, next) {
     results: formattedProducts,
     count: deleteCount,
     totalCount: totalCount,
-    totalPages: Math.ceil(totalCount / limit), // 🔥 Trả về totalPages
+    totalPages: Math.ceil(totalCount / limit), 
     currentPage: page,
   });
 }
@@ -46,15 +46,25 @@ async function index(req, res, next) {
 async function create(req, res, next) {
   const imageeName = req.files;
   const imageUrls = [];
-  for (let i = 0; i < imageeName.length; i++) {
+  if(imageeName){
+    for (let i = 0; i < imageeName.length; i++) {
     const uploadResult = await cloudinary.uploader.upload(imageeName[i].path, {
       folder: "products",
     });
     imageUrls.push(uploadResult.secure_url);
     fs.unlinkSync(imageeName[i].path);
   }
+  }
+  const discount = req.body.discount
+  const price = req.body.price
+  if(discount < 0) {
+    return res.status(400).json({ message: "Discount cannot be less than 0"})
+  }
+
+  const priceDiscount = price - (price * discount / 100)
   const product = await ProductRepository.create({
     image: imageUrls,
+    priceDiscount: priceDiscount,
     ...req.body,
   });
   res.json(product);

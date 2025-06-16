@@ -16,6 +16,8 @@ const product = new Schema({
     image: [{ type: String }],
     slug: String,
     createdAt: { type: Date, default: Date.now },
+    discount: Number,
+    priceDiscount: mongoose.Schema.Types.Decimal128
 });
 
 //gán document cho slug
