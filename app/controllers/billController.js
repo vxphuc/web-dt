@@ -1,6 +1,7 @@
 const billModel = require("../models/bill");
 const userModel = require("../models/user");
 const Product = require("../models/product");
+const user = require("../models/user");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
@@ -156,8 +157,16 @@ const getAllBill = async (req, res) => {
 // sửa trạng thái giao dịch
 const updateStatus = async (req, res) => {
   try {
-    console.log(req.params);
-    const bill = await billModel.updateMany(
+    console.log(req.body.OrderStatus);
+    const bill = await billModel.findById(req.params.id);
+    console.log(bill);
+    if (req.body.OrderStatus === "đã giao hàng") {
+      const point = Math.floor(bill.Intomoney / 10000) * 100;
+      console.log(point);
+      await user.updateOne({ uid: bill.UserUID }, { $inc: { token: point } });
+    }
+
+    await billModel.updateOne(
       { _id: req.params.id },
       { $set: { OrderStatus: req.body.OrderStatus } }
     );
@@ -173,9 +182,9 @@ const cancelOrder = async (req, res) => {
     const bill = await billModel.updateMany(
       { _id: req.params.id },
       { $set: { OrderStatus: "hủy đơn hàng" } }
-      );
+    );
 
-      res.status(201).json({message:"Successfully Registered"});
+    res.status(201).json({ message: "Successfully Registered" });
   } catch (error) {
     console.error(error);
   }
@@ -188,5 +197,5 @@ module.exports = {
   updateBillStatus,
   getAllBill,
   updateStatus,
-  cancelOrder
+  cancelOrder,
 };
