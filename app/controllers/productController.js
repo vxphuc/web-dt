@@ -266,6 +266,8 @@ async function getProductsNest(req, res, next) {
 // lấy ra sản phẩm mang loai sản phẩm
 async function getProducts(req, res, next) {
   let num = 10;
+  let skip = 0;
+  let filter = req.query.filter
   const products = await ProductRepository.getAllWithJoin(
     [
       {
@@ -283,7 +285,9 @@ async function getProducts(req, res, next) {
         },
       },
     ],
-    num
+    num,
+    skip,
+    filter
   );
   res.json(products);
 }

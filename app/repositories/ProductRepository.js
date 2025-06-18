@@ -28,11 +28,21 @@ class ProductRepository {
   }
 
   //xem tất cả sản phẩm không bị xóa mềm
-  async getAllWithJoin(pipeline, limit = 10, skip = 0) {
+  async getAllWithJoin(pipeline, limit = 10, skip = 0, sort) {
+    let sortOption = {};
+    if (sort === "highToLow") {
+      sortOption.priceDiscount = -1;
+    } else if (sort === "lowToHigh") {
+      sortOption.priceDiscount = 1;
+    } else if (sort === "biggestDiscount") {
+      sortOption.discount = -1;
+    }else{
+      sortOption.createdAt = -1
+    }
     const result = await this.model
       .aggregate([
         ...pipeline,
-        { $sort: { createdAt: -1 } },
+        { $sort: sortOption },
         { $skip: skip },
         { $limit: limit },
       ])
