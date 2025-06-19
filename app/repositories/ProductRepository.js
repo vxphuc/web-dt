@@ -28,7 +28,8 @@ class ProductRepository {
   }
 
   //xem tất cả sản phẩm không bị xóa mềm
-  async getAllWithJoin(pipeline, limit = 10, skip = 0, sort) {
+  async getAllWithJoin(pipeline, limit, skip = 0, sort) {
+    limit = parseInt(limit);
     let sortOption = {};
     if (sort === "highToLow") {
       sortOption.priceDiscount = -1;

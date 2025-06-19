@@ -265,7 +265,7 @@ async function getProductsNest(req, res, next) {
 
 // lấy ra sản phẩm mang loai sản phẩm
 async function getProducts(req, res, next) {
-  let num = 10;
+  let num = req.query.num ? parseInt(req.query.num) : 10; // Số lượng sản phẩm mỗi trang
   let skip = 0;
   let filter = req.query.filter
   const products = await ProductRepository.getAllWithJoin(
