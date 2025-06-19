@@ -148,7 +148,9 @@ async function fixProduct(req, res, next) {
       description: req.body.description,
       quantity: req.body.quantity,
       typeProductId: req.body.typeProductId,
+      discount: req.body.discount,
       slug: slugify(req.body.name),
+      priceDiscount: req.body.price - (req.body.price * req.body.discount / 100),
     };
 
     const getPublicIdFromUrl = (url) => {
