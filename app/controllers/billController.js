@@ -7,9 +7,6 @@ const user = require("../models/user");
 async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
-    if (req.body.useToken) {
-      await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
-    }
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
       return res
@@ -62,6 +59,9 @@ async function createBill(req, res) {
     // Trừ tồn kho
     for (const item of productsInOrder) {
       await Product.reduceStock(item.productID, item.quantity);
+    }
+    if (req.body.useToken) {
+      await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
     }
 
     return res.json(bill);
