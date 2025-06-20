@@ -7,9 +7,8 @@ const user = require("../models/user");
 async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
-    const users = await userModel.findOne({ uid: req.user.uid });
     if (req.body.useToken) {
-      await users.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
+      await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
     }
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
