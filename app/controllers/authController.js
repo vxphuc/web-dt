@@ -3,6 +3,7 @@ const admin = require("../../config/firebaseConfig");
 const Banner = require("../models/banner");
 const fs = require("fs");
 const path = require("path");
+const { createQueue } = require("../queue/index"); 
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -170,6 +171,25 @@ async function getUserByAdmin(req, res, next) {
     res.status(500).json({ error: "Failed to get user by admin" });
   }
 }
+//  thông báo đơn hàng mới cho admin
+const NotificationAdmin = async (req, res, next) => {
+  try {
+    const { orderId, message } = req.body;
+    console.log("=== Bắt đầu thêm job vào queue ===");
+    await createQueue.add("send", {
+      orderId,
+      message,
+    });
+    console.log("=== Thêm job thành công ===");
+
+    res.status(200).json({ message: "Notification job added to queue" });
+
+  }catch (error) {
+    console.error("Error in NotificationAdmin:", error);
+    res.status(500).json({ error: "Failed to send notification" });
+  }
+
+}
 
 module.exports = {
   signin,
@@ -182,5 +202,6 @@ module.exports = {
   logout,
   editProfile,
   editUserByAdmin,
-  getUserByAdmin
+  getUserByAdmin,
+  NotificationAdmin
 };

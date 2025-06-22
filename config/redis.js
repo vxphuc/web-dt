@@ -1,5 +1,5 @@
-const createClient = require("redis").createClient;
-export function createRedisClient() {
+const {createClient} = require("redis");
+const createRedisClient = async () => {
   const client = createClient({
     username: "default",
     password: "baCuPa8MxDKqjEA0YKYFEndn9sVeO2Fj",
@@ -8,5 +8,11 @@ export function createRedisClient() {
       port: 10304,
     },
   });
+  await client.connect();
+
   return client;
 }
+
+module.exports = {
+  createRedisClient,
+};
