@@ -7,6 +7,8 @@ const cors = require("cors");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const http = require('http')
+const server = http.createServer(app);
 
 app.use(cookieParser());
 
