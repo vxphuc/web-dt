@@ -64,7 +64,7 @@ async function createBill(req, res) {
     if (req.body.useToken) {
       await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
     }
-    createQueue.add(
+    await createQueue.add(
       "send",
       {
         orderId: bill._id,
