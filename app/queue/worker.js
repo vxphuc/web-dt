@@ -5,7 +5,7 @@ const Notification = require("../models/Notification");
 
 const startWorker = async (server) => {
   const io = await initSocket(server);
-  const redisConn = createRedisClient();
+  const redisConn = await createRedisClient();
   const worker = new Worker(
     "notificationQueue",
     async (job) => {
