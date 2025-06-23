@@ -1,15 +1,14 @@
-const {Queue} = require('bullmq');
-const {createRedisClient} = require('../../config/redis');
+const { Queue } = require('bullmq');
+const { createRedisClient } = require('../../config/redis');
 
+let queueInstance;
 
-const createQueue = async () => {
-
+async function getQueue() {
+  if (!queueInstance) {
     const redisClient = await createRedisClient();
-    return new Queue('notificationQueue', {
-        connection: redisClient,
-    });
+    queueInstance = new Queue('notificationQueue', { connection: redisClient });
+  }
+  return queueInstance;
 }
 
-module.exports = {
-    createQueue,
-}
+module.exports = getQueue;
