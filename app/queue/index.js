@@ -1,11 +1,10 @@
-const { Queue } = require("bullmq");
-const { createRedisClient } = require("../../config/redis");
-require("dotenv").config();
+const {Queue} = require('bullmq');
+const {createRedisClient} = require('../../config/redis');
 
-const redisConn = createRedisClient();
+const redisClient = createRedisClient();
 
-const createQueue = new Queue("notificationQueue", {connection: redisConn});
+const createQueue = new Queue('notificationQueue', { connection: redisClient });
 
 module.exports = {
-  createQueue,
-};
+    createQueue,
+}

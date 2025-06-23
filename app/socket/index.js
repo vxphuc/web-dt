@@ -7,8 +7,16 @@ const {registerNotificationHandlers} = require('./handlers/notificationHandler')
 module.exports = initSocket = async (server) =>{
      const io = new Server(server, { cors: { origin: '*' } });
      pub = await createRedisClient();
-     sub = pub.duplicate();
-     io.adapter(createAdapter(pub, sub));
+     sub = await createRedisClient();
+     Promise.all([pub, sub])
+         .then(() => {
+             io.adapter(createAdapter(pub, sub));
+             console.log('Redis connected');
+         })
+         .catch((err) => {
+             console.error('Redis connection error:', err);
+         });
+
      io.on('connection', (socket) => {
           registerNotificationHandlers(io, socket);
      });

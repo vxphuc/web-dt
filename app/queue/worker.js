@@ -16,7 +16,9 @@ const startWorker = async (server) => {
       });
       io.to("admins").emit("notification", n);
     },
-    {connection: redisConn}
+    {
+      connection: redisConn,
+    }
   );
 };
 
