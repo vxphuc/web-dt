@@ -242,7 +242,7 @@ async function newProduct(req, res, next) {
 
 // lấy ra sản phẩm mang loai sản phẩm
 async function getProductsNest(req, res, next) {
-  let num = 20;
+  let num = 10;
   const products = await ProductRepository.getAllWithJoin(
     [
       {
