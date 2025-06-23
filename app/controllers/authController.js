@@ -3,6 +3,8 @@ const admin = require("../../config/firebaseConfig");
 const Banner = require("../models/banner");
 const fs = require("fs");
 const path = require("path");
+const { createQueue } = require("../queue/index"); 
+
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -171,6 +173,7 @@ async function getUserByAdmin(req, res, next) {
   }
 }
 
+
 module.exports = {
   signin,
   Getuser,
@@ -182,5 +185,6 @@ module.exports = {
   logout,
   editProfile,
   editUserByAdmin,
-  getUserByAdmin
+  getUserByAdmin,
+  
 };

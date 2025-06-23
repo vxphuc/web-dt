@@ -10,6 +10,7 @@ router.post('/', authContrller.signin)
 //tạo banner hiển thị trang home
 router.post('/upload-banner', multerUpload.single('image') ,authContrller.uploadBaner)
 
+
 //đăng xuất
 router.post('/logout', authContrller.logout)
 //lấy ra tất cả user dành cho editor và admin

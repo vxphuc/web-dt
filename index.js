@@ -7,6 +7,9 @@ const cors = require("cors");
 require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const http = require('http')
+const server = http.createServer(app);
+const {startWorker} = require('./app/queue/worker');
 
 app.use(cookieParser());
 
@@ -33,6 +36,8 @@ router(app);
 //database
 db.connect();
 
-app.listen(port, () => {
+startWorker(server)
+
+server.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
