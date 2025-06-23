@@ -8,7 +8,7 @@ module.exports = initSocket = async (server) =>{
      const io = new Server(server, { cors: { origin: '*' } });
      pub = await createRedisClient();
      sub = await createRedisClient();
-     Promise.all([pub.connect(), sub.connect()])
+     Promise.all([pub, sub])
          .then(() => {
              io.adapter(createAdapter(pub, sub));
              console.log('Redis connected');
