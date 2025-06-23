@@ -8,9 +8,8 @@ const createRedisClient = async () => {
       port: 10304,
     },
   });
-  client.connect();
+  return client.connect().then(() => client);
 
-  return client;
 }
 
 module.exports = {
