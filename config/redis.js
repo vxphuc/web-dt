@@ -4,7 +4,6 @@ const createRedisClient = async () => {
   const client = createClient({
     url: process.env.REDIS_URL
   });
-
   return client;
 }
 
