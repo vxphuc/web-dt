@@ -13,6 +13,8 @@ const startWorker = async (server) => {
       const n = await Notification.create({
         orderId,
         message,
+      },{
+        connection: redisConn,
       });
       io.to("admins").emit("notification", n);
     },
