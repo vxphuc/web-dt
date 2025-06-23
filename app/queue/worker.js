@@ -5,6 +5,7 @@ const Notification = require("../models/Notification");
 
 const startWorker = async (server) => {
   const io = await initSocket(server);
+  const redisConn = createRedisClient();
   const worker = new Worker(
     "notificationQueue",
     async (job) => {
@@ -15,15 +16,7 @@ const startWorker = async (server) => {
       });
       io.to("admins").emit("notification", n);
     },
-    {
-      connection: {
-        password: "baCuPa8MxDKqjEA0YKYFEndn9sVeO2Fj",
-        socket: {
-          host: "redis-10304.c99.us-east-1-4.ec2.redns.redis-cloud.com",
-          port: 10304,
-        },
-      },
-    }
+    {connection: redisConn}
   );
 };
 
