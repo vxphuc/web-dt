@@ -2,7 +2,7 @@ const billModel = require("../models/bill");
 const userModel = require("../models/user");
 const Product = require("../models/product");
 const user = require("../models/user");
-const { createQueue } = require("../queue/index");
+const getQueue = require("../queue/index");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
