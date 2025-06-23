@@ -4,6 +4,7 @@ const Banner = require("../models/banner");
 const fs = require("fs");
 const path = require("path");
 const {queueInstance} = require("../queue/index");
+const Notification = require("../models/Notification");
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -177,21 +178,10 @@ async function getUserByAdmin(req, res, next) {
   }
 }
 
-async function test(req, res, next) {
+async function notification(req, res, next) {
   try {
-    const {orderId, message} = req.body; 
-    await queueInstance.add(
-      "send",
-      {
-        orderId,
-        message
-      },
-      {
-        removeOnComplete: { age: 3600, count: 500 },
-        removeOnFail: 1000,
-      }
-    );
-    res.json({ message: "Notification job added to queue" });
+    const result = await Notification.find().sort({ createdAt: -1 }).limit(50);
+    res.json(result);
   } catch {
     res.status(500).json({ error: "Failed to get user by admin" });
   }
@@ -209,5 +199,5 @@ module.exports = {
   editProfile,
   editUserByAdmin,
   getUserByAdmin,
-  test
+  notification
 };
