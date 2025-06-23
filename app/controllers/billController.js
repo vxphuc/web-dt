@@ -64,18 +64,19 @@ async function createBill(req, res) {
     if (req.body.useToken) {
       await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
     }
-    const queue = await getQueue();
-    await queue.add(
-      "send",
-      {
-        orderId: bill._id,
-        message: `Đơn hàng mới từ ${req.user.name} - Mã đơn: ${bill._id}`,
-      },
-      {
-        removeOnComplete: { age: 3600, count: 500 },
-        removeOnFail: 1000,
-      }
-    );
+    console.log("✅ Đơn hàng đã được tạo:", bill);
+    // const queue = await getQueue();
+    // await queue.add(
+    //   "send",
+    //   {
+    //     orderId: bill._id,
+    //     message: `Đơn hàng mới từ ${req.user.name} - Mã đơn: ${bill._id}`,
+    //   },
+    //   {
+    //     removeOnComplete: { age: 3600, count: 500 },
+    //     removeOnFail: 1000,
+    //   }
+    // );
 
     return res.json(bill);
   } catch (error) {
