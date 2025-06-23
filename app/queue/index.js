@@ -1,14 +1,16 @@
-const { Queue } = require('bullmq');
-const { createRedisClient } = require('../../config/redis');
+const { Queue } = require("bullmq");
+const { createRedisClient } = require("../../config/redis");
+const { createClient } = require("redis");
 
-let queueInstance;
 
-async function getQueue() {
-
-    const redisClient = await createRedisClient();
-    queueInstance = new Queue('notificationQueue', { connection: redisClient });
-
-  return queueInstance;
-}
-
-module.exports = getQueue;
+const queueInstance = new Queue("notificationQueue", {
+  connection: {
+    username: "default",
+    password: "baCuPa8MxDKqjEA0YKYFEndn9sVeO2Fj",
+    host: "redis-10304.c99.us-east-1-4.ec2.redns.redis-cloud.com",
+    port: 10304,
+  },
+});
+module.exports = {
+  queueInstance,
+};

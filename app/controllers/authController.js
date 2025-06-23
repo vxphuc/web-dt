@@ -3,8 +3,7 @@ const admin = require("../../config/firebaseConfig");
 const Banner = require("../models/banner");
 const fs = require("fs");
 const path = require("path");
-const { createQueue } = require("../queue/index"); 
-
+const {queueInstance} = require("../queue/index");
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -139,7 +138,13 @@ async function editProfile(req, res, next) {
     const user = req.user;
     const result = await User.updateOne(
       { uid: user.uid },
-      { $set: { name: req.body.name, gender: req.body.sex, numberPhone: req.body.numberPhone } }
+      {
+        $set: {
+          name: req.body.name,
+          gender: req.body.sex,
+          numberPhone: req.body.numberPhone,
+        },
+      }
     );
     res.json(result);
   } catch (error) {
@@ -154,11 +159,10 @@ async function editUserByAdmin(req, res, next) {
     const { name, gender, role } = req.body;
     const result = await User.updateOne(
       { uid: uid },
-      { $set: { name : name, gender: gender, role: role } }
+      { $set: { name: name, gender: gender, role: role } }
     );
     res.json(result);
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({ error: "Failed to edit user by admin" });
   }
 }
@@ -168,11 +172,30 @@ async function getUserByAdmin(req, res, next) {
     const { uid } = req.params;
     const user = await User.findOne({ uid: uid });
     res.json(user);
-  }catch{
+  } catch {
     res.status(500).json({ error: "Failed to get user by admin" });
   }
 }
 
+async function test(req, res, next) {
+  try {
+    const {orderId, message} = req.body; 
+    await queueInstance.add(
+      "send",
+      {
+        orderId,
+        message
+      },
+      {
+        removeOnComplete: { age: 3600, count: 500 },
+        removeOnFail: 1000,
+      }
+    );
+    res.json({ message: "Notification job added to queue" });
+  } catch {
+    res.status(500).json({ error: "Failed to get user by admin" });
+  }
+}
 
 module.exports = {
   signin,
@@ -186,5 +209,5 @@ module.exports = {
   editProfile,
   editUserByAdmin,
   getUserByAdmin,
-  
+  test
 };
