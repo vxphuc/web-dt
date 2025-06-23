@@ -2,6 +2,7 @@ const billModel = require("../models/bill");
 const userModel = require("../models/user");
 const Product = require("../models/product");
 const user = require("../models/user");
+const { createQueue } = require("../queue/index");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
@@ -63,6 +64,17 @@ async function createBill(req, res) {
     if (req.body.useToken) {
       await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
     }
+    createQueue.add(
+      "send",
+      {
+        orderId: bill._id,
+        message: `Đơn hàng mới từ ${req.user.name} - Mã đơn: ${bill._id}`,
+      },
+      {
+        removeOnComplete: { age: 3600, count: 500 },
+        removeOnFail: 1000,
+      }
+    );
 
     return res.json(bill);
   } catch (error) {

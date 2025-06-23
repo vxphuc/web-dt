@@ -9,8 +9,7 @@ const multerUpload = require('../app/middlewares/multerUpload')
 router.post('/', authContrller.signin)
 //tạo banner hiển thị trang home
 router.post('/upload-banner', multerUpload.single('image') ,authContrller.uploadBaner)
-// thông báo đơn hàng mới cho admin
-router.post('/NotificationAdmin', authContrller.NotificationAdmin)
+
 
 //đăng xuất
 router.post('/logout', authContrller.logout)

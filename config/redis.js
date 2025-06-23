@@ -8,7 +8,6 @@ const createRedisClient = async () => {
       port: 10304,
     },
   });
-  await client.connect();
 
   return client;
 }
