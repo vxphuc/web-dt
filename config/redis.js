@@ -1,9 +1,15 @@
 const {createClient} = require("redis");
-require("dotenv").config();
 const createRedisClient = async () => {
   const client = createClient({
-    url: process.env.REDIS_URL
+    username: "default",
+    password: "baCuPa8MxDKqjEA0YKYFEndn9sVeO2Fj",
+    socket: {
+      host: "redis-10304.c99.us-east-1-4.ec2.redns.redis-cloud.com",
+      port: 10304,
+    },
   });
+  client.connect();
+
   return client;
 }
 
