@@ -78,6 +78,50 @@ const deleteAddress = async (req, res) => {
     }
 }
 
+const getUserAddress = async (req, res) => {
+    const {uid} = req.params;
+    try {
+        const address = await road.aggregate([
+            {
+                $match: {userUID: uid}
+            },
+            {
+                $lookup: {
+                    from: 'Wards',
+                    localField: 'idWards',
+                    foreignField: 'IDWards',
+                    as: 'wards'
+                }
+            },
+            {
+                $unwind: "$wards"
+            },{
+                $lookup: {
+                    from: 'Districts',
+                    localField: 'wards.IDDistricts',
+                    foreignField: 'IDDistricts',
+                    as: 'districts'
+                }
+            },{
+                $unwind: "$districts"
+            },{
+                $lookup: {
+                    from: 'Provinces',
+                    localField: 'districts.IDProvinces',
+                    foreignField: 'IDProvinces',
+                    as: 'provinces'
+                }
+            },
+            {
+                $unwind: "$provinces"
+            }
+        ])
+        res.json(address)
+    }catch (error) {
+        console.log(error);
+    }
+}
+
 module.exports = {
-    createAddress,getAdress,deleteAddress
+    createAddress,getAdress,deleteAddress,getUserAddress
 }

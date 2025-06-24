@@ -9,6 +9,9 @@ router.post('/create', checkAuth, addressController.createAddress);
 // xem địa chỉ
 router.get('/', checkAuth, addressController.getAdress);
 
+// xem địa chỉ của từng người dùng
+router.get('/user-address/:uid', checkAuth, addressController.getUserAddress);
+
 //xóa địa chỉ
 router.delete('/delete/:roadId/:wardId/:districtId/:provinceId', checkAuth, addressController.deleteAddress);
 
