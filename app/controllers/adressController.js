@@ -57,6 +57,18 @@ const getAdress = async (req, res) => {
             },
             {
                 $unwind: "$provinces"
+            },
+            {
+                $group: {
+                    _id: "$_id",
+                    nameRoad: { $first: "$nameRoad" },
+                    idWards: { $first: "$idWards" },
+                    userUID: { $first: "$userUID" },
+                    wards: { $first: "$wards" },
+                    districts: { $first: "$districts" },
+                    provinces: { $first: "$provinces" },
+                    // Nếu có field khác muốn trả về thì bổ sung ở đây
+                }
             }
         ])
         res.json(address)
@@ -78,12 +90,14 @@ const deleteAddress = async (req, res) => {
     }
 }
 
+// controllers/address.js
+
 const getUserAddress = async (req, res) => {
-    const {uid} = req.params;
+    const { uid } = req.params;
     try {
         const address = await road.aggregate([
             {
-                $match: {userUID: uid}
+                $match: { userUID: uid }
             },
             {
                 $lookup: {
@@ -93,18 +107,17 @@ const getUserAddress = async (req, res) => {
                     as: 'wards'
                 }
             },
+            { $unwind: "$wards" },
             {
-                $unwind: "$wards"
-            },{
                 $lookup: {
                     from: 'Districts',
                     localField: 'wards.IDDistricts',
                     foreignField: 'IDDistricts',
                     as: 'districts'
                 }
-            },{
-                $unwind: "$districts"
-            },{
+            },
+            { $unwind: "$districts" },
+            {
                 $lookup: {
                     from: 'Provinces',
                     localField: 'districts.IDProvinces',
@@ -112,15 +125,30 @@ const getUserAddress = async (req, res) => {
                     as: 'provinces'
                 }
             },
+            { $unwind: "$provinces" },
+            // ------- CHỐT BẰNG GROUP ĐỂ LOẠI LẶP -------
             {
-                $unwind: "$provinces"
+                $group: {
+                    _id: "$_id",
+                    nameRoad: { $first: "$nameRoad" },
+                    idWards: { $first: "$idWards" },
+                    userUID: { $first: "$userUID" },
+                    wards: { $first: "$wards" },
+                    districts: { $first: "$districts" },
+                    provinces: { $first: "$provinces" },
+                    // Nếu có field khác muốn trả về thì bổ sung ở đây
+                }
             }
-        ])
-        res.json(address)
-    }catch (error) {
+        ]);
+        res.json(address);
+    } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Lỗi truy vấn địa chỉ người dùng." });
     }
 }
+
+module.exports = { getUserAddress };
+
 
 module.exports = {
     createAddress,getAdress,deleteAddress,getUserAddress
