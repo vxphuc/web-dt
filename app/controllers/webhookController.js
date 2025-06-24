@@ -1,4 +1,5 @@
 const bank = require("../models/bank");
+const bill = require("../models/bill");
 
 const handleWebhook = async (req, res) => {
   try {
@@ -33,7 +34,6 @@ const handlecheck = async (req, res) => {
   try {
     const {id}  = req.body;
     
-    console.log("Received check:", id);
     const bankData = await bank.findOne({ orderId: id });
     if (!bankData) {
       console.log("Bank data not found for id:", id);

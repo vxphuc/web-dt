@@ -8,7 +8,11 @@ const road = new Schema({
     },
     userUID : {
         type: String
-    }
+    },
+    isDefault : {
+        type: Boolean,
+        default: false
+    },
 })
 
 module.exports = mongoose.model('Road', road);

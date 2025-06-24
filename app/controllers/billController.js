@@ -115,7 +115,7 @@ const updateBillStatus = async (req, res) => {
   try {
     const bill = await billModel.updateOne(
       { _id: req.params.id },
-      { $set: { statusPay: "đã thanh toán" } }
+      { $set: { statusPay: "đã thanh toán", PaymentForm: "Thanh toán qua ngân hàng" } }
     );
     res.json(bill);
   } catch (error) {
