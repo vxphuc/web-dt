@@ -39,6 +39,7 @@ const create = async (req, res) => {
   try {
     const existingCart = await cartsModel.findOne({
       productID: req.body.productID,
+      userID: req.user.uid,
     });
     if (existingCart) {
       existingCart.quantity += req.body.quantity ?? 1;
