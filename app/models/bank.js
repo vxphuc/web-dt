@@ -19,6 +19,9 @@ const bankSchema = new Schema({
         type: Number,
         required: true
     },
+    orderId: {
+        type: String
+    }
 });
 
 module.exports = mongoose.model('Bank', bankSchema);

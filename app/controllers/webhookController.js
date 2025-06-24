@@ -4,12 +4,19 @@ const handleWebhook = async (req, res) => {
   try {
     
     console.log("Received webhook:", req.body);
+    
 
     const description = req.body.data.description;
+
+    // Regex tìm mã MongoDB 24 ký tự
+    const match = description.match(/[a-f0-9]{24}/i);
+    const orderId = match ? match[0] : null;
+
     const Bank = new bank({
       id: req.body.data.id,
       transactionDateTime: req.body.data.transactionDateTime,
-      description: description,
+      description,
+      orderId,
       amount: req.body.data.amount,
     });
 
@@ -25,9 +32,9 @@ const handleWebhook = async (req, res) => {
 const handlecheck = async (req, res) => {
   try {
     const {id}  = req.body;
-
+    
     console.log("Received check:", id);
-    const bankData = await bank.findOne({ id: id });
+    const bankData = await bank.findOne({ orderId: id });
     if (!bankData) {
       console.log("Bank data not found for id:", id);
       return res.status(404).json({ code: 404, message: "Not Found" });
