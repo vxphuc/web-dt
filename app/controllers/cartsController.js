@@ -35,6 +35,7 @@ const index = async (req, res) => {
 };
 
 const create = async (req, res) => {
+  console.log(req.user.uid);
   try {
     const existingCart = await cartsModel.findOne({
       productID: req.body.productID,
