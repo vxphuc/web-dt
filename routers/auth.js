@@ -9,7 +9,7 @@ const multerUpload = require('../app/middlewares/multerUpload')
 router.post('/', authContrller.signin)
 //tạo banner hiển thị trang home
 router.post('/upload-banner', multerUpload.single('image') ,authContrller.uploadBaner)
-router.get('/NotificationAdmin', checkAuth ,authContrller.notification)
+router.get('/NotificationAdmin', checkAuth, checkRole(['admin']) ,authContrller.notification)
 
 
 
