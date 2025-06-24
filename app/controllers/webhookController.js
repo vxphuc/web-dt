@@ -6,11 +6,10 @@ const handleWebhook = async (req, res) => {
     console.log("Received webhook:", req.body);
 
     const description = req.body.data.description;
-    const descriptionSplit = description.split(" ")[1];
     const Bank = new bank({
       id: req.body.data.id,
       transactionDateTime: req.body.data.transactionDateTime,
-      description: descriptionSplit,
+      description: description,
       amount: req.body.data.amount,
     });
 
@@ -28,7 +27,7 @@ const handlecheck = async (req, res) => {
     const {id}  = req.body;
 
     console.log("Received check:", id);
-    const bankData = await bank.findOne({ description: id });
+    const bankData = await bank.findOne({ id: id });
     if (!bankData) {
       console.log("Bank data not found for id:", id);
       return res.status(404).json({ code: 404, message: "Not Found" });
