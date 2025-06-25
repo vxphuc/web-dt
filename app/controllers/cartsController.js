@@ -118,6 +118,19 @@ const updateDecrease = async (req, res) => {
 
 const updateAddress = async (req, res) => {
   try {
+    const road = await roadsModel.findOne({
+      userUID: req.user.uid,
+      isDefault: true,
+    })
+    if (road) {
+      road.isDefault = false;
+      await road.save();
+    }
+    const newRoad = await roadsModel.findById(req.body.roadID);
+    if (newRoad) {
+      road.isDefault = true;
+      await road.save();
+    } 
     const updateCart = await cartsModel.updateMany(
       {
         userID: req.user.uid,
