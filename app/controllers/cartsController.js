@@ -42,7 +42,7 @@ const create = async (req, res) => {
       userID: req.user.uid,
     });
     const address = await roadsModel.findOne({
-      userID: req.user.uid,
+      userUID: req.user.uid,
       isDefault: true,
     });
     let adr = null;
