@@ -45,7 +45,7 @@ const create = async (req, res) => {
       userUID: req.user.uid,
       isDefault: true,
     });
-    let adr = null;
+    let adr = "";
 
     adr = address._id;
 
