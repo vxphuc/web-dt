@@ -29,7 +29,7 @@ class ProductRepository {
 
   //xem tất cả sản phẩm không bị xóa mềm
   async getAllWithJoin(pipeline, limit, skip = 0, sort) {
-    limit = parseInt(limit);
+    limit = parseInt(limit) || 20;
     let sortOption = {};
     if (sort === "highToLow") {
       sortOption.priceDiscount = -1;
