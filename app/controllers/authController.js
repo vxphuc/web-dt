@@ -112,7 +112,7 @@ async function fillInInformation(req, res, next) {
   const user = req.user;
   const result = await User.updateOne(
     { uid: user.uid },
-    { $set: { name: req.body.name, gender: req.body.gender } }
+    { $set: { name: req.body.name } }
   );
   res.json(result);
 }
