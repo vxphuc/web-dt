@@ -129,11 +129,10 @@ const updateAddress = async (req, res) => {
     const newRoad = await roadsModel.findOne({
       _id: req.body.roadID,
       userUID: req.user.uid,
-      isDefault: false,
     });
     if (newRoad) {
       newRoad.isDefault = true;
-      await road.save();
+      await newRoad.save();
     }
     const updateCart = await cartsModel.updateMany(
       {
