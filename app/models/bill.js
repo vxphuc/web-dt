@@ -38,14 +38,28 @@ const billSchema = new Schema({
   },
   OrderStatus: {
     type: String,
-    enum: ["chờ xác nhận", "đã xác nhận", "đã giao hàng","đang giao hàng" ,"hủy đơn hàng"],
+    enum: [
+      "chờ xác nhận",
+      "đã xác nhận",
+      "đã giao hàng",
+      "đang giao hàng",
+      "hủy đơn hàng",
+    ],
     default: "chờ xác nhận",
     require: true,
   },
-  statusPay:{
-    type:String,
+  statusPay: {
+    type: String,
     default: "chưa thanh toán",
-  }
+  },
+  alternateReceiverPhone: {
+    type: String,
+    default: "",
+  },
+  alternateReceiverName: {
+    type: String,
+    default: "",
+  },
 });
 
 module.exports = mongoose.model("Bill", billSchema);

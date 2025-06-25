@@ -23,15 +23,7 @@ const CartSchema = new Schema({
     },
     roadID: {
         type: mongoose.Schema.Types.ObjectId,
-    },
-    alternateReceiverPhone: {
-        type: String,
-        default: '',
-    },
-    alternateReceiverName: {
-        type: String,
-        default: '',
-    },
+    }
 });
 
 module.exports = mongoose.model('carts', CartSchema);
