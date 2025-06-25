@@ -45,9 +45,10 @@ const create = async (req, res) => {
       userUID: req.user.uid,
       isDefault: true,
     });
-    let adr = "";
-
-    adr = address._id;
+    let adr = null;
+    if (address) {
+      adr = address._id;
+    }
 
     if (existingCart) {
       existingCart.quantity += req.body.quantity ?? 1;
