@@ -32,7 +32,6 @@ const CartSchema = new Schema({
         type: String,
         default: '',
     },
-
 });
 
 module.exports = mongoose.model('carts', CartSchema);

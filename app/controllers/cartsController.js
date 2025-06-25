@@ -1,4 +1,5 @@
 const cartsModel = require("../models/carts");
+const roadsModel = require("../models/road");
 
 const index = async (req, res) => {
   try {
@@ -35,12 +36,21 @@ const index = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  console.log(req.user.uid);
+  
   try {
+    let adr
     const existingCart = await cartsModel.findOne({
       productID: req.body.productID,
       userID: req.user.uid,
     });
+    const address = await roadsModel.find({
+      userID: req.user.uid,
+      isDefault: true,
+    });
+    if(address) {
+      adr = address._id;
+    }
+
     if (existingCart) {
       existingCart.quantity += req.body.quantity ?? 1;
       const savedCarts = await existingCart.save();
@@ -50,7 +60,8 @@ const create = async (req, res) => {
     const cart = new cartsModel({
       productID: req.body.productID,
       userID: req.user.uid,
-      quantity: req.body.quantity ?? 1
+      quantity: req.body.quantity ?? 1,
+      roadID: adr,
     });
     const savedCarts = await cart.save();
     res.status(201).json(savedCarts);
