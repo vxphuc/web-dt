@@ -23,7 +23,7 @@ const index = async (req, res) => {
         },
       ]),
 
-      cartsModel.countDocuments({userID: req.user.uid}),
+      cartsModel.countDocuments({ userID: req.user.uid }),
     ]);
 
     res.json({
@@ -36,20 +36,18 @@ const index = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  
   try {
-    let adr
     const existingCart = await cartsModel.findOne({
       productID: req.body.productID,
       userID: req.user.uid,
     });
-    const address = await roadsModel.find({
+    const address = await roadsModel.findOne({
       userID: req.user.uid,
       isDefault: true,
     });
-    if(address) {
-      adr = address._id;
-    }
+    let adr = null;
+
+    adr = address._id;
 
     if (existingCart) {
       existingCart.quantity += req.body.quantity ?? 1;
@@ -209,7 +207,8 @@ async function deleteCart(req, res) {
 const updateQuantity = async (req, res) => {
   try {
     const { quantity } = req.body;
-    if (quantity < 1) return res.status(400).json({ message: "Số lượng phải lớn hơn 0" });
+    if (quantity < 1)
+      return res.status(400).json({ message: "Số lượng phải lớn hơn 0" });
 
     const updateCart = await cartsModel.updateOne(
       { productID: req.params.id, userID: req.user.uid },
@@ -221,7 +220,6 @@ const updateQuantity = async (req, res) => {
   }
 };
 
-
 module.exports = {
   index,
   create,
@@ -231,5 +229,5 @@ module.exports = {
   updateAddress,
   getAdd,
   deleteCart,
-  updateQuantity
+  updateQuantity,
 };
