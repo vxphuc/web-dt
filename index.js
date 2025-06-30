@@ -19,6 +19,7 @@ app.use(
       "https://dt-group.netlify.app",
       "http://localhost:3000",
       "https://sieuthidt.com",
+      "http://localhost:2999",
     ], // CHỈ ĐỊNH chính xác FE
     credentials: true,
   })
