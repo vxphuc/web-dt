@@ -208,7 +208,8 @@ const updateStatus = async (req, res) => {
     const bill = await billModel.findById(req.params.id);
     console.log(bill);
     if (req.body.OrderStatus === "đã giao hàng") {
-      const point = Math.floor(bill.Intomoney / 10000) * 0.5;
+      // sửa logic cộng điểm
+      const point = Math.floor(bill.Intomoney / 10000) * 0;
       console.log(point);
       await user.updateOne({ uid: bill.UserUID }, { $inc: { token: point } });
     }
