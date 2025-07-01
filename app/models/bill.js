@@ -26,6 +26,7 @@ const billSchema = new Schema({
       price: mongoose.Schema.Types.Decimal128,
       quantity: Number,
       img: String,
+      productID: String,
     },
   ],
   createDate: {
