@@ -76,6 +76,7 @@ async function signin(req, res, next) {
       secure: isProduction, // true nếu deploy
       sameSite: isProduction ? "None" : "Lax", // None nếu khác origin
       path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
     res.json({ message: "Login successful", user });
