@@ -29,7 +29,7 @@ class ProductRepository {
 
   //xem tất cả sản phẩm không bị xóa mềm
   async getAllWithJoin(pipeline, limit, skip = 0, sort) {
-    limit = parseInt(limit) || 20;
+    limit = parseInt(limit);
     let sortOption = {};
     if (sort === "highToLow") {
       sortOption.priceDiscount = -1;
@@ -37,17 +37,15 @@ class ProductRepository {
       sortOption.priceDiscount = 1;
     } else if (sort === "biggestDiscount") {
       sortOption.discount = -1;
-    }else{
-      sortOption.createdAt = -1
+    } else {
+      sortOption.createdAt = -1;
     }
-    const result = await this.model
-      .aggregate([
-        ...pipeline,
-        { $sort: sortOption },
-        { $skip: skip },
-        { $limit: limit },
-      ])
-      .exec();
+    let aggPipeline = [...pipeline, { $sort: sortOption }];
+    if (limit && Number(limit) > 0) {
+      aggPipeline.push({ $skip: skip });
+      aggPipeline.push({ $limit: Number(limit) });
+    }
+    const result = await this.model.aggregate(aggPipeline).exec();
     return result;
   }
   //đếm số lượng sản phẩm

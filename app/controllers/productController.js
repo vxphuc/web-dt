@@ -5,9 +5,17 @@ const cloudinary = require("../../config/cloudinaryConfig");
 
 //Get product not delete
 async function index(req, res, next) {
+  const limitRaw = req.query.limit;
+  let limit;
+  if (limitRaw === "0" || limitRaw === "all") {
+    limit = null; // Hoặc 0, nhưng truyền thống hay dùng null để bỏ limit
+  } else if (limitRaw) {
+    limit = Number.parseInt(limitRaw);
+  } else {
+    limit = 10; // Mặc định
+  }
   const page = Number.parseInt(req.query.page) || 1;
-  const limit = Number.parseInt(req.query.limit) || 10;
-  const skip = (page - 1) * limit;
+  const skip = limit ? (page - 1) * limit : 0;
 
   const [products, deleteCount, totalCount] = await Promise.all([
     ProductRepository.getAllWithJoin(
@@ -26,7 +34,7 @@ async function index(req, res, next) {
       skip
     ),
     ProductRepository.countProduct({ isDeleted: true }),
-    ProductRepository.countProduct({ isDeleted: null }), 
+    ProductRepository.countProduct({ isDeleted: null }),
   ]);
   const formattedProducts = products.map((product) => ({
     ...product,
@@ -37,7 +45,7 @@ async function index(req, res, next) {
     results: formattedProducts,
     count: deleteCount,
     totalCount: totalCount,
-    totalPages: Math.ceil(totalCount / limit), 
+    totalPages: Math.ceil(totalCount / limit),
     currentPage: page,
   });
 }
@@ -46,22 +54,25 @@ async function index(req, res, next) {
 async function create(req, res, next) {
   const imageeName = req.files;
   const imageUrls = [];
-  if(imageeName){
+  if (imageeName) {
     for (let i = 0; i < imageeName.length; i++) {
-    const uploadResult = await cloudinary.uploader.upload(imageeName[i].path, {
-      folder: "products",
-    });
-    imageUrls.push(uploadResult.secure_url);
-    fs.unlinkSync(imageeName[i].path);
+      const uploadResult = await cloudinary.uploader.upload(
+        imageeName[i].path,
+        {
+          folder: "products",
+        }
+      );
+      imageUrls.push(uploadResult.secure_url);
+      fs.unlinkSync(imageeName[i].path);
+    }
   }
-  }
-  const discount = req.body.discount
-  const price = req.body.price
-  if(discount < 0) {
-    return res.status(400).json({ message: "Discount cannot be less than 0"})
+  const discount = req.body.discount;
+  const price = req.body.price;
+  if (discount < 0) {
+    return res.status(400).json({ message: "Discount cannot be less than 0" });
   }
 
-  const priceDiscount = price - (price * discount / 100)
+  const priceDiscount = price - (price * discount) / 100;
   const product = await ProductRepository.create({
     image: imageUrls,
     priceDiscount: priceDiscount,
@@ -150,7 +161,8 @@ async function fixProduct(req, res, next) {
       typeProductId: req.body.typeProductId,
       discount: req.body.discount,
       slug: slugify(req.body.name),
-      priceDiscount: req.body.price - (req.body.price * req.body.discount / 100),
+      priceDiscount:
+        req.body.price - (req.body.price * req.body.discount) / 100,
     };
 
     const getPublicIdFromUrl = (url) => {
@@ -267,17 +279,9 @@ async function getProductsNest(req, res, next) {
 
 // lấy ra sản phẩm mang loai sản phẩm
 async function getProducts(req, res, next) {
-  const numRaw = req.query.num;
-  let num;
-  if(numRaw === 'all' || numRaw === "0") {
-    num = 0
-  }else if (numRaw) {
-    num = parseInt(numRaw);
-  } else {
-    num = 20;
-  }
+  let num = req.query.num ? parseInt(req.query.num) : 20; // Số lượng sản phẩm mỗi trang
   let skip = 0;
-  let filter = req.query.filter
+  let filter = req.query.filter;
   const products = await ProductRepository.getAllWithJoin(
     [
       {
@@ -334,12 +338,13 @@ const search = async (req, res, next) => {
           foreignField: "_id",
           as: "typeProduct",
         },
-      },{
+      },
+      {
         $match: {
           name: { $regex: q, $options: "i" }, // Tìm gần đúng không phân biệt hoa thường
-          isDeleted: null
+          isDeleted: null,
         },
-      }
+      },
     ]);
     res.json(products);
   } catch (err) {
