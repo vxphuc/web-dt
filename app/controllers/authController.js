@@ -71,6 +71,14 @@ async function signin(req, res, next) {
 
     const isProduction = process.env.NODE_ENV === "production";
 
+    // res.cookie("authToken", idToken, {
+    //   httpOnly: true,
+    //   secure: isProduction, // true nếu deploy
+    //   sameSite: isProduction ? "None" : "Lax", // None nếu khác origin
+    //   path: "/",
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    // });
+
     res.json({ message: "Login successful", user });
   } catch {
     res.status(401).json({ error: "Authentication failed" });
