@@ -15,6 +15,7 @@ const whitelist = [
   "http://localhost:3000",
   "https://sieuthidt.com",
   "http://localhost:2999",
+  "https://zalo.me/s/1780581978027324044/?env=DEVELOPMENT&version=zdev-c094ecf9"
 ];
 
 // --- 2. Cấu hình cors động để trả đúng origin ---
