@@ -3,8 +3,9 @@ const admin = require("../../config/firebaseConfig");
 const Banner = require("../models/banner");
 const fs = require("fs");
 const path = require("path");
-const {queueInstance} = require("../queue/index");
+const { queueInstance } = require("../queue/index");
 const Notification = require("../models/Notification");
+const axios = require("axios");
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -188,6 +189,27 @@ async function notification(req, res, next) {
   }
 }
 
+// lấy số điện thoại từ zalo
+// const zaloPhone = async (req, res) => {
+//   try {
+//     const { token } = req.body;
+//     const respons = axios.post(
+//       "https://openapi.zalo.me/v3/user/info",
+//       {
+//         code: token,
+//       },
+//       {
+//         headers: {
+//           access_token: 1551304423954723698,
+//           "Content-Type": "application/json",
+//         },
+//       }
+//     );
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
 module.exports = {
   signin,
   Getuser,
@@ -200,5 +222,5 @@ module.exports = {
   editProfile,
   editUserByAdmin,
   getUserByAdmin,
-  notification
+  notification,
 };
