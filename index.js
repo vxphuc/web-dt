@@ -15,8 +15,7 @@ const whitelist = [
   "http://localhost:3000",
   "https://sieuthidt.com",
   "http://localhost:2999",
-  "https://zmp.vn",
-  "https://zalo.me"
+  "https://h5.zdn.vn"
 ];
 
 // --- 2. Cấu hình cors động để trả đúng origin ---
