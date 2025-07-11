@@ -53,6 +53,9 @@ const billSchema = new Schema({
     type: String,
     default: "chưa thanh toán",
   },
+  phoneNumber: {
+    type: String,
+  },
   alternateReceiverPhone: {
     type: String,
     default: "",
