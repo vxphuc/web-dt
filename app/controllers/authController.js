@@ -70,6 +70,11 @@ async function signin(req, res, next) {
       await user.save();
     }
 
+    if (user) {
+      user.numberPhone = req.body.numberPhone;
+      await user.save();
+    }
+
     const isProduction = process.env.NODE_ENV === "production";
 
     // res.cookie("authToken", idToken, {
