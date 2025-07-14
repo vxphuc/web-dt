@@ -26,7 +26,7 @@ router.get('/user-profile', checkAuth ,authContrller.userProfile)
 //chỉnh sửa tài khoản
 router.put('/editProfile', checkAuth, authContrller.editProfile)
 // lấy token từ zalo gửi về
-// router.post('zalo/decode-phone')
+router.post('/zalo/decode-phone', authContrller.decodePhone)
 // lấy tài khoản đang nhập bằng tài khaonr admin
 router.get('/user-profile-admin/:uid', checkAuth, checkRole('admin'), authContrller.getUserByAdmin)
 

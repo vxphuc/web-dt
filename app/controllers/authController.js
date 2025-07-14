@@ -6,6 +6,7 @@ const path = require("path");
 const { queueInstance } = require("../queue/index");
 const Notification = require("../models/Notification");
 const axios = require("axios");
+const request = require("request");
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -70,7 +71,6 @@ async function signin(req, res, next) {
       await user.save();
     }
     const isProduction = process.env.NODE_ENV === "production";
-
 
     res.json({ message: "Login successful", user });
   } catch {
@@ -181,26 +181,32 @@ async function notification(req, res, next) {
   }
 }
 
-// lấy số điện thoại từ zalo
-// const zaloPhone = async (req, res) => {
-//   try {
-//     const { token } = req.body;
-//     const respons = axios.post(
-//       "https://openapi.zalo.me/v3/user/info",
-//       {
-//         code: token,
-//       },
-//       {
-//         headers: {
-//           access_token: 1551304423954723698,
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
+const decodePhone = async (req, res) => {
+  console.log(123)
+  const endpoint = "https://graph.zalo.me/v2.0/me/info";
+  const userAccessToken = req.body.accessToken;
+  const token = req.body.token;
+  const secretKey = "TU4QIsG3TvIF77FMHBB8";
+
+
+  const options = {
+    url: endpoint,
+    headers: {
+      access_token: userAccessToken,
+      code: token,
+      secret_key: secretKey,
+    },
+  };
+
+  request(options, (error, response, body) => {
+    if (error) {
+      console.error("Error:", error);
+    } else {
+      console.log("Response Code:", response.statusCode);
+      console.log("Response Body:", body);
+    }
+  });
+};
 
 module.exports = {
   signin,
@@ -215,4 +221,5 @@ module.exports = {
   editUserByAdmin,
   getUserByAdmin,
   notification,
+  decodePhone,
 };
