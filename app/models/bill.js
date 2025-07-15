@@ -14,7 +14,7 @@ const billSchema = new Schema({
   road: {
     type: String,
   },
-  UserUID: {
+  UserName: {
     type: String,
   },
   Intomoney: {

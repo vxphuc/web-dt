@@ -9,34 +9,6 @@ async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
 
-    // ---------------------||----------------------
-    // giới hạn số lượng đặt hàng của 1 tài khoản mỗi sản phẩm chỉ mua được 2 đơn
-    // const bills = await billModel.find({UserUID: req.user.uid});
-    // const purchasedMap = {};
-    // for (let bill of bills) {
-    //   for (let product of bill.products) {
-    //     purchasedMap[product.productID] =  (purchasedMap[product.productID] || 0) + product.quantity;
-    //   }
-    // }
-    // let errorList = [];
-    // for(let product of productsInOrder) {
-    //   const alreadyPurchased = purchasedMap[product.productID] || 0;
-    //   const totalAfterOrder = alreadyPurchased + product.quantity
-    //   if(totalAfterOrder > 2){
-    //     errorList.push({
-    //       name: product.name,
-    //       message: `Bạn chỉ được mua tối đa 2 sản phẩm "${product.name}". Đã mua: ${alreadyPurchased}`
-    //     })
-    //   }
-    // }
-
-    // if(errorList.length > 0){
-    //   return res.json({errorList})
-    // }
-    // ----------------------////-------------------------------------||||
-
-
-
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
       return res
         .status(400)
@@ -80,7 +52,6 @@ async function createBill(req, res) {
     );
 
     const bill = await billModel.create({
-      UserUID: req.user.uid,
       ...req.body,
       Intomoney: cleanedMoney,
     });
@@ -96,7 +67,7 @@ async function createBill(req, res) {
       "send",
       {
         orderId: bill._id,
-        message: `Đơn hàng mới từ ${req.user.name} - Mã đơn: ${bill._id}`,
+        message: `Đơn hàng mới từ ${req.body.name} - Mã đơn: ${bill._id}`,
       },
       {
         removeOnComplete: { age: 3600, count: 500 },
