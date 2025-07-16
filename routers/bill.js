@@ -10,7 +10,7 @@ router.get('/', checkAuth, checkRole(['admin', 'user']), billController.getAllBi
 //lấy hóa đơn theo người dùng
 router.get('/user', checkAuth, billController.getBillByUser);
 //tạo mói hóa đơn
-router.post( '/create', checkAuth, billController.createBill)
+router.post( '/create', billController.createBill)
 //sửa trạng thái giao dịch
 router.patch('/billstatus/:id', billController.updateStatus);
 router.patch('/status/:id', checkAuth, billController.updateBillStatus);

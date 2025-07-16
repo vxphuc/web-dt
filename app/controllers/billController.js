@@ -9,34 +9,6 @@ async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
 
-    // ---------------------||----------------------
-    // giới hạn số lượng đặt hàng của 1 tài khoản mỗi sản phẩm chỉ mua được 2 đơn
-    // const bills = await billModel.find({UserUID: req.user.uid});
-    // const purchasedMap = {};
-    // for (let bill of bills) {
-    //   for (let product of bill.products) {
-    //     purchasedMap[product.productID] =  (purchasedMap[product.productID] || 0) + product.quantity;
-    //   }
-    // }
-    // let errorList = [];
-    // for(let product of productsInOrder) {
-    //   const alreadyPurchased = purchasedMap[product.productID] || 0;
-    //   const totalAfterOrder = alreadyPurchased + product.quantity
-    //   if(totalAfterOrder > 2){
-    //     errorList.push({
-    //       name: product.name,
-    //       message: `Bạn chỉ được mua tối đa 2 sản phẩm "${product.name}". Đã mua: ${alreadyPurchased}`
-    //     })
-    //   }
-    // }
-
-    // if(errorList.length > 0){
-    //   return res.json({errorList})
-    // }
-    // ----------------------////-------------------------------------||||
-
-
-
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
       return res
         .status(400)
@@ -80,7 +52,6 @@ async function createBill(req, res) {
     );
 
     const bill = await billModel.create({
-      UserUID: req.user.uid,
       ...req.body,
       Intomoney: cleanedMoney,
     });
@@ -96,7 +67,7 @@ async function createBill(req, res) {
       "send",
       {
         orderId: bill._id,
-        message: `Đơn hàng mới từ ${req.user.name} - Mã đơn: ${bill._id}`,
+        message: `Đơn hàng mới từ ${req.body.name} - Mã đơn: ${bill._id}`,
       },
       {
         removeOnComplete: { age: 3600, count: 500 },
@@ -114,7 +85,7 @@ async function createBill(req, res) {
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
   try {
-    const bill = await billModel.find({ UserUID: req.user.uid });
+    const bill = await billModel.find({ phoneNumber: req.user.numberPhone });
     res.json(bill);
   } catch (error) {
     console.error(error);
@@ -129,7 +100,8 @@ const getBillByCode = async (req, res) => {
     if (!bill)
       return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
 
-    const user = await userModel.findOne({ uid: bill.UserUID }); // hoặc find nếu muốn lấy mảng
+    const user = await userModel.findOne({ numberPhone: bill.phoneNumber }); // hoặc find nếu muốn lấy mảng
+
 
     res.json({ bill, user });
   } catch (error) {
@@ -159,8 +131,8 @@ const getAllBill = async (req, res) => {
       {
         $lookup: {
           from: "users",
-          localField: "UserUID",
-          foreignField: "uid",
+          localField: "phoneNumber",
+          foreignField: "numberPhone",
           as: "userInfo",
         },
       },
@@ -180,6 +152,7 @@ const getAllBill = async (req, res) => {
           statusPay: 1,
           createDate: 1,
           OrderStatus: 1,
+          UserName: 1,
           road: 1,
           province: 1,
           District: 1,
@@ -200,7 +173,6 @@ const getAllBill = async (req, res) => {
 // sửa trạng thái giao dịch
 const updateStatus = async (req, res) => {
   try {
-    console.log(req.body.OrderStatus);
     const bill = await billModel.findById(req.params.id);
     console.log(bill);
     if (req.body.OrderStatus === "đã giao hàng") {
