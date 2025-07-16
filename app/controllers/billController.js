@@ -85,7 +85,7 @@ async function createBill(req, res) {
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
   try {
-    const bill = await billModel.find({ UserUID: req.user.uid });
+    const bill = await billModel.find({ phoneNumber: req.user.numberPhone });
     res.json(bill);
   } catch (error) {
     console.error(error);
@@ -100,7 +100,8 @@ const getBillByCode = async (req, res) => {
     if (!bill)
       return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
 
-    const user = await userModel.findOne({ uid: bill.UserUID }); // hoặc find nếu muốn lấy mảng
+    const user = await userModel.findOne({ numberPhone: bill.phoneNumber }); // hoặc find nếu muốn lấy mảng
+
 
     res.json({ bill, user });
   } catch (error) {
@@ -130,8 +131,8 @@ const getAllBill = async (req, res) => {
       {
         $lookup: {
           from: "users",
-          localField: "UserUID",
-          foreignField: "uid",
+          localField: "phoneNumber",
+          foreignField: "numberPhone",
           as: "userInfo",
         },
       },
@@ -151,6 +152,7 @@ const getAllBill = async (req, res) => {
           statusPay: 1,
           createDate: 1,
           OrderStatus: 1,
+          UserName: 1,
           road: 1,
           province: 1,
           District: 1,
@@ -171,7 +173,6 @@ const getAllBill = async (req, res) => {
 // sửa trạng thái giao dịch
 const updateStatus = async (req, res) => {
   try {
-    console.log(req.body.OrderStatus);
     const bill = await billModel.findById(req.params.id);
     console.log(bill);
     if (req.body.OrderStatus === "đã giao hàng") {

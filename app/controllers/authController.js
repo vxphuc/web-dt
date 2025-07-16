@@ -182,7 +182,6 @@ async function notification(req, res, next) {
 }
 
 const decodePhone = async (req, res) => {
-  console.log(123)
   const endpoint = "https://graph.zalo.me/v2.0/me/info";
   const userAccessToken = req.body.accessToken;
   const token = req.body.token;
@@ -204,6 +203,8 @@ const decodePhone = async (req, res) => {
     } else {
       console.log("Response Code:", response.statusCode);
       console.log("Response Body:", body);
+      const data = JSON.parse(body);
+      res.json(data)
     }
   });
 };
