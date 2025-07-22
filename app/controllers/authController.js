@@ -209,6 +209,11 @@ const decodePhone = async (req, res) => {
   });
 };
 
+const verifySignature = async (req, res) =>{
+  console.log(req.body)
+  res.send('hello')
+}
+
 module.exports = {
   signin,
   Getuser,
@@ -223,4 +228,5 @@ module.exports = {
   getUserByAdmin,
   notification,
   decodePhone,
+  verifySignature
 };

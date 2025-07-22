@@ -157,6 +157,8 @@ const getAllBill = async (req, res) => {
           province: 1,
           District: 1,
           ward: 1,
+          phoneNumber: 1,
+          UserName: 1,
           userInfo: {
             name: "$userInfo.name",
             numberPhone: "$userInfo.numberPhone",
