@@ -21,6 +21,8 @@ router.get('/user',checkAuth, checkRole('admin'), authContrller.Getuser)
 router.get('/banner', authContrller.GetBanner)
 //đăng nhập tài khoản
 router.get('/user-profile', checkAuth ,authContrller.userProfile)
+// xác minh giao dịch zalo-mini-app
+router.post('/verify-zalo/callback', authContrller.verifySignature)
 
 
 //chỉnh sửa tài khoản
