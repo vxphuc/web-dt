@@ -56,6 +56,10 @@ const billSchema = new Schema({
   phoneNumber: {
     type: String,
   },
+  app: {
+    type: String,
+    default: "web"
+  },
   alternateReceiverPhone: {
     type: String,
     default: "",
