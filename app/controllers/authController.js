@@ -58,16 +58,16 @@ async function deleteBanner(req, res, next) {
 
 //POST create and login
 async function signin(req, res, next) {
-  const { idToken } = req.body;
+  // const { idToken } = req.body;
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    let user = await User.findOne({ uid: decodedToken.uid });
-
+    // const decodedToken = await admin.auth().verifyIdToken(idToken);
+    
+    let user = await User.findOne({ numberPhone: req.body.numberPhone });
     if (!user) {
-      user = await new User({
-        uid: decodedToken.uid,
-        ...req.body,
-      });
+      user = new User(
+        // uid: decodedToken.uid,
+       req.body,
+      );
       await user.save();
     }
     const isProduction = process.env.NODE_ENV === "production";
@@ -88,14 +88,9 @@ async function Getuser(req, res, next) {
 async function userProfile(req, res, next) {
   try {
     const user = req.user;
-    res.json({
-      uid: user.uid, // UID của người dùng từ Firebase
-      name: user.name,
-      phone: user.numberPhone, // Số điện thoại đã đăng ký
-      token: user.token, // Token mua hàng
-      role: user.role, // Vai trò của người dùng
-      gender: user.gender, // Giới tính của người dùng
-    });
+    const numberPhone = req.query.numberPhone
+    const user_profile = await User.findOne({ numberPhone }).lean();
+    res.json(user_profile);
   } catch {
     res.status(404).json({ error: "User not found" });
   }

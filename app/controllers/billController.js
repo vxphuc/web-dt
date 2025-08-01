@@ -84,8 +84,9 @@ async function createBill(req, res) {
 
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
+  const numberPhone = req.query.phone;
   try {
-    const bill = await billModel.find({ phoneNumber: req.user.numberPhone });
+    const bill = await billModel.find({ phoneNumber: numberPhone });
     res.json(bill);
   } catch (error) {
     console.error(error);

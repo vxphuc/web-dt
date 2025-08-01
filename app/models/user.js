@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const user = new Schema({
-    uid: {type: String, required: true},
+    uid: {type: String},
     numberPhone: {type: String},
     name: {type: String, default: null},
     gender: {type: String, enum: ['nam', 'nữ'], default: null},
