@@ -54,6 +54,7 @@ async function createBill(req, res) {
     const bill = await billModel.create({
       ...req.body,
       Intomoney: cleanedMoney,
+      img: req.body.image
     });
 
     // Trừ tồn kho
