@@ -8,6 +8,7 @@ const {queueInstance} = require("../queue/index");
 async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
+    console.log(req.body)
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
       return res
