@@ -3,10 +3,13 @@ const admin = require("../../config/firebaseConfig");
 const Banner = require("../models/banner");
 const fs = require("fs");
 const path = require("path");
-const { queueInstance } = require("../queue/index");
 const Notification = require("../models/Notification");
 const axios = require("axios");
 const request = require("request");
+const { createOtp, verifyOtp } = require("../../services/otpService");
+require('dotenv').config();
+const jwt = require("jsonwebtoken");
+
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -56,23 +59,45 @@ async function deleteBanner(req, res, next) {
   }
 }
 
+// POST tạo OTP và gửi otp
+async function createOTP(req, res, next) {
+  const { numberPhone } = req.body;
+  const otp = await createOtp(numberPhone);
+  const zaloRes = await axios.post('https://business.openapi.zalo.me/message/template',{
+    phone: numberPhone,
+    template_id: process.env.ZALOPAY_OTP,
+    template_data: {
+      otp: otp,
+    },
+  },{
+    headers: {
+      'Content-Type': 'application/json',
+      'access_token': process.env.ZALOPAY_ACCESS_TOKEN, // Ensure you have this token in your .env file
+    },
+  })
+  res.status(200).json({ message: "OTP sent successfully", numberPhone, otp, data: zaloRes.data});
+}
 //POST create and login
 async function signin(req, res, next) {
   // const { idToken } = req.body;
+  const { numberPhone, otp } = req.body;
   try {
-    // const decodedToken = await admin.auth().verifyIdToken(idToken);
-    
     let user = await User.findOne({ numberPhone: req.body.numberPhone });
+    const verified = await verifyOtp(numberPhone, otp);
+    if(!verified) {
+      return res.status(401).json({ error: "Invalid OTP" });
+    }
     if (!user) {
-      user = new User(
-        // uid: decodedToken.uid,
-       req.body,
-      );
+      user = new User({
+        numberPhone: numberPhone,
+        role: "user",
+      });
       await user.save();
     }
-    const isProduction = process.env.NODE_ENV === "production";
+    // Tạo JWT token
+    const token = jwt.sign( {numberPhone : user.numberPhone}, process.env.JWT_SECRET, { expiresIn: '8h' });
 
-    res.json({ message: "Login successful", user });
+    res.json({ message: "Login successful", token });
   } catch {
     res.status(401).json({ error: "Authentication failed" });
   }
@@ -223,5 +248,6 @@ module.exports = {
   getUserByAdmin,
   notification,
   decodePhone,
-  verifySignature
+  verifySignature,
+  createOTP
 };
