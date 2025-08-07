@@ -1,6 +1,5 @@
 const { getRedisClient } = require("../config/redis");
 
-const OTP_EXPIRE_TIME = 60 * 5; // 5 minutes
 
 const generateOtp = (length = 6) => {
   const randomOTP = Math.floor(
@@ -13,7 +12,7 @@ const createOtp = async (phone) => {
   const otp = generateOtp();
   const redis = getRedisClient();
   await redis.set(phone, otp, {
-    EX: OTP_EXPIRE_TIME,
+    EX: 300,
   });
 
   return otp;
