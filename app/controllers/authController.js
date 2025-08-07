@@ -8,7 +8,8 @@ const request = require("request");
 const { createOtp, verifyOtp } = require("../../services/otpService");
 require('dotenv').config();
 const jwt = require("jsonwebtoken");
-const {getUserByAdmin} = "../"
+const { getRedisClient } = require('../../config/redis')
+const qs = require('qs')
 
 
 // taọ banener
@@ -61,6 +62,24 @@ async function deleteBanner(req, res, next) {
 
 // POST tạo OTP và gửi otp
 async function createOTP(req, res, next) {
+  const redis = getRedisClient()
+  const zalo_accent_token = await redis.get('zalo_accent_token')
+  const refresh_token = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
+    qs.stringify({
+      app_id: '823501624227579220',
+      refresh_token: 'KcPS0BhcnnDNOLW3lkF65bnaNmIfbhmN6Lj6Mk-bfXbM9JzNm-FYDc4TUMsBcvOe9argUAAfXZCqRG0YlEZWGnuL4ZU9-T9l1WG-2OxaobCJAoybbyh9SJuCCcI2xEWAFsWX7wEqsayJK2iSlD7iT5SBTMVyZwrrG6LK8xQHodi7QGvgZhhdUGfPBGoueC1A9dCONOULnom-GWTjbQNT9XnO1a6_dEa23Xac49oUwm0bSND3iecxAY1IHc-9hjuL6bL5VPQFb0iuQMT3qOs89sjVP63veg8ZUqrVMCYql0yZGrbQbP-qDmmOB7-jwDS232ypRBolg1SsQdPXeAgq24DlJaJ2hzSWAd4cL8km_qGODJmlbyxxI3yn0X20q-jVQ3mvAiRcs3jME05JnUZoD4q2EsJcxTCIRaemsxMh8htzpn0',
+      grant_type: 'refresh_token'
+    }),{
+      headers: {
+        "Content-Type" : "application/x-www-form-urlencoded",
+        "secret_key": process.env.ZALO_SECRET
+      }
+    }
+  )
+  console.log(refresh_token.data)
+  // await redis.del('zalo_accent_token')
+  await redis.set('zalo_accent_token',refresh_token.data.refresh_token, {EX: 2160000})
+
   const { numberPhone } = req.body;
   phoneslice = `84${numberPhone.slice(1)}`
   const otp = await createOtp(numberPhone);
@@ -73,10 +92,10 @@ async function createOTP(req, res, next) {
   },{
     headers: {
       'Content-Type': 'application/json',
-      'access_token': process.env.ZALOPAY_ACCESS_TOKEN, // Ensure you have this token in your .env file
+      'access_token': refresh_token.data.access_token, // Ensure you have this token in your .env file
     },
   })
-  res.status(200).json({ message: "OTP sent successfully", numberPhone, otp, data: zaloRes.data});
+  res.status(200).json({ message: "OTP sent successfully", numberPhone, data: zaloRes.data});
 }
 
 //POST create and login
