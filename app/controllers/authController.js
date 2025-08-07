@@ -114,7 +114,7 @@ async function signin(req, res, next) {
       await user.save();
     }
     // Tạo JWT token
-    const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp}, process.env.JWT_SECRET, { expiresIn: '8h' });
+    const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp, role: user.role}, process.env.JWT_SECRET, { expiresIn: '8h' });
 
     res.json({ message: "Login successful", token });
   } catch {
