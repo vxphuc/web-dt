@@ -67,7 +67,7 @@ async function createOTP(req, res, next) {
   const refresh_token = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
     qs.stringify({
       app_id: '823501624227579220',
-      refresh_token: zalo_accent_token,
+      refresh_token: 'JpBcMNNeB4bADU9QSUqjJ44mvLrcZammNZk4Mpw031jp0h5p2QOoPb4E-X4JsNXPT5cm4X7n7aPkTuS-8g4VN60lY1uQyo1dPrUfCJdn4bzoHzm4BfzsInKfmIChb68s4WgiI2-m1Gz1Ph9y8xun3b8dhquHc3mDO03nQZgyKIvmFSbD5eSA2cudgXqMX3PhCWw4FqgrAsmDF-K4KfLNJ6aNpmekkanl5XlR0rgaMKGzAi8X19D-Tdu5vn8Rh6bh9ZkaEXhb97aYFkqTUkXx3HbOrXXOWW4D2HIXN5IsE3OQBunUP8Sf6Z8wZ78MxGCyPMQfUYtQDcbdU9Pb0lmMDanbg6q3lHqqMIJMGnAaM3LE8yXB3ffO6MiWmmexa05TP1Yv2Lkw2cSh0Bm14Dv_R4vEC0dl-Y5oyoHA',
       grant_type: 'refresh_token'
     }),{
       headers: {
@@ -76,7 +76,7 @@ async function createOTP(req, res, next) {
       }
     }
   )
-  await redis.del('zalo_accent_token')
+  // await redis.del('zalo_accent_token')
   await redis.set('zalo_accent_token',refresh_token.data.refresh_token, {EX: 2160000})
 
   const { numberPhone } = req.body;
