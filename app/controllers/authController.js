@@ -67,7 +67,7 @@ async function createOTP(req, res, next) {
   const refresh_token = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
     qs.stringify({
       app_id: '1240211320870133371',
-      refresh_token: 'rYErBBaC-JxJ8BKji0ZxFzWajYko5O5ghbdISPusoYAtOUHMlGhf6Qjqfc2L0filbsYLUgv0e3Q0EwTMX4Qt1fG6ZLQWL89Oamt98gOX-JYdTU94j3FI1jvbs43k3uiHZ7Ey08LUeqMf0fu2W5wXSv4vk06_4_GMWJxLK9z4pGA80k1cYLBo88CQsJIkJv9XWZYB1BXXkX7RHhLR-3EzJyPeaoImFPTola7H2PSn-KAQH-8YenBRChTxntU-7TycZ63oTBiczY-KTiP-zroC2VartqF86kWfyMR_R9qJyJxpPCOet2lGCkn0n6JIFeiDvsYg7zubjcRJL9SttWQWPzzRZXBt4Ri8bJoMGhjnnGg68-DYxLdxBCKJyZtkQizjx2hp6CTOm7BJ5uybm7oGOCGIe7DR7tuZkHBwFG',
+      refresh_token: zalo_accent_token,
       grant_type: 'refresh_token'
     }),{
       headers: {
