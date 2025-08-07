@@ -76,7 +76,6 @@ async function createOTP(req, res, next) {
       }
     }
   )
-  console.log(refresh_token.data)
   await redis.del('zalo_accent_token')
   await redis.set('zalo_accent_token',refresh_token.data.refresh_token, {EX: 2160000})
 
