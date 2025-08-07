@@ -8,13 +8,13 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
-      - /app/node_modules # Tránh ghi đè thư mục node_modules trong container
+      - /app/node_modules
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
       - redis
-    command: npm start # chạy lệnh nodemon index.js
+    command: npm start
 
   redis:
     image: redis:7.2
@@ -23,6 +23,7 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    command: redis-server --appendonly yes
 
 volumes:
   redis-data:
