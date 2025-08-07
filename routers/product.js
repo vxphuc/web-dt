@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const upload = require('../app/middlewares/multerUpload')
+const checkAuth = require('../app/middlewares/checkAuth')
 
 //controller
 const productController = require('../app/controllers/productController')

@@ -1,6 +1,7 @@
 // middleware/auth.js (sửa lại)
 const User = require('../models/user');
-const admin = require('../../config/firebaseConfig');
+const jwt = require("jsonwebtoken");
+require('dotenv').config();
 
 const checkAuth = async (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -12,10 +13,9 @@ const checkAuth = async (req, res, next) => {
     return res.status(401).json({ error: 'Unauthorized: Bad token format' });
 
   const token = parts[1];
-
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    const user = await User.findOne({ uid: decodedToken.uid });
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findOne({ numberPhone: decodedToken.numberPhone })
     if (!user) return res.status(401).json({ error: 'Unauthorized: User not found' });
 
     req.user = user;

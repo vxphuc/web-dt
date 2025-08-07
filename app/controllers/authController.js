@@ -1,5 +1,4 @@
 const User = require("../models/user"); //model
-const admin = require("../../config/firebaseConfig");
 const Banner = require("../models/banner");
 const fs = require("fs");
 const path = require("path");
@@ -62,9 +61,10 @@ async function deleteBanner(req, res, next) {
 // POST tạo OTP và gửi otp
 async function createOTP(req, res, next) {
   const { numberPhone } = req.body;
+  phoneslice = `84${numberPhone.slice(1)}`
   const otp = await createOtp(numberPhone);
   const zaloRes = await axios.post('https://business.openapi.zalo.me/message/template',{
-    phone: numberPhone,
+    phone: phoneslice,
     template_id: process.env.ZALOPAY_OTP,
     template_data: {
       otp: otp,
@@ -77,9 +77,9 @@ async function createOTP(req, res, next) {
   })
   res.status(200).json({ message: "OTP sent successfully", numberPhone, otp, data: zaloRes.data});
 }
+
 //POST create and login
 async function signin(req, res, next) {
-  // const { idToken } = req.body;
   const { numberPhone, otp } = req.body;
   try {
     let user = await User.findOne({ numberPhone: req.body.numberPhone });
@@ -113,9 +113,7 @@ async function Getuser(req, res, next) {
 async function userProfile(req, res, next) {
   try {
     const user = req.user;
-    const numberPhone = req.query.numberPhone
-    const user_profile = await User.findOne({ numberPhone }).lean();
-    res.json(user_profile);
+    res.json(user);
   } catch {
     res.status(404).json({ error: "User not found" });
   }
@@ -152,12 +150,10 @@ async function editProfile(req, res, next) {
   try {
     const user = req.user;
     const result = await User.updateOne(
-      { uid: user.uid },
+      { numberPhone: user.numberPhone },
       {
         $set: {
           name: req.body.name,
-          gender: req.body.sex,
-          numberPhone: req.body.numberPhone,
         },
       }
     );

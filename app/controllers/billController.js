@@ -63,17 +63,6 @@ async function createBill(req, res) {
     if (req.body.useToken) {
       await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
     }
-    await queueInstance.add(
-      "send",
-      {
-        orderId: bill._id,
-        message: `Đơn hàng mới từ ${req.body.name} - Mã đơn: ${bill._id}`,
-      },
-      {
-        removeOnComplete: { age: 3600, count: 500 },
-        removeOnFail: 1000,
-      }
-    );
 
     return res.json(bill);
   } catch (error) {
@@ -84,7 +73,8 @@ async function createBill(req, res) {
 
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
-  const numberPhone = req.query.phone;
+  console.log(req.user)
+  const numberPhone = req.user.numberPhone;
   try {
     const bill = await billModel.find({ phoneNumber: numberPhone });
     res.json(bill);
@@ -182,7 +172,6 @@ const updateStatus = async (req, res) => {
     if (req.body.OrderStatus === "đã giao hàng") {
       // sửa logic cộng điểm
       const point = Math.floor(bill.Intomoney / 10000) * 0;
-      console.log(point);
       await user.updateOne({ uid: bill.UserUID }, { $inc: { token: point } });
     }
 
