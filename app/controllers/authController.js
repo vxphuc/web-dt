@@ -8,6 +8,7 @@ const request = require("request");
 const { createOtp, verifyOtp } = require("../../services/otpService");
 require('dotenv').config();
 const jwt = require("jsonwebtoken");
+const {getUserByAdmin} = "../"
 
 
 // taọ banener
