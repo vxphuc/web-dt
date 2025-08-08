@@ -64,7 +64,6 @@ async function deleteBanner(req, res, next) {
 // POST tạo OTP và gửi otp
 async function createOTP(req, res, next) {
   const response = await refresh_token.find({name: "zalo_token"})
-  res.json(response[0].token)
 
   const refresh_token_zalo = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
     qs.stringify({
