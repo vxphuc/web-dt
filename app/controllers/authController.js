@@ -10,6 +10,7 @@ require('dotenv').config();
 const jwt = require("jsonwebtoken");
 const { getRedisClient } = require('../../config/redis')
 const qs = require('qs')
+const refresh_token = require('../models/refresh_token_zalo')
 
 
 // taọ banener
@@ -62,12 +63,13 @@ async function deleteBanner(req, res, next) {
 
 // POST tạo OTP và gửi otp
 async function createOTP(req, res, next) {
-  const redis = getRedisClient()
-  const zalo_accent_token = await redis.get('zalo_accent_token')
-  const refresh_token = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
+  const response = await refresh_token.find({name: "zalo_token"})
+  res.json(response[0].token)
+
+  const refresh_token_zalo = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
     qs.stringify({
       app_id: '1240211320870133371',
-      refresh_token: zalo_accent_token,
+      refresh_token: response[0].token,
       grant_type: 'refresh_token'
     }),{
       headers: {
@@ -76,7 +78,7 @@ async function createOTP(req, res, next) {
       }
     }
   )
-  await redis.set('zalo_accent_token',refresh_token.data.refresh_token, {EX: 2160000})
+  await refresh_token.updateOne({ name: 'zalo_token' }, { token: refresh_token_zalo.data.refresh_token });
   const { numberPhone } = req.body;
   phoneslice = `84${numberPhone.slice(1)}`
   const otp = await createOtp(numberPhone);
@@ -89,7 +91,7 @@ async function createOTP(req, res, next) {
   },{
     headers: {
       'Content-Type': 'application/json',
-      'access_token': refresh_token.data.access_token, // Ensure you have this token in your .env file
+      'access_token': refresh_token_zalo.data.access_token,
     },
   })
   res.status(200).json({ message: "OTP sent successfully", numberPhone, data: zaloRes.data});
