@@ -119,45 +119,6 @@ const getAllBill = async (req, res) => {
   let status = req.query.status || "chờ xác nhận";
   try {
     const bill = await billModel.find({OrderStatus: status})
-    // const bill = await billModel.aggregate([
-    //   {
-    //     $lookup: {
-    //       from: "users",
-    //       localField: "phoneNumber",
-    //       foreignField: "numberPhone",
-    //       as: "userInfo",
-    //     },
-    //   },
-    //   {
-    //     $unwind: "$userInfo",
-    //   },
-    //   {
-    //     $match: {
-    //       OrderStatus: status,
-    //     },
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       UserUID: 1,
-    //       Intomoney: 1,
-    //       statusPay: 1,
-    //       createDate: 1,
-    //       OrderStatus: 1,
-    //       UserName: 1,
-    //       road: 1,
-    //       province: 1,
-    //       District: 1,
-    //       ward: 1,
-    //       phoneNumber: 1,
-    //       UserName: 1,
-    //       userInfo: {
-    //         name: "$userInfo.name",
-    //         numberPhone: "$userInfo.numberPhone",
-    //       },
-    //     },
-    //   },
-    // ]);
     res.json(bill);
   } catch (error) {
     console.error(error);
