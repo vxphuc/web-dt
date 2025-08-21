@@ -264,7 +264,7 @@ const createHmacSignature = async (req, res) => {
            }`
        )
        .join("&");
-     const mac = createHmac("sha256", 'TU4QIsG3TvIF77FMHBB8')
+     const mac = createHmac("sha256", '4ca45953e0750379637cf233e800eb99')
        .update(dataMac)
        .digest("hex");
      res.json({ mac })
