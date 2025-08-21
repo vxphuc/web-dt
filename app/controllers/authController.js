@@ -11,6 +11,8 @@ const jwt = require("jsonwebtoken");
 const { getRedisClient } = require('../../config/redis')
 const qs = require('qs')
 const refresh_token = require('../models/refresh_token_zalo')
+const {createHmac} = require('crypto');
+
 
 
 // taọ banener
@@ -248,6 +250,26 @@ const verifySignature = async (req, res) =>{
   res.send('hello')
 }
 
+const createHmacSignature = async (req, res) => {
+  const { amount, desc, item, extradata, method } = req.body;
+  const params = { amount, desc, item, extradata, method };
+  const dataMac = Object.keys(params)
+       .sort()
+       .map(
+         (key) =>
+           `${key}=${
+             typeof params[key] === "object"
+               ? JSON.stringify(params[key])
+               : params[key]
+           }`
+       )
+       .join("&");
+     const mac = createHmac("sha256", 'TU4QIsG3TvIF77FMHBB8')
+       .update(dataMac)
+       .digest("hex");
+     res.json({ mac })
+};
+
 module.exports = {
   signin,
   Getuser,
@@ -263,5 +285,6 @@ module.exports = {
   notification,
   decodePhone,
   verifySignature,
-  createOTP
+  createOTP,
+  createHmacSignature
 };

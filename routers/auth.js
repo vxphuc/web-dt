@@ -9,6 +9,8 @@ const multerUpload = require('../app/middlewares/multerUpload')
 router.post('/', authContrller.signin)
 // tạo OTP
 router.post('/create-otp', authContrller.createOTP)
+// tạo mac gửi cho zalo
+router.post('/mac', authContrller.createHmacSignature)
 //tạo banner hiển thị trang home
 router.post('/upload-banner', checkAuth, checkRole(['admin', 'user']), multerUpload.single('image') ,authContrller.uploadBaner)
 router.get('/NotificationAdmin', checkRole(['admin']) ,authContrller.notification)
