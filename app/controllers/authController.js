@@ -252,7 +252,7 @@ const verifySignature = async (req, res) =>{
 
 const createHmacSignature = async (req, res) => {
   const { amount, desc, item, extradata, method } = req.body;
-  const params = { amount, desc, item, extradata, method };
+  const params = { amount, desc, extradata ,item, method };
   const dataMac = Object.keys(params)
        .sort()
        .map(
