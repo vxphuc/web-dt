@@ -9,6 +9,8 @@ const checkRole = require('../app/middlewares/checkRole');
 router.get('/', checkAuth, checkRole(['admin', 'user']), billController.getAllBill);
 //lấy hóa đơn theo người dùng
 router.get('/user', checkAuth, billController.getBillByUser);
+// lấy hóa đơn theo người dùng và trạng thái
+router.get('/user/status', billController.getBillByUserAndStatus);
 //tạo mói hóa đơn
 router.post( '/create', billController.createBill)
 //sửa trạng thái giao dịch

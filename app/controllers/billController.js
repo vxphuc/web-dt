@@ -73,7 +73,6 @@ async function createBill(req, res) {
 
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
-  console.log(req.user)
   const numberPhone = req.user.numberPhone;
   try {
     const bill = await billModel.find({ phoneNumber: numberPhone });
@@ -160,6 +159,18 @@ const cancelOrder = async (req, res) => {
   }
 };
 
+// lấy hóa đơn theo người dùng và trạng thái
+const getBillByUserAndStatus = async (req, res) => {
+  const numberPhone = req.query.phone;
+  try {
+    const bill = await billModel.find({ phoneNumber: numberPhone });
+    res.json(bill);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error });
+  }
+}
+
 module.exports = {
   createBill,
   getBillByUser,
@@ -168,4 +179,5 @@ module.exports = {
   getAllBill,
   updateStatus,
   cancelOrder,
+  getBillByUserAndStatus
 };
