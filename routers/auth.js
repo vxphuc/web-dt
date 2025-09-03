@@ -34,10 +34,10 @@ router.put('/editProfile',checkAuth, authContrller.editProfile)
 // lấy token từ zalo gửi về
 router.post('/zalo/decode-phone', authContrller.decodePhone)
 // lấy tài khoản đang nhập bằng tài khaonr admin
-router.get('/user-profile-admin/:uid',checkAuth, checkRole('admin'), authContrller.getUserByAdmin)
+router.get('/user-profile-admin/:id',checkAuth, checkRole('admin'), authContrller.getUserByAdmin)
 
 //chỉnh sửa tài khoản bằng tài khoản admin
-router.put('/:uid/editUserByAdmin',checkAuth, checkRole('admin'), authContrller.editUserByAdmin)
+router.put('/:id/editUserByAdmin',checkAuth, checkRole('admin'), authContrller.editUserByAdmin)
 //điền thông tin tài khoản còn thiếu
 router.put('/:uid/fillInInformation',checkAuth, authContrller.fillInInformation)
 

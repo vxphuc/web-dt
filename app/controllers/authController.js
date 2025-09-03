@@ -186,10 +186,10 @@ async function editProfile(req, res, next) {
 //  chỉnh sửa thông tin khách hàng bằng tài khoản admin
 async function editUserByAdmin(req, res, next) {
   try {
-    const { uid } = req.params;
+    const { id } = req.params;
     const { name, gender, role } = req.body;
     const result = await User.updateOne(
-      { uid: uid },
+      { _id: id },
       { $set: { name: name, gender: gender, role: role } }
     );
     res.json(result);
@@ -200,8 +200,8 @@ async function editUserByAdmin(req, res, next) {
 // lấy ra thông tin của tài khoản bằng tài khoản admin
 async function getUserByAdmin(req, res, next) {
   try {
-    const { uid } = req.params;
-    const user = await User.findOne({ uid: uid });
+    const { id } = req.params;
+    const user = await User.findOne({ _id: id });
     res.json(user);
   } catch {
     res.status(500).json({ error: "Failed to get user by admin" });
