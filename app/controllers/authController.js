@@ -255,7 +255,7 @@ const createHmacSignature = async (req, res) => {
 
   // build đúng thứ tự, không sort
   const rawString = `amount=${amount}&desc=${desc}&item=${item}`;
-  const mac = createHmac("sha256", "582bb83d792a994faaf217faec1794a9")
+  const mac = createHmac("sha256", "bd29abf8244696b5b6258171c6b097b3")
     .update(rawString)
     .digest("hex");
 
