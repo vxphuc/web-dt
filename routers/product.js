@@ -9,6 +9,7 @@ const productController = require('../app/controllers/productController')
 
 //post
 router.post('/create',upload.array('images', 10), productController.create)
+router.post('/seeding-product', productController.seeding)
 
 //patch
 router.patch('/:id/destroy', productController.destroy)

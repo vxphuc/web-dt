@@ -46,14 +46,10 @@ async function createBill(req, res) {
     }
 
     // Tạo đơn hàng
-    const IntomoneySplit = req.body.Intomoney.split("₫");
-    const cleanedMoney = Number.parseFloat(
-      IntomoneySplit[0].replace(/\./g, "")
-    );
+   
 
     const bill = await billModel.create({
-      ...req.body,
-      Intomoney: cleanedMoney
+      ...req.body
     });
 
     // Trừ tồn kho

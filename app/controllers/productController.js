@@ -352,6 +352,22 @@ const search = async (req, res, next) => {
   }
 };
 
+const seeding = async (req, res) =>{
+  try{
+    const productArr = []
+    for(let i in req.body.id){
+      const findproduct = await ProductRepository.getAll({_id: req.body.id[i]});
+      for (let index = 0; index < findproduct.length; index++) {
+        findproduct[index].quantity = req.body.quantity[i]
+        productArr.push(findproduct[index]) 
+      }
+    }
+    res.json(productArr);
+  }catch{
+    res.json(300)
+  };
+}
+
 module.exports = {
   getAllProducts,
   index,
@@ -366,4 +382,5 @@ module.exports = {
   getProductsNest,
   getProducts,
   search,
+  seeding
 };
