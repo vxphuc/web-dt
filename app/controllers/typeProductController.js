@@ -21,7 +21,8 @@ async function index(req, res, next) {
 
 // POST create new Type
 async function create(req, res, next) {
-  uploadimg = req.file.path;
+  try{
+    uploadimg = req.file.path;
   const uploadCloudinary = await cloudinary.uploader.upload(uploadimg, 
     {
       folder: "typeProduct",
@@ -40,6 +41,10 @@ async function create(req, res, next) {
     image: uploadCloudinary.secure_url,
   });
   res.json(typeProductCreate);
+  }catch(err){
+    console.log("lỗi")
+    res.json("lỗi")
+  }
 }
 
 //Path xóa mềm
