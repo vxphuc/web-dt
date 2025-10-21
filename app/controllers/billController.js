@@ -2,12 +2,12 @@ const billModel = require("../models/bill");
 const userModel = require("../models/user");
 const Product = require("../models/product");
 const user = require("../models/user");
+const { default: axios } = require("axios");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
-    console.log(req.body)
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
       return res
@@ -45,12 +45,27 @@ async function createBill(req, res) {
       });
     }
 
+    //tính giá sản phẩm sau khi acp mã
+    const giatien =
+      req.body.Intomoney - req.body.Intomoney * req.body.discount_value;
     // Tạo đơn hàng
-   
-
     const bill = await billModel.create({
-      ...req.body
+      ...req.body,
+      Intomoney: giatien,
     });
+
+    if (req.body.code) {
+      const response = axios.post(
+        "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
+        {
+          order_id: bill._id,
+          code: req.body.code,
+          phone: bill.phoneNumber,
+          order_value: req.body.Intomoney,
+        }
+      );
+      console.log(response.data)
+    }
 
     // Trừ tồn kho
     for (const item of productsInOrder) {
@@ -88,7 +103,6 @@ const getBillByCode = async (req, res) => {
 
     const user = await userModel.findOne({ numberPhone: bill.phoneNumber }); // hoặc find nếu muốn lấy mảng
 
-
     res.json({ bill, user });
   } catch (error) {
     console.error(error);
@@ -101,7 +115,12 @@ const updateBillStatus = async (req, res) => {
   try {
     const bill = await billModel.updateOne(
       { _id: req.params.id },
-      { $set: { statusPay: "đã thanh toán", PaymentForm: "Thanh toán qua ngân hàng" } }
+      {
+        $set: {
+          statusPay: "đã thanh toán",
+          PaymentForm: "Thanh toán qua ngân hàng",
+        },
+      }
     );
     res.json(bill);
   } catch (error) {
@@ -113,7 +132,7 @@ const updateBillStatus = async (req, res) => {
 const getAllBill = async (req, res) => {
   let status = req.query.status || "chờ xác nhận";
   try {
-    const bill = await billModel.find({OrderStatus: status})
+    const bill = await billModel.find({ OrderStatus: status });
     res.json(bill);
   } catch (error) {
     console.error(error);
@@ -165,7 +184,7 @@ const getBillByUserAndStatus = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: error });
   }
-}
+};
 
 module.exports = {
   createBill,
@@ -175,5 +194,5 @@ module.exports = {
   getAllBill,
   updateStatus,
   cancelOrder,
-  getBillByUserAndStatus
+  getBillByUserAndStatus,
 };
