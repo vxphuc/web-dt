@@ -2,87 +2,101 @@ const billModel = require("../models/bill");
 const userModel = require("../models/user");
 const Product = require("../models/product");
 const user = require("../models/user");
+const mongoose = require("mongoose");
 const { default: axios } = require("axios");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     const productsInOrder = req.body.products;
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
-      return res
-        .status(400)
-        .json({ message: "Dữ liệu sản phẩm không hợp lệ." });
+      return res.status(400).json({ message: "Dữ liệu sản phẩm không hợp lệ." });
     }
 
-    // Gom các sản phẩm không đủ tồn kho
+    // Kiểm tra tồn kho
     let notEnoughProducts = [];
     for (const item of productsInOrder) {
       const product = await Product.getById(item.productID);
-      if (!product) {
+      if (!product || product.quantity < item.quantity) {
         notEnoughProducts.push({
           productID: item.productID,
           name: item.name,
-          reason: "Sản phẩm không tồn tại",
-        });
-        continue;
-      }
-      if (product.quantity < item.quantity) {
-        notEnoughProducts.push({
-          productID: item.productID,
-          name: item.name,
-          stock: product.quantity,
-          reason: `Chỉ còn ${product.quantity} sản phẩm`,
+          reason: product ? `Chỉ còn ${product.quantity}` : "Không tồn tại",
         });
       }
     }
 
-    // Nếu có sản phẩm lỗi thì trả về hết luôn!
     if (notEnoughProducts.length > 0) {
+      await session.abortTransaction();
       return res.status(400).json({
         message: "Có sản phẩm không đủ số lượng trong kho",
         products: notEnoughProducts,
       });
     }
 
-    //tính giá sản phẩm sau khi acp mã
-    const giatien = req.body.Intomoney - ((req.body.Intomoney * (req.body.discount_value/100)));
+    // Tính giá
+    const giatien =
+      req.body.Intomoney - req.body.Intomoney * (req.body.discount_value / 100);
+
+    // 🧩 Nếu có mã giảm giá → kiểm tra trước khi lưu
     if (req.body.code) {
-      try{
-        
+      try {
         const response = await axios.post(
-        "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
-        {
-          order_id: bill._id,
-          code: req.body.code,
-          phone: bill.phoneNumber,
-          order_value: req.body.Intomoney,
+          "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
+          {
+            code: req.body.code,
+            phone: req.body.phoneNumber,
+            order_value: req.body.Intomoney,
+          }
+        );
+
+        if (!response.data?.success) {
+          throw new Error(response.data?.message || "Mã giảm giá không hợp lệ");
         }
-      );
-      }catch(error){
-        return res.json(error.response?.data);
+      } catch (error) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: "Lỗi khi xác thực mã giảm giá",
+          details: error.response?.data || error.message,
+        });
       }
     }
 
-    // Tạo đơn hàng
-    const bill = await billModel.create({
-      ...req.body,
-      Intomoney: giatien,
-    });
+    // ✅ Tạo bill trong transaction
+    const bill = await billModel.create(
+      [
+        {
+          ...req.body,
+          Intomoney: giatien,
+        },
+      ],
+      { session }
+    );
 
-    
-    // Trừ tồn kho
+    // ✅ Giảm tồn kho
     for (const item of productsInOrder) {
-      await Product.reduceStock(item.productID, item.quantity);
-    }
-    if (req.body.useToken) {
-      await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } });
+      await Product.reduceStock(item.productID, item.quantity, session);
     }
 
-    return res.json(bill);
+    // ✅ Cập nhật token nếu có
+    if (req.body.useToken) {
+      await userModel.updateOne({ uid: req.user.uid }, { $set: { token: 0 } }, { session });
+    }
+
+    // ✅ Commit nếu mọi thứ OK
+    await session.commitTransaction();
+
+    return res.json(bill[0]);
   } catch (error) {
+    await session.abortTransaction();
     console.error("❌ Lỗi createBill:", error);
-    return res.status(500).json({ message: "Lỗi server" });
+    return res.status(500).json({ message: "Lỗi server", details: error.message });
+  } finally {
+    session.endSession();
   }
 }
 
