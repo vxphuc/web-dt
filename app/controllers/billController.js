@@ -47,12 +47,6 @@ async function createBill(req, res) {
 
     //tính giá sản phẩm sau khi acp mã
     const giatien = req.body.Intomoney - ((req.body.Intomoney * (req.body.discount_value/100)));
-    // Tạo đơn hàng
-    const bill = await billModel.create({
-      ...req.body,
-      Intomoney: giatien,
-    });
-
     if (req.body.code) {
       try{
         const response = await axios.post(
@@ -69,6 +63,13 @@ async function createBill(req, res) {
       }
     }
 
+    // Tạo đơn hàng
+    const bill = await billModel.create({
+      ...req.body,
+      Intomoney: giatien,
+    });
+
+    
     // Trừ tồn kho
     for (const item of productsInOrder) {
       await Product.reduceStock(item.productID, item.quantity);
