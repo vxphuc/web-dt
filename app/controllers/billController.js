@@ -49,6 +49,7 @@ async function createBill(req, res) {
     const giatien = req.body.Intomoney - ((req.body.Intomoney * (req.body.discount_value/100)));
     if (req.body.code) {
       try{
+        
         const response = await axios.post(
         "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
         {
