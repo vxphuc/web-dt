@@ -60,7 +60,7 @@ async function createBill(req, res) {
         }
       );
       }catch(error){
-        return res.json(error.response.data);
+        return res.json(error.response?.data);
       }
     }
 
