@@ -54,7 +54,8 @@ async function createBill(req, res) {
     });
 
     if (req.body.code) {
-      const response = axios.post(
+      try{
+        const response = await axios.post(
         "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
         {
           order_id: bill._id,
@@ -63,7 +64,9 @@ async function createBill(req, res) {
           order_value: req.body.Intomoney,
         }
       );
-      console.log(response.data)
+      }catch(error){
+        console.log(error.response.data)
+      }
     }
 
     // Trừ tồn kho
