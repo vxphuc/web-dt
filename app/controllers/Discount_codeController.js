@@ -2,7 +2,8 @@ const { default: axios } = require("axios")
 
 const giaTriMaGiam = async (req, res) =>{
     const response = await axios.post('https://chatapi.io.vn/gia-tri-ma-giam',{
-        code : req.body.code
+        code : req.body.code,
+        phone: req.body.phone
     })
     if(response.data == ""){
         res.json({value: "mã giảm giá không hợp lệ"})
