@@ -46,7 +46,11 @@ async function createBill(req, res) {
     }
 
     //tính giá sản phẩm sau khi acp mã
-    const giatien = req.body.Intomoney - ((req.body.Intomoney * (req.body.discount_value/100)));
+    let giatien
+    
+    if(req.body.discount_value){
+      giatien = req.body.Intomoney - ((req.body.Intomoney * (req.body.discount_value/100)))
+    }
 
     // Tạo đơn hàng
     const bill = await billModel.create({
