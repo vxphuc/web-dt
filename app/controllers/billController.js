@@ -46,7 +46,7 @@ async function createBill(req, res) {
     }
 
     //tính giá sản phẩm sau khi acp mã
-    let giatien
+    let giatien = req.body.Intomoney
     
     if(req.body.discount_value){
       giatien = req.body.Intomoney - ((req.body.Intomoney * (req.body.discount_value/100)))
