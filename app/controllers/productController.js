@@ -5,7 +5,9 @@ const cloudinary = require("../../config/cloudinaryConfig");
 
 //Get product not delete
 async function index(req, res, next) {
-  const limitRaw = req.query.limit;
+  try{
+    const limitRaw = req.query.limit;
+  const search = req.query.search || "";
   let limit;
   if (limitRaw === "0" || limitRaw === "all") {
     limit = null; // Hoặc 0, nhưng truyền thống hay dùng null để bỏ limit
@@ -20,7 +22,7 @@ async function index(req, res, next) {
   const [products, deleteCount, totalCount] = await Promise.all([
     ProductRepository.getAllWithJoin(
       [
-        { $match: { isDeleted: null } },
+        { $match: { isDeleted: null, name: { $regex: search, $options: "i" }}},
         {
           $lookup: {
             from: "typeproducs",
@@ -48,6 +50,9 @@ async function index(req, res, next) {
     totalPages: Math.ceil(totalCount / limit),
     currentPage: page,
   });
+  }catch{
+    res.json(500)
+  }
 }
 
 //create post
