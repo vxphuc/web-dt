@@ -3,16 +3,11 @@ const bill = require("../models/bill");
 
 const handleWebhook = async (req, res) => {
   try {
-    
     console.log("Received webhook:", req.body);
-    
-
     const description = req.body.data.description;
-
     // Regex tìm mã MongoDB 24 ký tự
     const match = description.match(/[a-f0-9]{24}/i);
     const orderId = match ? match[0] : null;
-
     const Bank = new bank({
       id: req.body.data.id,
       transactionDateTime: req.body.data.transactionDateTime,
@@ -33,7 +28,6 @@ const handleWebhook = async (req, res) => {
 const handlecheck = async (req, res) => {
   try {
     const {id}  = req.body;
-    
     const bankData = await bank.findOne({ orderId: id });
     if (!bankData) {
       console.log("Bank data not found for id:", id);
