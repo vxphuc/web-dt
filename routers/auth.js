@@ -8,7 +8,7 @@ const multerUpload = require('../app/middlewares/multerUpload')
 
 // sự kiện event
 const eventController = require("../app/controllers/eventController")
-router.post("/event", eventController.savePhone)
+router.post("/event", eventController.saveInformation)
 
 //đăng nhập
 router.post('/', authContrller.signin)

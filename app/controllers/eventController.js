@@ -2,9 +2,9 @@ const { messaging } = require("firebase-admin");
 const PhoneEvent = require("../models/event");
 const event = PhoneEvent
 
-const savePhone = async (req, res) =>{
+const saveInformation = async (req, res) =>{
     try{
-        const savenumperphone = await new event({phone: req.body.phone});
+        const savenumperphone = await new event(req.body);
         await savenumperphone.save();
         res.json("thêm thành công")
     }catch(err){
@@ -13,5 +13,5 @@ const savePhone = async (req, res) =>{
 }
 
 module.exports ={
-    savePhone
+    saveInformation
 }
