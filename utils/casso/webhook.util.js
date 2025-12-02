@@ -1,5 +1,5 @@
 /*webhook.util.js*/
-export default {
+module.exports = {
   create: async (data) => {
     let res = await api.post("/webhooks", data);
     return res;
