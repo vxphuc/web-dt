@@ -5,7 +5,8 @@ const phoneEvent = new schema({
     name: String,
     phone: String,
     company: String,
-    email: String
+    email: String,
+    listProduct: String
 });
 
 const PhoneEvent = mongoose.model("phoneEvent", phoneEvent);
