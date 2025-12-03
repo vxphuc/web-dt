@@ -76,6 +76,7 @@ const usersPaid = async (req, res, next) => {
   try {
     // Để thực hiện tính năng đồng bộ cần có Số tài khoản, Bạn có thể validate bằng schema ở middlewares
     // Hoặc có thể kiểm tra trong đây luôn
+    console.log('BODY:', req.body);
     if (!req.body.accountNumber) {
       return res.status(404).json({
         code: 404,
