@@ -24,16 +24,17 @@ module.exports = {
     return res;
   },
   /*webhook.util.js*/
-    parseOrderId: (caseInsensitive, transactionPrefix, description) => {
-        // Ở đây mình ở sử dụng regex để parse nội dung chuyển khoản có chứa orderId
-        // CASSO101 => orderId = 101
-        let re = new RegExp(transactionPrefix);
-        if (!caseInsensitive)
-            re = new RegExp(transactionPrefix, 'i');
-        let matchPrefix = description.match(re);
-        // Không tồn tại tiền tố giao dịch
-        if (!matchPrefix) return null;
-        let orderId = parseInt(description.substring(transactionPrefix.length, description.length));
-        return orderId;
-    }
+  parseOrderId: (description) => {
+  if (!description) return null;
+
+  const regex = /([a-fA-F0-9]{24})/;
+  const match = description.match(regex);
+
+  if (!match) return null;
+
+  return {
+    description: match[1]
+  };
+}
+
 };

@@ -13,7 +13,6 @@ const api_key = process.env.API_KEY_CASSO;
 
 const handleWebhook = async (req, res, next) => {
   try {
-    console.log(123);
     // B1: Ở đây mình sẽ thực hiện check secure-token. Bình thường phần này sẽ nằm trong middlewares
     // Mình sẽ code trực tiếp tại đây cho dễ hình dung luồng. Nếu không có secure-token hoặc sai đều trả về lỗi
     if (
@@ -28,13 +27,11 @@ const handleWebhook = async (req, res, next) => {
     // B2: Thực hiện lấy thông tin giao dịch
     for (let item of req.body.data) {
       
+
       // Lấy thông orderId từ nội dung giao dịch
       let orderId = webhookUtil.parseOrderId(
-        case_insensitive,
-        transaction_prefix,
         item.description
       );
-      console.log(orderId)
       // Nếu không có orderId phù hợp từ nội dung ra next giao dịch tiếp theo
       if (!orderId) continue;
       // Kiểm tra giao dịch còn hạn hay không? Nếu không qua giao dịch tiếp theo
@@ -44,8 +41,11 @@ const handleWebhook = async (req, res, next) => {
       )
         continue;
       // Bước quan trọng đây.
-      const updateStatusBill = await bill.updateOne({_id: orderId.description}, {statusPay: "đã thanh toán"})
-      console.log(orderId.description, updateStatusBill)
+      const updateStatusBill = await bill.updateOne(
+        { _id: orderId.description },
+        { statusPay: "đã thanh toán" }
+      );
+      console.log(orderId);
       // Sau khi có orderId Thì thực hiện thay đổi các trang thái giao dịch
       // Ví dụ như kiểm tra orderId có tồn tại trong danh sách các đơn hàng của bạn?
       // Sau đó cập nhật trạng thái theo orderId và amount nhận được: đủ hay thiếu tiền...
@@ -57,7 +57,7 @@ const handleWebhook = async (req, res, next) => {
       data: null,
     });
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
@@ -98,7 +98,7 @@ const usersPaid = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
-    next(error)
+    next(error);
   }
 };
 
