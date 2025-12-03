@@ -113,7 +113,6 @@ const registerWebhook = async (req, res, next) => {
     let newWebhook = await webhookUtil.create(data);
     // Lấy thông tin về userInfo
     let userInfo = await userUtil.getDetailUser();
-    console.log(data)
     return res.status(200).json({
       code: 200,
       message: "success",

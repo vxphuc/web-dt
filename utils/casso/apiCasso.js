@@ -4,8 +4,6 @@ const queryString =  require("qs");
 require("dotenv").config();
 const api_key = process.env.API_KEY_CASSO;
 
-
-
 const axiosClient = axios.create({
   baseURL: 'https://oauth.casso.vn/v2',
   headers: {
