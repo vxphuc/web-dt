@@ -1,6 +1,6 @@
 //utils/api.js
 const axios = require("axios");
-const queryString =  require("query-string");
+const queryString =  require("qs");
 require("dotenv").config();
 const api_key = process.env.API_KEY_CASSO;
 

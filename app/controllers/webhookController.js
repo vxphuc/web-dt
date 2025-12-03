@@ -1,16 +1,16 @@
-const { default: webhookUtil } = require("../../utils/casso/webhook.util");
+const webhookUtil = require("../../utils/casso/webhook.util");
 const syncUtil = require("../../utils/casso/sync.util");
 const bank = require("../models/bank");
 const bill = require("../models/bill");
 require("dotenv").config();
 
-const secure_token = process.env.CASSO_SECURE_TOKEN
+const secure_token = process.env.CASSO_SECURE_TOKEN;
 const expiration_date = 1;
-const transaction_prefix = 'CASSO';
+const transaction_prefix = "CASSO";
 const case_insensitive = false;
 const api_key = process.env.API_KEY_CASSO;
 
-const handleWebhook = async (req, res) => {
+const handleWebhook = async (req, res, next) => {
   try {
     // B1: Ở đây mình sẽ thực hiện check secure-token. Bình thường phần này sẽ nằm trong middlewares
     // Mình sẽ code trực tiếp tại đây cho dễ hình dung luồng. Nếu không có secure-token hoặc sai đều trả về lỗi
@@ -25,6 +25,7 @@ const handleWebhook = async (req, res) => {
     }
     // B2: Thực hiện lấy thông tin giao dịch
     for (let item of req.body.data) {
+      console.log(item)
       // Lấy thông orderId từ nội dung giao dịch
       let orderId = webhookUtil.parseOrderId(
         case_insensitive,
@@ -51,7 +52,7 @@ const handleWebhook = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    next(error);
+    console.log(error)
   }
 };
 
@@ -76,7 +77,7 @@ const usersPaid = async (req, res, next) => {
   try {
     // Để thực hiện tính năng đồng bộ cần có Số tài khoản, Bạn có thể validate bằng schema ở middlewares
     // Hoặc có thể kiểm tra trong đây luôn
-    console.log('BODY:', req.body);
+    console.log("BODY:", req.body);
     if (!req.body.accountNumber) {
       return res.status(404).json({
         code: 404,
@@ -92,6 +93,7 @@ const usersPaid = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+    next(error)
   }
 };
 
