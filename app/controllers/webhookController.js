@@ -1,4 +1,5 @@
 const webhookUtil = require("../../utils/casso/webhook.util");
+const userUtil = require("../../utils/casso/get_user_info.util");
 const syncUtil = require("../../utils/casso/sync.util");
 const bank = require("../models/bank");
 const bill = require("../models/bill");
