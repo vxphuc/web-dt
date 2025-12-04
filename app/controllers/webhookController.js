@@ -106,11 +106,11 @@ const registerWebhook = async (req, res, next) => {
   try {
     //Delete Toàn bộ webhook đã đăng kí trước đó với https://ten-mien-cua-ban.com/webhook/handler-bank-transfer
     await webhookUtil.deleteWebhookByUrl(
-      "https://sieuthidt.com/webhook/handler-bank-transfer"
+      "https://sieuthidt.io.vn/webhook/handler-bank-transfer"
     );
     //Tiến hành tạo webhook
     let data = {
-      webhook: "https://sieuthidt.com/webhook/handler-bank-transfer",
+      webhook: "https://sieuthidt.io.vn/webhook/handler-bank-transfer",
       secure_token: secure_token,
       income_only: true,
     };
