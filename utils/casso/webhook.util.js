@@ -13,6 +13,10 @@ module.exports = {
     let res = await api.put(`/webhooks/${webhookId}`, data);
     return res;
   },
+  deleteWebhookById: async (webhookId) => {
+    let res = await api.delete(`/webhooks/${webhookId}`);
+    return res;
+  },
   deleteWebhookByUrl: async (urlWebhook) => {
     // B1: Lấy danh sách webhook
     const list = await api.get("/webhooks");
@@ -26,12 +30,6 @@ module.exports = {
 
     // B3: Xóa đúng theo ID
     return await api.delete(`/webhooks/${found.id}`);
-  },
-  deleteWebhookByUrl: async (urlWebhook) => {
-    // Thêm url vào query để delete https://oauth.casso.vn/v1/webhooks?webhook=https://website-cua-ban.com/api/webhook
-    let query = { params: { webhook: urlWebhook } };
-    let res = await api.delete(`/webhooks`, query);
-    return res;
   },
   /*webhook.util.js*/
   parseOrderId: (description) => {
