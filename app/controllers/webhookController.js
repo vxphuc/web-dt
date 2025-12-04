@@ -61,22 +61,6 @@ const handleWebhook = async (req, res, next) => {
   }
 };
 
-const handlecheck = async (req, res) => {
-  try {
-    const { id } = req.body;
-    const bankData = await bank.findOne({ orderId: id });
-    if (!bankData) {
-      console.log("Bank data not found for id:", id);
-      return res.status(404).json({ code: 404, message: "Not Found" });
-    }
-    return res.status(200).json({ code: 200, message: "OK", data: bankData });
-  } catch (error) {
-    console.error("Error handling check:", error);
-    return res
-      .status(500)
-      .json({ code: 500, message: "Internal Server Error" });
-  }
-};
 
 const usersPaid = async (req, res, next) => {
   try {
@@ -127,6 +111,23 @@ const registerWebhook = async (req, res, next) => {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+const handlecheck = async (req, res) => {
+  try {
+    const { id } = req.body;
+    const bankData = await bank.findOne({ orderId: id });
+    if (!bankData) {
+      console.log("Bank data not found for id:", id);
+      return res.status(404).json({ code: 404, message: "Not Found" });
+    }
+    return res.status(200).json({ code: 200, message: "OK", data: bankData });
+  } catch (error) {
+    console.error("Error handling check:", error);
+    return res
+      .status(500)
+      .json({ code: 500, message: "Internal Server Error" });
   }
 };
 
