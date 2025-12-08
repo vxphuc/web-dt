@@ -12,6 +12,5 @@ router.post("/users-paid", webhookController.usersPaid)
 // Route này sẽ thực hiện đăng kí webhook dựa vào API KEY và lấy thông tin về business và banks
 router.post('/register-webhook', webhookController.registerWebhook)
 
-router.post('/check', webhookController.handlecheck);
 
 module.exports = router;
