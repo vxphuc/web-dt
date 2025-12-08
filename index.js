@@ -9,14 +9,36 @@ const http = require("http");
 require("dotenv").config();
 const { connectRedis } = require("./config/redis");
 
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+
+// ========================
+//  CẤU HÌNH SOCKET.IO CORS
+// ========================
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "https://dt-group.netlify.app",
+      "http://localhost:3000",
+      "http://localhost:2999",
+      "https://sieuthidt.com",
+      "https://h5.zdn.vn",
+      "https://sieuthidt.io.vn"
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+
 (async () => {
-  // --- 1. CORS ---
+  // --- 1. Express CORS ---
   const whitelist = [
     "https://dt-group.netlify.app",
     "http://localhost:3000",
     "https://sieuthidt.com",
     "http://localhost:2999",
     "https://h5.zdn.vn",
+    "https://sieuthidt.io.vn"
   ];
 
   const corsOptions = {
@@ -37,16 +59,28 @@ const { connectRedis } = require("./config/redis");
   app.use(express.static("public"));
   app.options("*", cors(corsOptions));
 
-  // --- 2. Kết nối DB và Redis ---
-  db.connect();
-  await connectRedis(); // ✅ Chờ Redis connect xong mới chạy tiếp
+  // Gắn io vào app để controller sử dụng
+  app.set("io", io);
 
-  // --- 3. Router ---
+  // --- 2. DB + Redis ---
+  db.connect();
+  await connectRedis();
+
+  // --- 3. SOCKET.IO EVENTS ---
+  io.on("connection", (socket) => {
+    console.log("Socket connected:", socket.id);
+
+    socket.on("join-order", (order_id) => {
+      socket.join(order_id.toString());
+      console.log(`Client ${socket.id} joined room: ${order_id}`);
+    });
+  });
+
+  // --- 4. Router ---
   router(app);
 
-  // --- 4. Server ---
-  const server = http.createServer(app);
+  // --- 5. Server ---
   server.listen(port, () => {
-    console.log(`🚀 App listening on port ${port}`);
+    console.log(`App listening on port ${port}`);
   });
 })();
