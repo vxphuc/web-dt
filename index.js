@@ -23,7 +23,6 @@ const io = new Server(server, {
       "http://localhost:2999",
       "https://sieuthidt.com",
       "https://h5.zdn.vn",
-      "https://sieuthidt.io.vn"
     ],
     methods: ["GET", "POST"],
     credentials: true,
@@ -38,7 +37,6 @@ const io = new Server(server, {
     "https://sieuthidt.com",
     "http://localhost:2999",
     "https://h5.zdn.vn",
-    "https://sieuthidt.io.vn"
   ];
 
   const corsOptions = {
