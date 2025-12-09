@@ -43,7 +43,9 @@ const handleWebhook = async (req, res, next) => {
         { statusPay: "đã thanh toán" }
       );
 
-      io.to(orderId.toString()).emit("payment-status", {
+      const realOrderId = orderId.description;
+
+      io.to(realOrderId).emit("payment-status", {
         _id: orderId.description.toString(),
         status: "PAID",
       });

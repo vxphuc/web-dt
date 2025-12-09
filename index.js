@@ -67,8 +67,8 @@ const io = new Server(server, {
   // --- 3. SOCKET.IO EVENTS ---
   io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
-
     socket.on("join-order", (order_id) => {
+      console.log(order_id);
       socket.join(order_id.toString());
       console.log(`Client ${socket.id} joined room: ${order_id}`);
     });
