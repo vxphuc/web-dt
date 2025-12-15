@@ -221,7 +221,7 @@ const decodePhone = async (req, res) => {
   const endpoint = "https://graph.zalo.me/v2.0/me/info";
   const userAccessToken = req.body.accessToken;
   const token = req.body.token;
-  const secretKey = "TU4QIsG3TvIF77FMHBB8";
+  const secretKey = process.env.ZALO_SECRETKEY;
 
 
   const options = {
