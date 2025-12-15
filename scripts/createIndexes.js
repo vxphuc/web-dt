@@ -5,13 +5,13 @@ const User = require('../app/models/user');
 
 (async () => {
   try {
-    // ✅ Kết nối MongoDB trước
+    // Kết nối MongoDB trước
     await connect();
 
-    // ⚠️ THÊM LOG cho dễ kiểm tra
+    // THÊM LOG cho dễ kiểm tra
     console.log('🔌 Kết nối MongoDB thành công');
 
-    // ✅ Tạo index unique cho numberPhone
+    // Tạo index unique cho numberPhone
     const result = await User.collection.createIndex(
       { numberPhone: 1 },
       { unique: true }
