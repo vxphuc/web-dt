@@ -4,6 +4,7 @@ const authContrller = require('../app/controllers/authController')
 const checkAuth = require('../app/middlewares/checkAuth')
 const checkRole = require('../app/middlewares/checkRole')
 const multerUpload = require('../app/middlewares/multerUpload')
+const rateLimit = require('../app/middlewares/rateLimit/ipRateLimit')
 
 
 // sự kiện event
@@ -13,7 +14,7 @@ router.post("/event", eventController.saveInformation)
 //đăng nhập
 router.post('/', authContrller.signin)
 // tạo OTP
-router.post('/create-otp', authContrller.createOTP)
+router.post('/create-otp',rateLimit.limitPhone, authContrller.createOTP)
 // tạo mac gửi cho zalo
 router.post('/mac', authContrller.createHmacSignature)
 //tạo banner hiển thị trang home
