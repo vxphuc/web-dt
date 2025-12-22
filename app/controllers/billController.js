@@ -3,11 +3,15 @@ const userModel = require("../models/user");
 const Product = require("../models/product");
 const user = require("../models/user");
 const { default: axios } = require("axios");
+const logger = require("../../config/logger");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
+    logger.info(req.ip);
+    logger.info(productsInOrder);
+    logger.info("gửi đơn hàng để tạo đơn hàng");
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
       return res
@@ -46,10 +50,12 @@ async function createBill(req, res) {
     }
 
     //tính giá sản phẩm sau khi acp mã
-    let giatien = req.body.Intomoney
-    
-    if(req.body.discount_value){
-      giatien = req.body.Intomoney - ((req.body.Intomoney * (req.body.discount_value/100)))
+    let giatien = req.body.Intomoney;
+
+    if (req.body.discount_value) {
+      giatien =
+        req.body.Intomoney -
+        req.body.Intomoney * (req.body.discount_value / 100);
     }
 
     // Tạo đơn hàng
@@ -58,23 +64,21 @@ async function createBill(req, res) {
       Intomoney: giatien,
     });
     if (req.body.code) {
-      try{
-        
+      try {
         const response = await axios.post(
-        "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
-        {
-          order_id: bill._id,
-          code: req.body.code,
-          phone: bill.phoneNumber,
-          order_value: req.body.Intomoney,
-        }
-      );
-      }catch(error){
+          "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
+          {
+            order_id: bill._id,
+            code: req.body.code,
+            phone: bill.phoneNumber,
+            order_value: req.body.Intomoney,
+          }
+        );
+      } catch (error) {
         return res.json(error.response?.data);
       }
     }
 
-    
     // Trừ tồn kho
     for (const item of productsInOrder) {
       await Product.reduceStock(item.productID, item.quantity);
