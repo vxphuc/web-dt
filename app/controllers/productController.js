@@ -2,6 +2,7 @@ const ProductRepository = require("../models/product");
 const fs = require("fs");
 const slugify = require("slugify");
 const cloudinary = require("../../config/cloudinaryConfig");
+const logger = require('../../config/logger')
 
 //Get product not delete
 async function index(req, res, next) {

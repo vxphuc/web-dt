@@ -1,8 +1,4 @@
-
-2025-12-20T09:50:04.377Z [rights] info: ::ffff:172.18.0.1
-2025-12-20T09:52:48.843Z [rights] info: ::ffff:172.18.0.1
-2025-12-20T09:52:48.843Z [rights] info: [object Object]
-2025-12-20T09:52:48.843Z [rights] info: gửi đơn hàng để tạo đơn hàng
-2025-12-20T09:53:42.400Z [rights] info: ::ffff:172.18.0.1
-2025-12-20T09:53:42.400Z [rights] info: [object Object]
-2025-12-20T09:53:42.400Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2025-12-23T09:26:53.262Z [rights] error: config/convertWorld/config.js.convertWorlText: Error: ENOENT: no such file or directory, open 'D:\Shop\backend\web-dt\text.docx'
+2025-12-23T09:27:03.956Z [rights] error: config/convertWorld/config.js.convertWorlText: Error: ENOENT: no such file or directory, open 'D:\Shop\backend\web-dt\text.docx'
+2025-12-23T09:30:16.808Z [rights] error: config/convertWorld/config.js.convertWorlText: Error: ENOENT: no such file or directory, open 'D:\Shop\backend\web-dt\text.docx'
+2025-12-23T09:31:42.992Z [rights] error: config/convertWorld/config.js.convertWorlText: Error: ENOENT: no such file or directory, open 'D:\Shop\backend\web-dt\text.docx'

@@ -12,8 +12,7 @@ const { getRedisClient } = require('../../config/redis')
 const qs = require('qs')
 const refresh_token = require('../models/refresh_token_zalo')
 const {createHmac} = require('crypto');
-
-
+const logger = require('../../config/logger')
 
 // taọ banener
 async function uploadBaner(req, res, next) {
@@ -37,7 +36,7 @@ async function GetBanner(req, res, next) {
     });
     await res.json(times);
   } catch {
-    res.status(500).json({ message: "Lỗi server" });
+    return res.status(500).json({ message: "Lỗi server" });
   }
 }
 
@@ -58,14 +57,15 @@ async function deleteBanner(req, res, next) {
     Banner.deleteOne({ _id: req.params.id })
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
-  } catch {
-    res.json("lỗi khi xóa");
+  } catch(err) {
+      return res.json("lỗi khi xóa");
   }
 }
 
 // POST tạo OTP và gửi otp
 async function createOTP(req, res, next) {
-  const response = await refresh_token.find({name: "zalo_token"})
+  try{
+    const response = await refresh_token.find({name: "zalo_token"})
 
   const refresh_token_zalo = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
     qs.stringify({
@@ -96,6 +96,10 @@ async function createOTP(req, res, next) {
     },
   })
   res.status(200).json({ message: "OTP sent successfully", numberPhone, data: zaloRes.data});
+  }catch(err){
+    logger.error(`authController.createOTP ${err}`);
+    return res.status(500).json(err);
+  }
 }
 
 //POST create and login
@@ -118,8 +122,9 @@ async function signin(req, res, next) {
     const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp, role: user.role}, process.env.JWT_SECRET, { expiresIn: '8h' });
 
     res.json({ message: "Login successful", token });
-  } catch {
-    res.status(401).json({ error: "Authentication failed" });
+  } catch(err) {
+    logger.error(`authController.signin ${err}`)
+    return res.status(401).json({ error: "Authentication failed" });
   }
 }
 
@@ -161,7 +166,8 @@ async function logout(req, res, next) {
     });
     res.status(200).json({ message: "Logged out" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to logout" });
+    logger.error(`authController.logout ${error}`)
+    return res.status(500).json({ error: "Failed to logout" });
   }
 }
 

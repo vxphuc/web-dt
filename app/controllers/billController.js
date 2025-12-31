@@ -9,8 +9,6 @@ const logger = require("../../config/logger");
 async function createBill(req, res) {
   try {
     const productsInOrder = req.body.products;
-    logger.info(req.ip);
-    logger.info(productsInOrder);
     logger.info("gửi đơn hàng để tạo đơn hàng");
 
     if (!productsInOrder || !Array.isArray(productsInOrder)) {
@@ -75,6 +73,7 @@ async function createBill(req, res) {
           }
         );
       } catch (error) {
+        logger.error(`tạo đơn hàng billController: createBill = err ${error}`);
         return res.json(error.response?.data);
       }
     }
@@ -89,7 +88,7 @@ async function createBill(req, res) {
 
     return res.json(bill);
   } catch (error) {
-    console.error("❌ Lỗi createBill:", error);
+    logger.error(`billController: createBill = err ${error}`);
     return res.status(500).json({ message: "Lỗi server" });
   }
 }
@@ -101,7 +100,7 @@ const getBillByUser = async (req, res) => {
     const bill = await billModel.find({ phoneNumber: numberPhone });
     res.json(bill);
   } catch (error) {
-    console.error(error);
+    logger.error(`billController: getBillByUser = err ${error}`)
     res.status(500).json({ message: error });
   }
 };
