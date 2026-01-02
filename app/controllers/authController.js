@@ -193,10 +193,10 @@ async function editProfile(req, res, next) {
 async function editUserByAdmin(req, res, next) {
   try {
     const { id } = req.params;
-    const { name, gender, role } = req.body;
+    const { name, role } = req.body;
     const result = await User.updateOne(
       { _id: id },
-      { $set: { name: name, gender: gender, role: role } }
+      { $set: { name: name, role: role } }
     );
     res.json(result);
   } catch (error) {
@@ -268,6 +268,19 @@ const createHmacSignature = async (req, res) => {
   res.json({ mac });
 };
 
+const approveKOC = async(req, res) =>{
+  try{
+    const { numberPhone} = req.params;
+    const result = await User.updateOne(
+      { numberPhone: numberPhone },
+      { $set: { role: "koc" } }
+    );
+    res.json(result);
+  }catch(err){
+    return res.json(err)
+  }
+}
+
 
 module.exports = {
   signin,
@@ -285,5 +298,6 @@ module.exports = {
   decodePhone,
   verifySignature,
   createOTP,
-  createHmacSignature
+  createHmacSignature,
+  approveKOC
 };

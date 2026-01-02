@@ -18,7 +18,7 @@ router.post('/create-otp',rateLimit.limitPhone, authContrller.createOTP)
 // tạo mac gửi cho zalo
 router.post('/mac', authContrller.createHmacSignature)
 //tạo banner hiển thị trang home
-router.post('/upload-banner', checkAuth, checkRole(['admin', 'user']), multerUpload.single('image') ,authContrller.uploadBaner)
+router.post('/upload-banner', checkAuth, checkRole(['admin']), multerUpload.single('image') ,authContrller.uploadBaner)
 router.get('/NotificationAdmin', checkRole(['admin']) ,authContrller.notification)
 
 
@@ -41,6 +41,9 @@ router.put('/editProfile',checkAuth, authContrller.editProfile)
 router.post('/zalo/decode-phone', authContrller.decodePhone)
 // lấy tài khoản đang nhập bằng tài khaonr admin
 router.get('/user-profile-admin/:id',checkAuth, checkRole('admin'), authContrller.getUserByAdmin)
+
+//cập nhập role cho KOC
+router.patch("/dang-ky-koc/:numberPhone", authContrller.approveKOC)
 
 //chỉnh sửa tài khoản bằng tài khoản admin
 router.put('/:id/editUserByAdmin',checkAuth, checkRole('admin'), authContrller.editUserByAdmin)

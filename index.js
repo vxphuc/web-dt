@@ -18,11 +18,11 @@ const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
     origin: [
-      "https://dt-group.netlify.app",
       "http://localhost:3000",
-      "http://localhost:2999",
       "https://sieuthidt.com",
       "https://h5.zdn.vn",
+      "https://chatapi.io.vn",
+      "http://localhost:8001",
     ],
     methods: ["GET", "POST"],
     credentials: true,
