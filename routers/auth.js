@@ -43,7 +43,7 @@ router.post('/zalo/decode-phone', authContrller.decodePhone)
 router.get('/user-profile-admin/:id',checkAuth, checkRole('admin'), authContrller.getUserByAdmin)
 
 //cập nhập role cho KOC
-router.patch("/dang-ky-koc/:numberPhone", authContrller.approveKOC)
+router.patch("/dang-ky-koc/:numberPhone",checkAuth, checkRole(['admin']), authContrller.approveKOC)
 
 //chỉnh sửa tài khoản bằng tài khoản admin
 router.put('/:id/editUserByAdmin',checkAuth, checkRole('admin'), authContrller.editUserByAdmin)
