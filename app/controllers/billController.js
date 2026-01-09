@@ -71,7 +71,9 @@ async function createBill(req, res) {
           "https://chatapi.io.vn/luu-don-hang-va-san-pham-trong-don",
           {
             madonhang: bill._id.toString(),
-            diachidonhang: bill.province,
+            province: bill.province,
+            ward: bill.ward,
+            road: bill.road,
             tennguoidat: bill.UserName,
             sotiensaukhidungma: sotiensau,
             maduocsudung: req.body.code,
