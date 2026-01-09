@@ -1,0 +1,33 @@
+2026-01-07T08:33:29.426Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T08:33:29.682Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 404
+2026-01-07T08:34:30.505Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T08:34:30.749Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 404
+2026-01-07T08:38:08.823Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T08:38:09.152Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 404
+2026-01-07T08:42:02.792Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T08:42:02.988Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 404
+2026-01-07T09:08:33.029Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:08:33.367Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 404
+2026-01-07T09:09:26.316Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:10:25.615Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:10:25.800Z [rights] error: tạo đơn hàng billController: createBill = err Error: connect ECONNREFUSED 127.0.0.1:8001
+2026-01-07T09:12:57.630Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:16:14.491Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:16:14.643Z [rights] error: tạo đơn hàng billController: createBill = err Error: connect ECONNREFUSED 127.0.0.1:8001
+2026-01-07T09:18:32.303Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:18:32.448Z [rights] error: tạo đơn hàng billController: createBill = err Error: connect ECONNREFUSED 127.0.0.1:8001
+2026-01-07T09:26:27.756Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:26:27.960Z [rights] error: tạo đơn hàng billController: createBill = err Error: connect ECONNREFUSED 127.0.0.1:8001
+2026-01-07T09:29:24.019Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:29:24.203Z [rights] error: tạo đơn hàng billController: createBill = err Error: connect ECONNREFUSED 127.0.0.1:8001
+2026-01-07T09:39:44.661Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:39:44.851Z [rights] error: tạo đơn hàng billController: createBill = err Error: connect ECONNREFUSED 172.19.0.3:8001
+2026-01-07T09:46:52.665Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:46:52.963Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
+2026-01-07T09:49:48.253Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:49:48.535Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
+2026-01-07T09:54:04.503Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:54:04.790Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
+2026-01-07T09:57:01.874Z [rights] info: gửi đơn hàng để tạo đơn hàng
+2026-01-07T09:57:02.170Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
+2026-01-07T10:00:51.302Z [rights] info: gửi đơn hàng để tạo đơn hàng

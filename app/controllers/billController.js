@@ -55,21 +55,33 @@ async function createBill(req, res) {
         req.body.Intomoney -
         req.body.Intomoney * (req.body.discount_value / 100);
     }
+    console.log(req.body.discount_value);
 
     // Tạo đơn hàng
     const bill = await billModel.create({
       ...req.body,
       Intomoney: giatien,
     });
+    const sotientruockhi = Number(req.body.Intomoney);
+    const sotiensau = Number(bill.Intomoney.toString());
+
     if (req.body.code) {
       try {
         const response = await axios.post(
-          "https://chatapi.io.vn/them-ma-giam-gia-va-nguoi-su-dung",
+          "https://chatapi.io.vn/luu-don-hang-va-san-pham-trong-don",
           {
-            order_id: bill._id,
-            code: req.body.code,
-            phone: bill.phoneNumber,
-            order_value: req.body.Intomoney,
+            madonhang: bill._id.toString(),
+            diachidonhang: bill.province,
+            tennguoidat: bill.UserName,
+            sotiensaukhidungma: sotiensau,
+            maduocsudung: req.body.code,
+            sotientruockhisudungma: sotientruockhi,
+            sanpham: bill.products.map((p) => ({
+              name: p.name,
+              quantity: Number(p.quantity),
+              price: Number(p.price ?? 0),
+            })),
+            sodienthoainguoidat: bill.phoneNumber,
           }
         );
       } catch (error) {
@@ -100,7 +112,7 @@ const getBillByUser = async (req, res) => {
     const bill = await billModel.find({ phoneNumber: numberPhone });
     res.json(bill);
   } catch (error) {
-    logger.error(`billController: getBillByUser = err ${error}`)
+    logger.error(`billController: getBillByUser = err ${error}`);
     res.status(500).json({ message: error });
   }
 };

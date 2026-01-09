@@ -1,0 +1,4 @@
+2026-01-07T09:46:52.963Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
+2026-01-07T09:49:48.535Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
+2026-01-07T09:54:04.790Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
+2026-01-07T09:57:02.170Z [rights] error: tạo đơn hàng billController: createBill = err AxiosError: Request failed with status code 422
