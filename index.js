@@ -1,3 +1,18 @@
+//gửi người anh em lập trình
+//
+// lúc tôi đang viết đống code này,
+// chỉ có chúa với tui là hiểu nó chạy kiểu gì
+//
+//giờ thì... xin chia buồn,
+//chỉ còn mỗi chúa hiểu thôi!
+//
+//nên nếu bro đang cố tối ưu,
+//cái mớ này và nó toang (99% là vậy)
+//thì làm ơn tăng cái biến đếm này lên
+//để người xui xẻo tiếp theo còn biết đường chạy
+//
+//total_hours_wasted_here = 1
+
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 5000;
@@ -15,6 +30,8 @@ const { Server } = require("socket.io");
 // ========================
 //  CẤU HÌNH SOCKET.IO CORS
 // ========================
+
+
 const io = new Server(server, {
   cors: {
     origin: [
@@ -65,6 +82,7 @@ const io = new Server(server, {
   await connectRedis();
 
   // --- 3. SOCKET.IO EVENTS ---
+
   io.on("connection", (socket) => {
     console.log("Socket connected:", socket.id);
     socket.on("join-order", (order_id) => {
@@ -75,6 +93,7 @@ const io = new Server(server, {
   });
 
   // --- 4. Router ---
+
   router(app);
 
 
