@@ -13,6 +13,11 @@ router.get('/user', checkAuth, billController.getBillByUser);
 router.get('/user/status', billController.getBillByUserAndStatus);
 //tạo mói hóa đơn
 router.post( '/create', billController.createBill)
+
+// sự kiện yến sữa
+router.post("/mua-yen-sua", billController.doiqua)
+
+
 //sửa trạng thái giao dịch
 router.patch('/billstatus/:id', billController.updateStatus);
 router.patch('/status/:id', billController.updateBillStatus);

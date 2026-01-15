@@ -68,6 +68,9 @@ const billSchema = new Schema({
     type: String,
     default: "",
   },
+  magiamgia: {
+    type: String
+  }
 });
 
 module.exports = mongoose.model("Bill", billSchema);

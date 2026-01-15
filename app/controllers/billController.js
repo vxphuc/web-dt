@@ -4,6 +4,8 @@ const Product = require("../models/product");
 const user = require("../models/user");
 const { default: axios } = require("axios");
 const logger = require("../../config/logger");
+const { error } = require("winston");
+const ProductRepository = require("../models/product");
 
 //tạo mới hóa đơn
 async function createBill(req, res) {
@@ -211,6 +213,66 @@ const getBillByUserAndStatus = async (req, res) => {
   }
 };
 
+// sự kiện đổi quà
+const doiqua = async (req, res) => {
+  try {
+    const {
+      magiamgia,
+      madonhang,
+      province,
+      ward,
+      road,
+      UserName,
+      phoneNumber,
+    } = req.body;
+
+    let ktrma;
+    try {
+      ktrma = await axios.post("https://chatapi.io.vn/kiem-tra-ma-hop-le", {
+        magiamgia,
+      });
+    } catch (err) {
+      if (err.response && err.response.status === 400) {
+        return res.status(400).json("mã không hợp lệ");
+      }
+      return res.status(500).json("lỗi kiểm tra mã giảm giá");
+    }
+
+    if (madonhang != "687462f1ce0e72618e43c61d") {
+      return res.status(400).json("sản phẩm không hợp lệ");
+    }
+
+    const sanpham = await ProductRepository.getAll({
+      _id: "687462f1ce0e72618e43c61d",
+    });
+    const sanpham1 = sanpham.map((sp) => {
+      return {
+        name: sp.name,
+        price: sp.price,
+        quantity: 1,
+        img: sp.img?.[0],
+        productID: sp.typeProductId,
+      };
+    });
+
+    const bill = await billModel.create({
+      magiamgia: magiamgia,
+      products: sanpham1,
+      Intomoney: 0,
+      province,
+      ward,
+      road,
+      UserName,
+      phoneNumber,
+    });
+
+    return res.status(200).json({ message: "tạo thành công" });
+    
+  } catch (error) {
+    return res.status(400).json({ message: error });
+  }
+};
+
 module.exports = {
   createBill,
   getBillByUser,
@@ -220,4 +282,5 @@ module.exports = {
   updateStatus,
   cancelOrder,
   getBillByUserAndStatus,
+  doiqua,
 };
