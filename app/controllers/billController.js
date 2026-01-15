@@ -238,12 +238,12 @@ const doiqua = async (req, res) => {
       return res.status(500).json("lỗi kiểm tra mã giảm giá");
     }
 
-    if (madonhang != "687462f1ce0e72618e43c61d") {
+    if (madonhang != "6954c48b3f84f2fd3ec4bb68") {
       return res.status(400).json("sản phẩm không hợp lệ");
     }
 
     const sanpham = await ProductRepository.getAll({
-      _id: "687462f1ce0e72618e43c61d",
+      _id: "6954c48b3f84f2fd3ec4bb68",
     });
     const sanpham1 = sanpham.map((sp) => {
       return {
