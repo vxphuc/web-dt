@@ -108,22 +108,27 @@ async function createOTP(req, res, next) {
 async function signin(req, res, next) {
   const { numberPhone, otp } = req.body;
   try {
-    let user = await User.findOne({ numberPhone: req.body.numberPhone });
-    const verified = await verifyOtp(numberPhone, otp);
+    phoneslice = `84${numberPhone.slice(1)}`
+    let user = await User.findOne({ numberPhone: phoneslice });
+    // const verified = await verifyOtp(numberPhone, otp);
+    const verified = await axios.post("https://chatapi.io.vn/dang-nhap",{
+      sodienthoai: phoneslice,
+      otp: otp
+    })
     if(!verified) {
       return res.status(401).json({ error: "Invalid OTP" });
     }
     if (!user) {
       user = new User({
-        numberPhone: numberPhone,
+        numberPhone: phoneslice,
         role: "user",
       });
       await user.save();
     }
     // Tạo JWT token
-    const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp, role: user.role}, process.env.JWT_SECRET, {algorithm: "HS256", expiresIn: '8h'}, );
+    // const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp, role: user.role}, process.env.JWT_SECRET, {algorithm: "HS256", expiresIn: '8h'}, );
 
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", verified });
   } catch(err) {
     logger.error(`authController.signin ${err}`)
     return res.status(401).json({ error: "Authentication failed" });
