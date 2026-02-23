@@ -62,7 +62,7 @@ async function deleteBanner(req, res, next) {
   }
 }
 
-// POST tạo OTP và gửi otp
+// POST gửi otp
 async function createOTP(req, res, next) {
   try{
     const response = await refresh_token.find({name: "zalo_token"})
@@ -84,6 +84,7 @@ async function createOTP(req, res, next) {
   phoneslice = `84${numberPhone.slice(1)}`
   // const otp = await createOtp(numberPhone);
   const otp = await axios.post(`https://chatapi.io.vn/tao-otp?numberPhone=${numberPhone}`)
+  console.log(otp)
   const zaloRes = await axios.post('https://business.openapi.zalo.me/message/template',{
     phone: phoneslice,
     template_id: process.env.ZALOPAY_OTP,
