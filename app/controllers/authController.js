@@ -82,12 +82,13 @@ async function createOTP(req, res, next) {
   await refresh_token.updateOne({ name: 'zalo_token' }, { token: refresh_token_zalo.data.refresh_token });
   const { numberPhone } = req.body;
   phoneslice = `84${numberPhone.slice(1)}`
-  const otp = await createOtp(numberPhone);
+  // const otp = await createOtp(numberPhone);
+  const otp = await axios.post(`https://chatapi.io.vn/tao-otp?numberPhone=${numberPhone}`)
   const zaloRes = await axios.post('https://business.openapi.zalo.me/message/template',{
     phone: phoneslice,
     template_id: process.env.ZALOPAY_OTP,
     template_data: {
-      otp: otp,
+      otp: otp.data.OTP,
     },
   },{
     headers: {
