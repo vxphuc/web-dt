@@ -112,7 +112,7 @@ async function signin(req, res, next) {
     let user = await User.findOne({ numberPhone: phoneslice });
     // const verified = await verifyOtp(numberPhone, otp);
     const verified = await axios.post("https://chatapi.io.vn/dang-nhap",{
-      sodienthoai: phoneslice,
+      sodienthoai: numberPhone,
       otp: otp
     })
     if(!verified) {
