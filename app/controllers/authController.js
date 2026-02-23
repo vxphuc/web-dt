@@ -84,7 +84,6 @@ async function createOTP(req, res, next) {
   phoneslice = `84${numberPhone.slice(1)}`
   // const otp = await createOtp(numberPhone);
   const otp = await axios.post(`https://chatapi.io.vn/tao-otp?numberPhone=${numberPhone}`)
-  console.log(otp)
   const zaloRes = await axios.post('https://business.openapi.zalo.me/message/template',{
     phone: phoneslice,
     template_id: process.env.ZALOPAY_OTP,
@@ -109,6 +108,7 @@ async function signin(req, res, next) {
   const { numberPhone, otp } = req.body;
   try {
     const phoneslice = `84${numberPhone.slice(1)}`
+    console.log(phoneslice, otp)
     let user = await User.findOne({ numberPhone: phoneslice });
     // const verified = await verifyOtp(numberPhone, otp);
     const verified = await axios.post("https://chatapi.io.vn/dang-nhap",{
