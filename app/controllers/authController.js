@@ -108,7 +108,7 @@ async function createOTP(req, res, next) {
 async function signin(req, res, next) {
   const { numberPhone, otp } = req.body;
   try {
-    phoneslice = `84${numberPhone.slice(1)}`
+    const phoneslice = `84${numberPhone.slice(1)}`
     let user = await User.findOne({ numberPhone: phoneslice });
     // const verified = await verifyOtp(numberPhone, otp);
     const verified = await axios.post("https://chatapi.io.vn/dang-nhap",{
@@ -128,7 +128,7 @@ async function signin(req, res, next) {
     // Tạo JWT token
     // const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp, role: user.role}, process.env.JWT_SECRET, {algorithm: "HS256", expiresIn: '8h'}, );
 
-    res.json({ message: "Login successful", verified });
+    res.json({ message: "Login successful", token: verified.data });
   } catch(err) {
     logger.error(`authController.signin ${err}`)
     return res.status(401).json({ error: "Authentication failed" });
