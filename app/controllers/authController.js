@@ -89,7 +89,7 @@ async function createOTP(req, res, next) {
     phone: phoneslice,
     template_id: process.env.ZALOPAY_OTP,
     template_data: {
-      otp: otp.data.OTP,
+      otp: otp.data,
     },
   },{
     headers: {
