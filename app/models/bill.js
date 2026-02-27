@@ -5,6 +5,9 @@ const billSchema = new Schema({
   province: {
     type: String,
   },
+  madonhang:{
+    type: String
+  },
   District: {
     type: String,
   },
