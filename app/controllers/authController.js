@@ -14,6 +14,70 @@ const refresh_token = require('../models/refresh_token_zalo')
 const {createHmac} = require('crypto');
 const logger = require('../../config/logger')
 
+let refreshTokenPromise = null;
+
+async function getZaloAccessToken() {
+  const tokenDoc = await refresh_token.findOne({ name: 'zalo_token' });
+  if (!tokenDoc?.token) {
+    throw new Error('Missing zalo refresh token in database');
+  }
+
+  const now = Date.now();
+  const expiresAt = tokenDoc.accessTokenExpiresAt
+    ? new Date(tokenDoc.accessTokenExpiresAt).getTime()
+    : 0;
+
+  if (tokenDoc.accessToken && expiresAt - now > 30 * 1000) {
+    return tokenDoc.accessToken;
+  }
+
+  if (refreshTokenPromise) {
+    return refreshTokenPromise;
+  }
+
+  refreshTokenPromise = (async () => {
+    const latestTokenDoc = await refresh_token.findOne({ name: 'zalo_token' });
+    if (!latestTokenDoc?.token) {
+      throw new Error('Missing latest zalo refresh token in database');
+    }
+
+    const refreshed = await axios.post(
+      'https://oauth.zaloapp.com/v4/oa/access_token',
+      qs.stringify({
+        app_id: '1240211320870133371',
+        refresh_token: latestTokenDoc.token,
+        grant_type: 'refresh_token',
+      }),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          secret_key: process.env.ZALO_SECRET,
+        },
+      }
+    );
+
+    const expiresIn = Number(refreshed.data.expires_in || 3600);
+    const accessTokenExpiresAt = new Date(Date.now() + expiresIn * 1000);
+
+    await refresh_token.updateOne(
+      { name: 'zalo_token' },
+      {
+        token: refreshed.data.refresh_token,
+        accessToken: refreshed.data.access_token,
+        accessTokenExpiresAt,
+      }
+    );
+
+    return refreshed.data.access_token;
+  })();
+
+  try {
+    return await refreshTokenPromise;
+  } finally {
+    refreshTokenPromise = null;
+  }
+}
+
 // taọ banener
 async function uploadBaner(req, res, next) {
   const banner = await new Banner({
@@ -65,23 +129,10 @@ async function deleteBanner(req, res, next) {
 // POST gửi otp
 async function createOTP(req, res, next) {
   try{
-    const response = await refresh_token.find({name: "zalo_token"})
 
-  const refresh_token_zalo = await axios.post('https://oauth.zaloapp.com/v4/oa/access_token',
-    qs.stringify({
-      app_id: '1240211320870133371',
-      refresh_token: response[0].token,
-      grant_type: 'refresh_token'
-    }),{
-      headers: {
-        "Content-Type" : "application/x-www-form-urlencoded",
-        "secret_key": process.env.ZALO_SECRET
-      }
-    }
-  )
-  await refresh_token.updateOne({ name: 'zalo_token' }, { token: refresh_token_zalo.data.refresh_token });
+  const accessToken = await getZaloAccessToken();
   const { numberPhone } = req.body;
-  phoneslice = `84${numberPhone.slice(1)}`
+  const phoneslice = `84${numberPhone.slice(1)}`
   // const otp = await createOtp(numberPhone);
   const otp = await axios.post(`https://chatapi.io.vn/tao-otp?numberPhone=${numberPhone}`)
   const zaloRes = await axios.post('https://business.openapi.zalo.me/message/template',{
@@ -93,7 +144,7 @@ async function createOTP(req, res, next) {
   },{
     headers: {
       'Content-Type': 'application/json',
-      'access_token': refresh_token_zalo.data.access_token,
+      'access_token': accessToken,
     },
   })
   res.status(200).json({ message: "OTP sent successfully", numberPhone, data: zaloRes.data});
