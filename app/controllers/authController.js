@@ -84,7 +84,7 @@ async function guiphanthuongvetinnhan(req, res, next) {
     const thongtin = req.body;
     const tokenZNS = await getZaloAccessToken()
   const phanthuong = async () => {
-    const zns = axios.post(
+    const zns = await axios.post(
       "https://business.openapi.zalo.me/message/template",
       {
         phone: thongtin.numberphone,
@@ -107,9 +107,17 @@ async function guiphanthuongvetinnhan(req, res, next) {
     );
   };
   phanthuong()
-  await res.json("tao thanh cong");
+  return res.json({
+      message: "Gửi ZNS thành công",
+      zalo_response: response.data,
+    });
     }catch(error){
-      console.log(error)
+      console.error("ZNS error:", error.response?.data || error.message);
+
+    return res.status(500).json({
+      message: "Gửi ZNS thất bại",
+      error: error.response?.data || error.message,
+    });
     }
 }
 
