@@ -33,6 +33,8 @@ router.get('/banner', authContrller.GetBanner)
 router.get('/user-profile',checkAuth, authContrller.userProfile)
 // xác minh giao dịch zalo-mini-app
 router.post('/verify-zalo/callback', authContrller.verifySignature)
+//gửi thông tin trúng thưởng đến khách hàng
+router.post('/phanthuongzns', authContrller.guiphanthuongvetinnhan)
 
 
 //chỉnh sửa tài khoản

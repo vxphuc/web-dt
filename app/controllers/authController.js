@@ -6,20 +6,20 @@ const Notification = require("../models/Notification");
 const axios = require("axios");
 const request = require("request");
 const { createOtp, verifyOtp } = require("../../services/otpService");
-require('dotenv').config();
+require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const { getRedisClient } = require('../../config/redis')
-const qs = require('qs')
-const refresh_token = require('../models/refresh_token_zalo')
-const {createHmac} = require('crypto');
-const logger = require('../../config/logger')
+const { getRedisClient } = require("../../config/redis");
+const qs = require("qs");
+const refresh_token = require("../models/refresh_token_zalo");
+const { createHmac } = require("crypto");
+const logger = require("../../config/logger");
 
 let refreshTokenPromise = null;
 
 async function getZaloAccessToken() {
-  const tokenDoc = await refresh_token.findOne({ name: 'zalo_token' });
+  const tokenDoc = await refresh_token.findOne({ name: "zalo_token" });
   if (!tokenDoc?.token) {
-    throw new Error('Missing zalo refresh token in database');
+    throw new Error("Missing zalo refresh token in database");
   }
 
   const now = Date.now();
@@ -36,36 +36,36 @@ async function getZaloAccessToken() {
   }
 
   refreshTokenPromise = (async () => {
-    const latestTokenDoc = await refresh_token.findOne({ name: 'zalo_token' });
+    const latestTokenDoc = await refresh_token.findOne({ name: "zalo_token" });
     if (!latestTokenDoc?.token) {
-      throw new Error('Missing latest zalo refresh token in database');
+      throw new Error("Missing latest zalo refresh token in database");
     }
 
     const refreshed = await axios.post(
-      'https://oauth.zaloapp.com/v4/oa/access_token',
+      "https://oauth.zaloapp.com/v4/oa/access_token",
       qs.stringify({
-        app_id: '1240211320870133371',
+        app_id: "1240211320870133371",
         refresh_token: latestTokenDoc.token,
-        grant_type: 'refresh_token',
+        grant_type: "refresh_token",
       }),
       {
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
           secret_key: process.env.ZALO_SECRET,
         },
-      }
+      },
     );
 
     const expiresIn = Number(refreshed.data.expires_in || 3600);
     const accessTokenExpiresAt = new Date(Date.now() + expiresIn * 1000);
 
     await refresh_token.updateOne(
-      { name: 'zalo_token' },
+      { name: "zalo_token" },
       {
         token: refreshed.data.refresh_token,
         accessToken: refreshed.data.access_token,
         accessTokenExpiresAt,
-      }
+      },
     );
 
     return refreshed.data.access_token;
@@ -76,6 +76,40 @@ async function getZaloAccessToken() {
   } finally {
     refreshTokenPromise = null;
   }
+}
+
+// gửi phần thưởng qua tin nhắn
+async function guiphanthuongvetinnhan(req, res, next) {
+    try{
+    const thongtin = req.body;
+    const tokenZNS = await getZaloAccessToken()
+  const phanthuong = async () => {
+    const zns = axios.post(
+      "https://business.openapi.zalo.me/message/template",
+      {
+        phone: thongtin.numberphone,
+        template_id: process.env.ZNS_SUKIEN,
+        template_data: {
+          san_pham: "san_pham",
+          tu_ngay: "01/08/2020",
+          ten_khach_hang: "ten_khach_hang",
+          voucher_code: "voucher_code",
+          ma_don_hang: "ma_don_hang",
+          den_ngay: "01/08/2020",
+          ma_trung_thuong: "ma_trung_thuong",
+        },
+      },{
+        headers: {
+          "Content-Type": "application/json",
+          access_token: tokenZNS,
+        }
+      }
+    );
+  };
+  phanthuong()
+    }catch(error){
+      console.log(error)
+    }
 }
 
 // taọ banener
@@ -121,34 +155,45 @@ async function deleteBanner(req, res, next) {
     Banner.deleteOne({ _id: req.params.id })
       .then((result) => console.log(result))
       .catch((error) => console.error(error));
-  } catch(err) {
-      return res.json("lỗi khi xóa");
+  } catch (err) {
+    return res.json("lỗi khi xóa");
   }
 }
 
 // POST gửi otp
 async function createOTP(req, res, next) {
-  try{
-
-  const accessToken = await getZaloAccessToken();
-  const { numberPhone } = req.body;
-  const phoneslice = `84${numberPhone.slice(1)}`
-  // const otp = await createOtp(numberPhone);
-  const otp = await axios.post(`https://chatapi.io.vn/tao-otp?numberPhone=${numberPhone}`)
-  const zaloRes = await axios.post('https://business.openapi.zalo.me/message/template',{
-    phone: phoneslice,
-    template_id: process.env.ZALOPAY_OTP,
-    template_data: {
-      otp: otp.data,
-    },
-  },{
-    headers: {
-      'Content-Type': 'application/json',
-      'access_token': accessToken,
-    },
-  })
-  res.status(200).json({ message: "OTP sent successfully", numberPhone, data: zaloRes.data});
-  }catch(err){
+  try {
+    const accessToken = await getZaloAccessToken();
+    const { numberPhone } = req.body;
+    const phoneslice = `84${numberPhone.slice(1)}`;
+    // const otp = await createOtp(numberPhone);
+    const otp = await axios.post(
+      `https://chatapi.io.vn/tao-otp?numberPhone=${numberPhone}`,
+    );
+    const zaloRes = await axios.post(
+      "https://business.openapi.zalo.me/message/template",
+      {
+        phone: phoneslice,
+        template_id: process.env.ZALOPAY_OTP,
+        template_data: {
+          otp: otp.data,
+        },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          access_token: accessToken,
+        },
+      },
+    );
+    res
+      .status(200)
+      .json({
+        message: "OTP sent successfully",
+        numberPhone,
+        data: zaloRes.data,
+      });
+  } catch (err) {
     logger.error(`authController.createOTP ${err}`);
     return res.status(500).json(err);
   }
@@ -158,15 +203,15 @@ async function createOTP(req, res, next) {
 async function signin(req, res, next) {
   const { numberPhone, otp } = req.body;
   try {
-    const phoneslice = `84${numberPhone.slice(1)}`
-    console.log(phoneslice, otp)
+    const phoneslice = `84${numberPhone.slice(1)}`;
+    console.log(phoneslice, otp);
     let user = await User.findOne({ numberPhone: phoneslice });
     // const verified = await verifyOtp(numberPhone, otp);
-    const verified = await axios.post("https://chatapi.io.vn/dang-nhap",{
+    const verified = await axios.post("https://chatapi.io.vn/dang-nhap", {
       sodienthoai: numberPhone,
-      otp: otp
-    })
-    if(!verified) {
+      otp: otp,
+    });
+    if (!verified) {
       return res.status(401).json({ error: "Invalid OTP" });
     }
     if (!user) {
@@ -180,8 +225,8 @@ async function signin(req, res, next) {
     // const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp, role: user.role}, process.env.JWT_SECRET, {algorithm: "HS256", expiresIn: '8h'}, );
 
     res.json({ message: "Login successful", token: verified.data });
-  } catch(err) {
-    logger.error(`authController.signin ${err}`)
+  } catch (err) {
+    logger.error(`authController.signin ${err}`);
     return res.status(401).json({ error: "Authentication failed" });
   }
 }
@@ -207,7 +252,7 @@ async function fillInInformation(req, res, next) {
   const user = req.user;
   const result = await User.updateOne(
     { uid: user.uid },
-    { $set: { name: req.body.name } }
+    { $set: { name: req.body.name } },
   );
   res.json(result);
 }
@@ -224,7 +269,7 @@ async function logout(req, res, next) {
     });
     res.status(200).json({ message: "Logged out" });
   } catch (error) {
-    logger.error(`authController.logout ${error}`)
+    logger.error(`authController.logout ${error}`);
     return res.status(500).json({ error: "Failed to logout" });
   }
 }
@@ -239,7 +284,7 @@ async function editProfile(req, res, next) {
         $set: {
           name: req.body.name,
         },
-      }
+      },
     );
     res.json(result);
   } catch (error) {
@@ -254,7 +299,7 @@ async function editUserByAdmin(req, res, next) {
     const { name, role } = req.body;
     const result = await User.updateOne(
       { _id: id },
-      { $set: { name: name, role: role } }
+      { $set: { name: name, role: role } },
     );
     res.json(result);
   } catch (error) {
@@ -287,7 +332,6 @@ const decodePhone = async (req, res) => {
   const token = req.body.token;
   const secretKey = process.env.ZALO_SECRETKEY;
 
-
   const options = {
     url: endpoint,
     headers: {
@@ -304,15 +348,15 @@ const decodePhone = async (req, res) => {
       console.log("Response Code:", response.statusCode);
       console.log("Response Body:", body);
       const data = JSON.parse(body);
-      res.json(data)
+      res.json(data);
     }
   });
 };
 
-const verifySignature = async (req, res) =>{
-  console.log(req.body)
-  res.send('hello')
-}
+const verifySignature = async (req, res) => {
+  console.log(req.body);
+  res.send("hello");
+};
 
 const createHmacSignature = async (req, res) => {
   const { amount, desc, item } = req.body;
@@ -326,19 +370,18 @@ const createHmacSignature = async (req, res) => {
   res.json({ mac });
 };
 
-const approveKOC = async(req, res) =>{
-  try{
-    const { numberPhone} = req.params;
+const approveKOC = async (req, res) => {
+  try {
+    const { numberPhone } = req.params;
     const result = await User.updateOne(
       { numberPhone: numberPhone },
-      { $set: { role: "koc" } }
+      { $set: { role: "koc" } },
     );
     res.json(result);
-  }catch(err){
-    return res.json(err)
+  } catch (err) {
+    return res.json(err);
   }
-}
-
+};
 
 module.exports = {
   signin,
@@ -357,5 +400,6 @@ module.exports = {
   verifySignature,
   createOTP,
   createHmacSignature,
-  approveKOC
+  approveKOC,
+  guiphanthuongvetinnhan
 };
