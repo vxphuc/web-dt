@@ -107,6 +107,7 @@ async function guiphanthuongvetinnhan(req, res, next) {
     );
   };
   phanthuong()
+  await res.json("tao thanh cong");
     }catch(error){
       console.log(error)
     }
