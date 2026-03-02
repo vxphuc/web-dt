@@ -80,11 +80,11 @@ async function getZaloAccessToken() {
 
 // gửi phần thưởng qua tin nhắn
 async function guiphanthuongvetinnhan(req, res, next) {
-    try{
+  try {
     const thongtin = req.body;
-    const tokenZNS = await getZaloAccessToken()
-  const phanthuong = async () => {
-    const zns = await axios.post(
+    const tokenZNS = await getZaloAccessToken();
+
+    const response = await axios.post(
       "https://business.openapi.zalo.me/message/template",
       {
         phone: thongtin.numberphone,
@@ -98,27 +98,29 @@ async function guiphanthuongvetinnhan(req, res, next) {
           den_ngay: "01/08/2020",
           ma_trung_thuong: "ma_trung_thuong",
         },
-      },{
+      },
+      {
         headers: {
           "Content-Type": "application/json",
           access_token: tokenZNS,
-        }
+        },
+        timeout: 10000,
       }
     );
-  };
-  phanthuong()
-  return res.json({
+
+    return res.json({
       message: "Gửi ZNS thành công",
       zalo_response: response.data,
     });
-    }catch(error){
-      console.error("ZNS error:", error.response?.data || error.message);
+
+  } catch (error) {
+    console.error("ZNS error:", error.response?.data || error.message);
 
     return res.status(500).json({
       message: "Gửi ZNS thất bại",
       error: error.response?.data || error.message,
     });
-    }
+  }
 }
 
 // taọ banener
