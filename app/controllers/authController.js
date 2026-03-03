@@ -90,13 +90,13 @@ async function guiphanthuongvetinnhan(req, res, next) {
         phone: thongtin.numberphone,
         template_id: process.env.ZNS_SUKIEN,
         template_data: {
-          san_pham: "san_pham",
-          tu_ngay: "01/08/2020",
-          ten_khach_hang: "ten_khach_hang",
-          voucher_code: "voucher_code",
-          ma_don_hang: "ma_don_hang",
-          den_ngay: "01/08/2020",
-          ma_trung_thuong: "ma_trung_thuong",
+          ngay_mua_hang: "01/08/2020",
+          code: thongtin.code,
+          giai_thuong: thongtin.giathuong,
+          ngay_ket_thuc: "03/05/2025",
+          payment_status: "đổi mã thành công",
+          customer_name: thongtin.numberphone,
+          ngay_bat_dau: "03/03/2025",
         },
       },
       {
@@ -105,14 +105,13 @@ async function guiphanthuongvetinnhan(req, res, next) {
           access_token: tokenZNS,
         },
         timeout: 10000,
-      }
+      },
     );
 
     return res.json({
       message: "Gửi ZNS thành công",
       zalo_response: response.data,
     });
-
   } catch (error) {
     console.error("ZNS error:", error.response?.data || error.message);
 
@@ -197,13 +196,11 @@ async function createOTP(req, res, next) {
         },
       },
     );
-    res
-      .status(200)
-      .json({
-        message: "OTP sent successfully",
-        numberPhone,
-        data: zaloRes.data,
-      });
+    res.status(200).json({
+      message: "OTP sent successfully",
+      numberPhone,
+      data: zaloRes.data,
+    });
   } catch (err) {
     logger.error(`authController.createOTP ${err}`);
     return res.status(500).json(err);
@@ -412,5 +409,5 @@ module.exports = {
   createOTP,
   createHmacSignature,
   approveKOC,
-  guiphanthuongvetinnhan
+  guiphanthuongvetinnhan,
 };
