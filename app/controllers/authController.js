@@ -209,10 +209,16 @@ async function createOTP(req, res, next) {
 
 //POST create and login
 async function signin(req, res, next) {
-  const { numberPhone, otp } = req.body;
+  const numberPhone = req.body.numberPhone || req.body.sodienthoai;
+  const otp = req.body.otp;
   try {
+    if (!numberPhone || !otp) {
+      return res
+        .status(400)
+        .json({ error: "numberPhone/sodienthoai and otp are required" });
+    }
+
     const phoneslice = `84${numberPhone.slice(1)}`;
-    console.log(phoneslice, otp);
     let user = await User.findOne({ numberPhone: phoneslice });
     // const verified = await verifyOtp(numberPhone, otp);
     const verified = await axios.post("https://chatapi.io.vn/dang-nhap", {
@@ -235,7 +241,10 @@ async function signin(req, res, next) {
     res.json({ message: "Login successful", token: verified.data });
   } catch (err) {
     logger.error(`authController.signin ${err}`);
-    return res.status(401).json({ error: "Authentication failed" });
+    const statusCode = err?.response?.status || 401;
+    return res
+      .status(statusCode)
+      .json(err?.response?.data || { error: "Authentication failed" });
   }
 }
 
