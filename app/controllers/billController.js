@@ -70,7 +70,7 @@ async function createBill(req, res) {
     if (req.body.code) {
       try {
         const response = await axios.post(
-          "https://chatapi.io.vn/luu-don-hang-va-san-pham-trong-don",
+          "https://staging.chatapi.io.vn/luu-don-hang-va-san-pham-trong-don",
           {
             madonhang: bill._id.toString(),
             province: bill.province,
