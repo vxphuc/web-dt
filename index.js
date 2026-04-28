@@ -40,6 +40,7 @@ const io = new Server(server, {
       "https://h5.zdn.vn",
       "https://chatapi.io.vn",
       "https://besieuthidt.io.vn",
+      "https://www.besieuthidt.io.vn",
       "http://localhost:8001",
     ],
     methods: ["GET", "POST"],
@@ -57,7 +58,8 @@ const io = new Server(server, {
     "https://h5.zdn.vn",
     "https://test.sieuthidt.io.vn",
     "http://test.sieuthidt.io.vn",
-    "https://besieuthidt.io.vn"
+    "https://besieuthidt.io.vn",
+    "https://www.besieuthidt.io.vn"
   ];
 
   const corsOptions = {

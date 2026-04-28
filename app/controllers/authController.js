@@ -175,18 +175,19 @@ async function createOTP(req, res, next) {
   try {
     const accessToken = await getZaloAccessToken();
     const { numberPhone } = req.body;
+    if (!numberPhone || !/^0\d{9}$/.test(numberPhone)) {
+      return res.status(400).json({ error: "Valid numberPhone is required" });
+    }
+
     const phoneslice = `84${numberPhone.slice(1)}`;
-    // const otp = await createOtp(numberPhone);
-    const otp = await axios.post(
-      `https://chatapi.io.vn/tao-otp?numberPhone=${numberPhone}`,
-    );
+    const otp = await createOtp(numberPhone);
     const zaloRes = await axios.post(
       "https://business.openapi.zalo.me/message/template",
       {
         phone: phoneslice,
         template_id: process.env.ZALOPAY_OTP,
         template_data: {
-          otp: otp.data,
+          otp,
         },
       },
       {
@@ -217,14 +218,13 @@ async function signin(req, res, next) {
         .status(400)
         .json({ error: "numberPhone/sodienthoai and otp are required" });
     }
+    if (!/^0\d{9}$/.test(numberPhone)) {
+      return res.status(400).json({ error: "Valid numberPhone is required" });
+    }
 
     const phoneslice = `84${numberPhone.slice(1)}`;
     let user = await User.findOne({ numberPhone: phoneslice });
-    // const verified = await verifyOtp(numberPhone, otp);
-    const verified = await axios.post("https://chatapi.io.vn/dang-nhap", {
-      sodienthoai: numberPhone,
-      otp: otp,
-    });
+    const verified = await verifyOtp(numberPhone, otp);
     if (!verified) {
       return res.status(401).json({ error: "Invalid OTP" });
     }
@@ -238,10 +238,16 @@ async function signin(req, res, next) {
     // Tạo JWT token
     // const token = jwt.sign( {numberPhone : user.numberPhone, OTP: otp, role: user.role}, process.env.JWT_SECRET, {algorithm: "HS256", expiresIn: '8h'}, );
 
-    res.json({ message: "Login successful", token: verified.data });
+    const token = jwt.sign(
+      { numberPhone: user.numberPhone, role: user.role, uid: user.uid },
+      process.env.JWT_SECRET,
+      { algorithm: "HS256", expiresIn: "8h" },
+    );
+
+    res.json({ message: "Login successful", token, user });
   } catch (err) {
     logger.error(`authController.signin ${err}`);
-    const statusCode = err?.response?.status || 401;
+    const statusCode = err?.response?.status || 500;
     return res
       .status(statusCode)
       .json(err?.response?.data || { error: "Authentication failed" });
