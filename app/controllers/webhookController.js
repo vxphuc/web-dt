@@ -10,6 +10,7 @@ const expiration_date = 1;
 const transaction_prefix = "CASSO";
 const case_insensitive = false;
 const api_key = process.env.API_KEY_CASSO;
+const publicBaseUrl = process.env.PUBLIC_BASE_URL || "https://besieuthidt.io.vn";
 
 const handleWebhook = async (req, res, next) => {
   try {
@@ -92,12 +93,11 @@ const usersPaid = async (req, res, next) => {
 const registerWebhook = async (req, res, next) => {
   try {
     //Delete Toàn bộ webhook đã đăng kí trước đó với https://ten-mien-cua-ban.com/webhook/handler-bank-transfer
-    await webhookUtil.deleteWebhookByUrl(
-      "https://sieuthidt.io.vn/webhook/handler-bank-transfer"
-    );
+    const webhookUrl = `${publicBaseUrl}/webhook/handler-bank-transfer`;
+    await webhookUtil.deleteWebhookByUrl(webhookUrl);
     //Tiến hành tạo webhook
     let data = {
-      webhook: "https://sieuthidt.io.vn/webhook/handler-bank-transfer",
+      webhook: webhookUrl,
       secure_token: secure_token,
       income_only: true,
     };

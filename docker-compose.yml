@@ -1,29 +1,30 @@
-version: '3.8'
-
 services:
   web:
     build: .
     container_name: web-dt
+    restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
+    env_file:
+      - .env
     volumes:
-      - .:/app
-      - /app/node_modules
+      - web-dt-uploads:/app/public/uploads
+      - web-dt-logs:/app/log
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
       - redis
-    command: npm start
 
   redis:
     image: redis:7.2
-    container_name: redis-local
-    ports:
-      - "127.0.0.1:6379:6379"
+    container_name: web-dt-redis
+    restart: unless-stopped
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
 
 volumes:
   redis-data:
+  web-dt-uploads:
+  web-dt-logs:
