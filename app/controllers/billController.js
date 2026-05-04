@@ -7,6 +7,20 @@ const logger = require("../../config/logger");
 const { error } = require("winston");
 const ProductRepository = require("../models/product");
 
+const getPhoneVariants = (phone) => {
+  if (!phone) return [];
+  const normalized = String(phone).trim();
+  const variants = new Set([normalized]);
+
+  if (normalized.startsWith("84")) {
+    variants.add(`0${normalized.slice(2)}`);
+  } else if (normalized.startsWith("0")) {
+    variants.add(`84${normalized.slice(1)}`);
+  }
+
+  return Array.from(variants);
+};
+
 //tạo mới hóa đơn
 async function createBill(req, res) {
   try {
@@ -111,9 +125,11 @@ async function createBill(req, res) {
 
 //lấy hóa đơn theo người dùng
 const getBillByUser = async (req, res) => {
-  const numberPhone = req.user.numberPhone;
+  const phoneVariants = getPhoneVariants(req.user.numberPhone);
   try {
-    const bill = await billModel.find({ phoneNumber: numberPhone });
+    const bill = await billModel
+      .find({ phoneNumber: { $in: phoneVariants } })
+      .sort({ createDate: -1 });
     res.json(bill);
   } catch (error) {
     logger.error(`billController: getBillByUser = err ${error}`);
@@ -203,9 +219,11 @@ const cancelOrder = async (req, res) => {
 
 // lấy hóa đơn theo người dùng và trạng thái
 const getBillByUserAndStatus = async (req, res) => {
-  const numberPhone = req.query.phone;
+  const phoneVariants = getPhoneVariants(req.query.phone);
   try {
-    const bill = await billModel.find({ phoneNumber: numberPhone });
+    const bill = await billModel
+      .find({ phoneNumber: { $in: phoneVariants } })
+      .sort({ createDate: -1 });
     res.json(bill);
   } catch (error) {
     console.error(error);
