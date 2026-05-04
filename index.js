@@ -38,7 +38,7 @@ const io = new Server(server, {
       "http://localhost:3000",
       "https://sieuthidt.com",
       "https://h5.zdn.vn",
-      "https://chatapi.io.vn",
+      // "https://chatapi.io.vn",
       "https://besieuthidt.io.vn",
       "https://www.besieuthidt.io.vn",
       "http://localhost:8001",
