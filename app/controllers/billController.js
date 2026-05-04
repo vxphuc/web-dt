@@ -70,7 +70,7 @@ async function createBill(req, res) {
     if (req.body.code) {
       try {
         const response = await axios.post(
-          "https://staging.chatapi.io.vn/luu-don-hang-va-san-pham-trong-don",
+          "https://kocapi.io.vn/luu-don-hang-va-san-pham-trong-don",
           {
             madonhang: bill._id.toString(),
             province: bill.province,
@@ -228,7 +228,7 @@ const doiqua = async (req, res) => {
 
     let ktrma;
     try {
-      ktrma = await axios.post("https://chatapi.io.vn/kiem-tra-ma-hop-le", {
+      ktrma = await axios.post("https://kocapi.io.vn/kiem-tra-ma-hop-le", {
         magiamgia,
       });
     } catch (err) {

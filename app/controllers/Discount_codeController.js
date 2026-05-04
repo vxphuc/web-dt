@@ -2,7 +2,7 @@ const { default: axios } = require("axios")
 
 const giaTriMaGiam = async (req, res) =>{
     try{
-        const response = await axios.post('https://staging.chatapi.io.vn/su-dung-ma-giam-gia',{
+        const response = await axios.post('https://kocapi.io.vn/su-dung-ma-giam-gia',{
         code : req.body.code,
         phone: req.body.phone
     })
