@@ -46,6 +46,8 @@ router.get('/user-profile-admin/:id',checkAuth, checkRole('admin'), authContrlle
 
 //cập nhập role cho KOC
 router.patch("/dang-ky-koc/:numberPhone",checkAuth, checkRole(['admin']), authContrller.approveKOC)
+// role koc
+router.patch("/internal/koc-role/:numberPhone", authContrller.approveKOCInternal);
 
 //chỉnh sửa tài khoản bằng tài khoản admin
 router.put('/:id/editUserByAdmin',checkAuth, checkRole('admin'), authContrller.editUserByAdmin)

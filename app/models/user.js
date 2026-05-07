@@ -8,7 +8,7 @@ const user = new Schema({
     gender: {type: String, enum: ['nam', 'nữ'], default: null},
     role: {
         type: String,
-        enum: ['admin', 'editor', 'user'],
+        enum: ['admin', 'editor', 'user', 'koc'],
         required: true,
         default: 'user'
       },

@@ -405,7 +405,34 @@ const approveKOC = async (req, res) => {
     return res.json(err);
   }
 };
+const approveKOCInternal = async (req, res) => {
+  try{
+    const apiKey = req.headers["x-internal-api-key"];
 
+    if(!process.env.INTERNAL_API_KEY || apiKey !== process.env.INTERNAL_API_KEY){
+      return res.status(401).json({ message: "Unauthorized internal request"})
+    }
+    const rawPhone = req.params.numberPhone || req.body.numberPhone;
+    if(!rawPhone){
+      return res.status(400).json({ message: "numberPhone is required" });
+    }
+    const numberPhone = rawPhone.startsWith("0")
+      ? `84${rawPhone.slice(1)}`
+      : rawPhone;
+    
+    const result = await User.updateOne(
+      { numberPhone },
+      { $set: { role: "koc" } },
+      { runValidators: true }
+    );
+    if (result.matchedCount === 0){
+      return res.status(404).json({ message: "User not found", numberPhone });
+    }
+    return res.json({ message: "Updated role to koc", numberPhone, result });
+  }catch(err){
+    return res.status(500).json({ message: "Failed to update KOC role", error: err.message });
+  }
+}
 module.exports = {
   signin,
   Getuser,
@@ -425,4 +452,5 @@ module.exports = {
   createHmacSignature,
   approveKOC,
   guiphanthuongvetinnhan,
+  approveKOCInternal,
 };
