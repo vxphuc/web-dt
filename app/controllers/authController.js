@@ -208,6 +208,62 @@ async function createOTP(req, res, next) {
   }
 }
 
+async function sendResetPasswordOtpInternal(req, res) {
+  try {
+    const apiKey = req.headers["x-internal-api-key"];
+    if (!process.env.INTERNAL_API_KEY || apiKey !== process.env.INTERNAL_API_KEY) {
+      return res.status(401).json({ success: false, message: "Unauthorized internal request" });
+    }
+
+    const { phone, otp, name, expires_in } = req.body || {};
+    if (!phone || !otp) {
+      return res.status(400).json({
+        success: false,
+        message: "phone and otp are required",
+      });
+    }
+
+    const normalizedPhone = String(phone).startsWith("0")
+      ? `84${String(phone).slice(1)}`
+      : String(phone);
+
+    const accessToken = await getZaloAccessToken();
+    const response = await axios.post(
+      "https://business.openapi.zalo.me/message/template",
+      {
+        phone: normalizedPhone,
+        template_id: process.env.ZALOPAY_OTP,
+        template_data: {
+          otp: String(otp),
+          name: name || "",
+          expires_in: String(expires_in || 5),
+          phone: normalizedPhone,
+        },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          access_token: accessToken,
+        },
+        timeout: 10000,
+      },
+    );
+
+    return res.json({
+      success: true,
+      message: "ZNS sent successfully",
+      data: response.data,
+    });
+  } catch (err) {
+    logger.error(`authController.sendResetPasswordOtpInternal ${err}`);
+    return res.status(500).json({
+      success: false,
+      message: err?.response?.data?.message || err.message || "Failed to send ZNS",
+      error: err?.response?.data || err.message,
+    });
+  }
+}
+
 //POST create and login
 async function signin(req, res, next) {
   const numberPhone = req.body.numberPhone || req.body.sodienthoai;
@@ -449,6 +505,7 @@ module.exports = {
   decodePhone,
   verifySignature,
   createOTP,
+  sendResetPasswordOtpInternal,
   createHmacSignature,
   approveKOC,
   guiphanthuongvetinnhan,

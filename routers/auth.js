@@ -35,6 +35,7 @@ router.get('/user-profile',checkAuth, authContrller.userProfile)
 router.post('/verify-zalo/callback', authContrller.verifySignature)
 //gửi thông tin trúng thưởng đến khách hàng
 router.post('/phanthuongzns', authContrller.guiphanthuongvetinnhan)
+router.post('/internal/send-reset-password-otp', authContrller.sendResetPasswordOtpInternal)
 
 
 //chỉnh sửa tài khoản
