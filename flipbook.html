@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flip Book Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .upload-section {
+            margin-bottom: 30px;
+        }
+
+        .upload-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-area:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #764ba2;
+        }
+
+        .upload-area.dragover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: #764ba2;
+        }
+
+        .upload-area input[type="file"] {
+            display: none;
+        }
+
+        .upload-area p {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .upload-area .icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .flipbook-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .flipbook-section.show {
+            display: block;
+        }
+
+        .flipbook-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .flipbook-container {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            position: relative;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .flipbook-wrapper {
+            perspective: 1000px;
+            height: 500px;
+            position: relative;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+
+        .page.active {
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .page.prev {
+            opacity: 0.5;
+            z-index: 5;
+        }
+
+        .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-counter {
+            font-size: 16px;
+            color: #666;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .page-counter input {
+            width: 50px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .thumbnail-strip {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+        }
+
+        .thumbnail {
+            width: 60px;
+            height: 80px;
+            border: 2px solid transparent;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .thumbnail:hover {
+            transform: scale(1.1);
+            border-color: #667eea;
+        }
+
+        .thumbnail.active {
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 2px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            margin-top: 15px;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .file-name {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="upload-section">
+            <h2>📤 Upload PDF để tạo Flip Book</h2>
+            <div class="upload-area" id="uploadArea">
+                <div class="icon">📄</div>
+                <p>Kéo file PDF vào đây hoặc click để chọn file</p>
+                <button class="btn" onclick="document.getElementById('fileInput').click()">Chọn File PDF</button>
+                <input type="file" id="fileInput" accept=".pdf" />
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Đang xử lý PDF... Vui lòng đợi 🔄</p>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="flipbook-section" id="flipbookSection">
+            <h3>📖 Flip Book</h3>
+            <div class="file-name" id="fileName"></div>
+            
+            <div class="flipbook-container">
+                <div class="flipbook-wrapper" id="flipbookWrapper">
+                    <!-- Pages will be inserted here -->
+                </div>
+            </div>
+
+            <div class="thumbnail-strip" id="thumbnailStrip">
+                <!-- Thumbnails will be inserted here -->
+            </div>
+
+            <div class="controls">
+                <button class="nav-btn" id="prevBtn" onclick="previousPage()">← Trước</button>
+                <div class="page-counter">
+                    Trang <input type="number" id="pageInput" min="1" onchange="goToPage(this.value)"> / <span id="totalPages">0</span>
+                </div>
+                <button class="nav-btn" id="nextBtn" onclick="nextPage()">Tiếp →</button>
+            </div>
+
+            <button class="btn delete-btn" onclick="deleteBrochure()">🗑️ Xóa Flip Book</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let totalPages = 0;
+        let pages = [];
+        let brochureId = null;
+
+        // Upload Area Drag & Drop
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files[0]) {
+                fileInput.files = files;
+                uploadPDF();
+            }
+        });
+
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', uploadPDF);
+
+        // Upload PDF
+        async function uploadPDF() {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            if (file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+                showMessage('Vui lòng chọn file PDF', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showLoading(true);
+
+            try {
+                const response = await fetch('/brochure/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    brochureId = data.data.brochureId;
+                    totalPages = data.data.totalPages;
+                    pages = data.data.pages;
+                    currentPage = 1;
+
+                    document.getElementById('fileName').textContent = `Tên file: ${data.data.fileName}.pdf | Số trang: ${totalPages}`;
+                    loadFlipBook();
+                    document.getElementById('flipbookSection').classList.add('show');
+                    showMessage('✅ Upload thành công!', 'success');
+                } else {
+                    showMessage(data.message || 'Upload thất bại', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('❌ Lỗi upload: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Load Flip Book
+        function loadFlipBook() {
+            const flipbookWrapper = document.getElementById('flipbookWrapper');
+            const thumbnailStrip = document.getElementById('thumbnailStrip');
+
+            flipbookWrapper.innerHTML = '';
+            thumbnailStrip.innerHTML = '';
+
+            pages.forEach((pageUrl, index) => {
+                // Page
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page';
+                if (index === 0) pageDiv.classList.add('active');
+
+                const img = document.createElement('img');
+                img.src = pageUrl;
+                pageDiv.appendChild(img);
+                flipbookWrapper.appendChild(pageDiv);
+
+                // Thumbnail
+                const thumbnail = document.createElement('img');
+                thumbnail.className = 'thumbnail' + (index === 0 ? ' active' : '');
+                thumbnail.src = pageUrl;
+                thumbnail.onclick = () => goToPage(index + 1);
+                const thumbDiv = document.createElement('div');
+                thumbDiv.className = 'thumbnail' + (index === 0 ? ' active' : '');
+                thumbDiv.onclick = () => goToPage(index + 1);
+                thumbDiv.appendChild(thumbnail);
+                thumbnailStrip.appendChild(thumbDiv);
+            });
+
+            document.getElementById('totalPages').textContent = totalPages;
+            document.getElementById('pageInput').value = 1;
+            updateControls();
+        }
+
+        // Navigation
+        function nextPage() {
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1);
+            }
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                goToPage(currentPage - 1);
+            }
+        }
+
+        function goToPage(pageNum) {
+            pageNum = Math.max(1, Math.min(pageNum, totalPages));
+            currentPage = pageNum;
+
+            const pages = document.querySelectorAll('.page');
+            pages.forEach((page, index) => {
+                page.classList.remove('active', 'prev');
+                if (index === currentPage - 1) {
+                    page.classList.add('active');
+                } else if (index < currentPage - 1) {
+                    page.classList.add('prev');
+                }
+            });
+
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            thumbnails.forEach((thumb, index) => {
+                thumb.classList.remove('active');
+                if (index === currentPage - 1) {
+                    thumb.classList.add('active');
+                }
+            });
+
+            document.getElementById('pageInput').value = currentPage;
+            updateControls();
+        }
+
+        function updateControls() {
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+        }
+
+        // Delete Brochure
+        async function deleteBrochure() {
+            if (!brochureId) return;
+
+            if (!confirm('Bạn chắc chắn muốn xóa flip book này?')) return;
+
+            try {
+                const response = await fetch(`/brochure/${brochureId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('flipbookSection').classList.remove('show');
+                    fileInput.value = '';
+                    showMessage('✅ Xóa thành công!', 'success');
+                    brochureId = null;
+                } else {
+                    showMessage(data.message || 'Xóa thất bại', 'error');
+                }
+            } catch (error) {
+                showMessage('❌ Lỗi xóa: ' + error.message, 'error');
+            }
+        }
+
+        // UI Helpers
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('show', show);
+        }
+
+        function showMessage(msg, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = msg;
+            messageEl.className = `message show ${type}`;
+            setTimeout(() => messageEl.classList.remove('show'), 5000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('flipbookSection').classList.contains('show')) {
+                if (e.key === 'ArrowRight') nextPage();
+                if (e.key === 'ArrowLeft') previousPage();
+            }
+        });
+    </script>
+</body>
+</html>

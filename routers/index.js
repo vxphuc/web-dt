@@ -10,6 +10,7 @@ const webhookRouter = require('./webhook')
 const chartRouter = require('./Chart')
 const chatbotRouter = require('./chatbot')
 const Discount_code = require('./Discount_code')
+const brochureRouter = require('./brochure')
 
 
 function router(app){
@@ -24,6 +25,7 @@ function router(app){
     app.use('/chart', chartRouter)
     app.use('/chatbot', chatbotRouter)
     app.use('/discount-code', Discount_code)
+    app.use('/brochure', brochureRouter)
 }
 
 module.exports = router;

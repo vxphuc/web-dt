@@ -78,6 +78,7 @@ const io = new Server(server, {
   app.use(express.json({ limit: "10mb" }));
   app.use(express.urlencoded({ extended: true, limit: "10mb" }));
   app.use(express.static("public"));
+  app.use(express.static("output")); // Phục vụ file flip book từ output folder
   app.options("*", cors(corsOptions));
 
   // Gắn io vào app để controller sử dụng
