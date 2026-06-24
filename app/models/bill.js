@@ -22,14 +22,34 @@ const billSchema = new Schema({
   },
   Intomoney: {
     type: mongoose.Schema.Types.Decimal128,
+    required: true,
+    validate: {
+      validator: (value) => Number(value?.toString()) >= 0,
+      message: "Tổng tiền không được âm",
+    },
   },
   products: [
     {
       name: String,
-      price: mongoose.Schema.Types.Decimal128,
-      quantity: Number,
+      price: {
+        type: mongoose.Schema.Types.Decimal128,
+        required: true,
+        validate: {
+          validator: (value) => Number(value?.toString()) >= 0,
+          message: "Giá sản phẩm không được âm",
+        },
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        min: 1,
+        validate: {
+          validator: Number.isInteger,
+          message: "Số lượng sản phẩm phải là số nguyên",
+        },
+      },
       img: String,
-      productID: String,
+      productID: { type: String, required: true },
     },
   ],
   createDate: {
@@ -50,7 +70,7 @@ const billSchema = new Schema({
       "hủy đơn hàng",
     ],
     default: "chờ xác nhận",
-    require: true,
+    required: true,
   },
   statusPay: {
     type: String,

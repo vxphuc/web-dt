@@ -8,7 +8,17 @@ const limitPhone = rateLimit.rateLimit({
     message: 'vui lòng đợi 10 phút rồi thử lại...',
 })
 
+const limitOrder = rateLimit.rateLimit({
+    windowMs: 10 * 60 * 1000,
+    limit: 30,
+    ipv6Subnet: 64,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Quá nhiều yêu cầu đặt hàng. Vui lòng thử lại sau.' },
+})
+
 
 module.exports = {
-    limitPhone
+    limitPhone,
+    limitOrder
 }
