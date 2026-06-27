@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const { convert } = require('pdf2pic');
-const { v4: uuidv4 } = require('uuid');
+const crypto = require("crypto");
 
 // Upload PDF và chuyển đổi thành flip book
 const uploadBrochure = async (req, res) => {
@@ -15,7 +15,7 @@ const uploadBrochure = async (req, res) => {
 
     const pdfPath = req.file.path;
     const fileName = path.parse(req.file.filename).name;
-    const brochureId = uuidv4();
+    const brochureId = crypto.randomUUID();
     
     // Thư mục output cho flip book
     const outputDir = path.join(__dirname, '../../output/brochure', brochureId);
