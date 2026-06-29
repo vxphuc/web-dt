@@ -9,6 +9,7 @@ services:
       - .env
     volumes:
       - web-dt-uploads:/app/public/uploads
+      - web-dt-output:/app/output
       - web-dt-logs:/app/log
     environment:
       - REDIS_HOST=redis
@@ -28,3 +29,4 @@ volumes:
   redis-data:
   web-dt-uploads:
   web-dt-logs:
+  web-dt-output:

@@ -21,6 +21,8 @@ const db = require("./config/db/index");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const http = require("http");
+const path = require("path");
+const fs = require("fs");
 require("dotenv").config();
 const { connectRedis } = require("./config/redis");
 
@@ -78,7 +80,9 @@ const io = new Server(server, {
   app.use(express.json({ limit: "10mb" }));
   app.use(express.urlencoded({ extended: true, limit: "10mb" }));
   app.use(express.static("public"));
-  app.use(express.static("output")); // Phục vụ file flip book từ output folder
+  const flipbookOutputDirectory = path.join(__dirname, "output");
+  fs.mkdirSync(flipbookOutputDirectory, { recursive: true });
+  app.use("/output", express.static(flipbookOutputDirectory));
   app.options("*", cors(corsOptions));
 
   // Gắn io vào app để controller sử dụng

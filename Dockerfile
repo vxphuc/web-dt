@@ -2,8 +2,8 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Cài đặt poppler-utils (dùng cho pdf2pic)
-RUN apk add --no-cache poppler-utils
+# pdf2pic cần GraphicsMagick và Ghostscript để đọc, render PDF.
+RUN apk add --no-cache graphicsmagick ghostscript poppler-utils
 
 COPY package*.json ./
 RUN npm ci --omit=dev
