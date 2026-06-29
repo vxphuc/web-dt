@@ -90,7 +90,7 @@ const uploadBrochure = async (req, res) => {
     if (fs.existsSync(pdfPath)) {
       fs.unlinkSync(pdfPath);
     }
-
+    console.log("📤 Chuẩn bị trả response");
     res.status(200).json({
       message: 'Upload và chuyển đổi PDF thành công',
       success: true,
@@ -102,7 +102,7 @@ const uploadBrochure = async (req, res) => {
         url: `/brochure/${brochureId}` // URL để xem flip book
       }
     });
-
+    console.log("✅ Đã gọi res.json()");
   } catch (error) {
     console.error('❌ Lỗi chuyển đổi PDF:', error);
     
